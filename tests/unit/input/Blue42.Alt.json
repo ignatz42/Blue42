@@ -1,0 +1,45 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "Blue42Password": {
+      "type": "securestring",
+      "defaultValue": "get[PASSWORD]",
+      "metadata": {
+        "description": "Blue42 password"
+      }
+    },
+    "NewCopySource": {
+      "type": "array",
+      "defaultValue": [
+        "singleEntry"
+      ],
+      "metadata": {
+        "description": "This sample tests an array with a single element"
+      }
+    }
+  },
+  "variables": {
+    "variableSampleD": {
+      "parameterReference": "[parameters('Blue42Password')]",
+      "copy": [
+        {
+          "name": "copySampleD",
+          "count": "[length(parameters('NewCopySource'))]",
+          "input": {
+            "parameterCopyReference": "[parameters('NewCopySource')[copyIndex('copySampleD')]]"
+          }
+        }
+      ]
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-02-01",
+      "type": "Blue42.Test/alternate",
+      "name": "[variables('variableSampleD')]",
+      "location": "[resourceGroup().location]"
+    }
+  ],
+  "outputs": {}
+}
