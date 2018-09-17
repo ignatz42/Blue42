@@ -7,8 +7,13 @@ Blue42 is a PowerShell Script Module that facilitates the process of writing and
 
 Blue42 requires the following modules to function as intended.
 
-+ PowerShell Core 6.1 rc4
++ PowerShell Core 6.1
 + AzureRm.Netcore
+
+or
+
++ PowerShell Desktop 5.1
++ AzureRm
 
 Blue42 requires the following modules for development.
 
