@@ -1,0 +1,52 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "Blue42Password": {
+      "type": "securestring",
+      "defaultValue": "get[PASSWORD]",
+      "metadata": {
+        "description": "Blue42 password"
+      }
+    },
+    "Blue42Location": {
+      "type": "string",
+      "defaultValue": "azure[LOCATION]",
+      "metadata": {
+        "description": "Blue42 Default Location"
+      }
+    },
+    "Blue42UID": {
+      "type": "string",
+      "defaultValue": "root[UID]",
+      "metadata": {
+        "description": "Blue42 Unique Identifer"
+      }
+    },
+    "CopySource": {
+      "type": "array",
+      "defaultValue": [
+        "singleEntry"
+      ],
+      "metadata": {
+        "description": "This sample tests an array with a single element"
+      }
+    }
+  },
+  "variables": {
+    "variableSample": {
+      "parameterReference": "[parameters('Blue42Password')]",
+      "copy": [
+        {
+          "name": "copySample",
+          "count": "[length(parameters('CopySource'))]",
+          "input": {
+            "parameterCopyReference": "[parameters('CopySource')[copyIndex('copySample')]]"
+          }
+        }
+      ]
+    }
+  },
+  "resources": [],
+  "outputs": {}
+}
