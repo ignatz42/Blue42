@@ -8,7 +8,7 @@ function New-Deployment {
         If the Resource Group doesn't exist, the function will create it before performing the deployment.
         .NOTES
         You need to run this function after establishing an AzureRm context using Login-AzureRmAccount.
-    #>    
+    #>
     param (
         # The destination Resource Group Name
         [Parameter(Mandatory=$true)]
@@ -59,11 +59,7 @@ function New-Deployment {
             Mode                    = $Mode
             DeploymentDebugLogLevel = $DeploymentDebugLogLevel
         }
-        $deploymentResults = New-AzureRmResourceGroupDeployment @deploymentParameters -Confirm:$false -Force
-        if ($deploymentResults.ProvisioningState -eq "Failed") {
-            Write-Error ("The {0} deployment failed." -f $Name)
-        }
-        $deploymentResults
+        New-AzureRmResourceGroupDeployment @deploymentParameters -Confirm:$false -Force
     }
 
     end {

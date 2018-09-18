@@ -10,19 +10,17 @@ function Get-Template {
     [CmdletBinding()]
     param (
         # The path to the template
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$true)]
         [string] $TemplatePath,
 
         # Skip token replacement.
+        [Parameter(Mandatory=$false)]
         [bool] $SkipTokenReplacement = $false
     )
 
     begin {
         Write-Verbose "Starting Get-Template"
         $globals = Get-B42Globals
-        if ([string]::IsNullOrEmpty($TemplatePath)) {
-            $TemplatePath = $globals.TemplatePath
-        }
     }
 
     process {

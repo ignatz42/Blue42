@@ -64,14 +64,14 @@ Describe "the physical manifest" {
             $functionFileNames = Get-ChildItem ("$ModuleBasePath\{0}" -f $sourceDirectory) -Filter *.ps1
             foreach ($functionFileName in $functionFileNames)
             {
-                $functionFileName | Should -FileContentMatch ".SYNOPSIS"
-                $functionFileName | Should -FileContentMatch ".DESCRIPTION"
-                $functionFileName | Should -FileContentMatch ".NOTES"
-                $functionFileName | Should -FileContentMatch "CmdletBinding()"
-                $functionFileName | Should -FileContentMatch "param "
-                $functionFileName | Should -FileContentMatch "begin {"
-                $functionFileName | Should -FileContentMatch "process {"
-                $functionFileName | Should -FileContentMatch "end {"
+                $functionFileName.FullName | Should -FileContentMatch ".SYNOPSIS"
+                $functionFileName.FullName | Should -FileContentMatch ".DESCRIPTION"
+                $functionFileName.FullName | Should -FileContentMatch ".NOTES"
+                $functionFileName.FullName | Should -FileContentMatch "CmdletBinding()"
+                $functionFileName.FullName | Should -FileContentMatch "param "
+                $functionFileName.FullName | Should -FileContentMatch "begin {"
+                $functionFileName.FullName | Should -FileContentMatch "process {"
+                $functionFileName.FullName | Should -FileContentMatch "end {"
             }
         }
     }

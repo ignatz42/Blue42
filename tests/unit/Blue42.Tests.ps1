@@ -21,6 +21,14 @@ Describe "the basic module" {
             }
             return $mockDeploymentResult
         }
+        Mock -ModuleName $ModuleName New-B42Password { "ExpectedTestResult" }
+        Mock -ModuleName $ModuleName Get-B42Globals {
+            @{
+                UID          = "ExpectedUID"
+                Location     = "AzureLocation"
+                TemplatePath = "$PSScriptRoot\input\"
+            }
+        }
 
         InModuleScope $ModuleName {
             It "generates a unique date identifier" {
@@ -30,11 +38,11 @@ Describe "the basic module" {
             }
 
             It "parses the module test template" {
-                $template = Get-Template -TemplatePath "$PSScriptRoot\input\Blue42.Test.json" -SkipTokenReplacement $true
+                $template = Get-Template -TemplatePath "$PSScriptRoot\input\Blue42.Test.json"
                 ($template.'$schema' -eq "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#") | Should Be ($true)
-                ($template.parameters["Blue42Password"].defaultValue -eq "get[PASSWORD]") | Should Be ($true)
-                ($template.parameters["Blue42UID"].defaultValue -eq "root[UID]") | Should Be ($true)
-                ($template.parameters["Blue42Location"].defaultValue -eq "azure[LOCATION]") | Should Be ($true)
+                ($template.parameters["Blue42Password"].defaultValue -eq "ExpectedTestResult") | Should Be ($true)
+                ($template.parameters["Blue42UID"].defaultValue -eq "rootExpectedUID") | Should Be ($true)
+                ($template.parameters["Blue42Location"].defaultValue -eq "AzureLocation") | Should Be ($true)
             }
 
             It "performs a simple deployment" {
@@ -76,7 +84,7 @@ Describe "the basic module" {
             ($password -match ("[A-Z]")) | Should Be ($true)
             ($password -match ("[a-z]")) | Should Be ($true)
             ($password.Length -gt 36) | Should Be ($true)
-        }        
+        }
     }
 
     AfterAll {
