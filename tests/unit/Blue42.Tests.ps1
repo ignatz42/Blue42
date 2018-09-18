@@ -59,6 +59,13 @@ Describe "the basic module" {
                 $deploymentResult.Parameters.Contains("Blue42Location") | Should Be ($true)
                 $deploymentResult.Parameters.Contains("Blue42UID") | Should Be ($true)
             }
+
+            It "checks the default Class" {
+                $test = [B42DeploymentReport]::new()
+                $test.SimpleReport() | Should Be ($false)
+                $test.SuccessfulDeploymentCount | Should Be (0)
+                $test.MismatchedParameters | Should Be (0)
+            }
         }
     }
 

@@ -26,63 +26,19 @@
   },
   "tasks": [
     {
-      "label": "Test",
+      "label": "Coverage",
       "type": "shell",
       "group": "test",
       "problemMatcher": [ "$msCompile" ],
       "command": "Invoke-Build -Task Test"
     },
     {
-      "label": ".",
+      "label": "Unit",
       "type": "shell",
+      "group": "test",
       "problemMatcher": [ "$msCompile" ],
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
-      "command": "Invoke-Build -Task ."
-    },
-    {
-      "label": "InstallDependencies",
-      "type": "shell",
-      "problemMatcher": [ "$msCompile" ],
-      "command": "Invoke-Build -Task InstallDependencies"
-    },
-    {
-      "label": "Clean",
-      "type": "shell",
-      "problemMatcher": [ "$msCompile" ],
-      "command": "Invoke-Build -Task Clean"
-    },
-    {
-      "label": "Analyze",
-      "type": "shell",
-      "problemMatcher": [ "$msCompile" ],
-      "command": "Invoke-Build -Task Analyze"
-    },
-    {
-      "label": "RunTests",
-      "type": "shell",
-      "problemMatcher": [ "$msCompile" ],
-      "command": "Invoke-Build -Task RunTests"
-    },
-    {
-      "label": "ConfirmTestsPassed",
-      "type": "shell",
-      "problemMatcher": [ "$msCompile" ],
-      "command": "Invoke-Build -Task ConfirmTestsPassed"
-    },
-    {
-      "label": "Publish",
-      "type": "shell",
-      "problemMatcher": [ "$msCompile" ],
-      "command": "Invoke-Build -Task Publish"
-    },
-    {
-      "label": "?",
-      "type": "shell",
-      "problemMatcher": [],
-      "command": "Invoke-Build -Task ?"
+      "command": "Invoke-Pester -Script .\\tests* -ExcludeTag RequiresAzureContext"
+
     }
   ]
 }

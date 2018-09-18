@@ -90,7 +90,9 @@
         "Find-B42Template",
         "Get-B42Template",
         "Get-B42TemplateParameters",
-        "ConvertTo-B42Json"
+        "ConvertTo-B42Json",
+        "New-B42Deployment",
+        "Test-B42Deployment"
     )
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.

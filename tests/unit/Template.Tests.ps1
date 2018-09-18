@@ -36,13 +36,16 @@ Describe "Templates" {
     }
 
     It "gets the Parameters" {
-        $testParameters = Get-B42TemplateParameters -Templates @("Blue42.Test") -SkipTokenReplacement
-        $testParameters.Contains("Blue42Password") | Should Be ($true)
-        $testParameters.Contains("Blue42Location") | Should Be ($true)
-        $testParameters.Contains("Blue42UID") | Should Be ($true)
-        ($testParameters["Blue42Password"] -eq "get[PASSWORD]") | Should Be ($true)
-        ($testParameters["Blue42Location"] -eq "azure[LOCATION]") | Should Be ($true)
-        ($testParameters["Blue42UID"] -eq "root[UID]") | Should Be ($true)
+        $customValues = [hashtable]@{
+            Blue42Password = "MockValue"
+            Blue42Location = "MockValue"
+            Blue42UID      = "MockValue"
+        }
+        $testParameters = Get-B42TemplateParameters -Templates @("Blue42.Test") -TemplateParams $customValues
+        foreach ($key in $customValues.Keys) {
+            $testParameters.Contains($key) | Should Be ($true)
+            ($testParameters[$key] -eq $customValues.$key) | Should Be ($true)
+        }
     }
 
     It "gets the Parameters in JSON" {

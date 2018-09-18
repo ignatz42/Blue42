@@ -17,6 +17,10 @@ function Get-B42TemplateParameters {
         [Parameter(Mandatory = $false)]
         [string] $TemplatePath,
 
+        # A list of override parameters. If empty, the default parameters supplied in the template will be used instead
+        [Parameter(Mandatory = $false)]
+        [hashtable] $TemplateParams = @{},
+
         # Return object in JSON format
         [switch] $AsJson,
 
@@ -43,7 +47,11 @@ function Get-B42TemplateParameters {
         $thisTemplate = Get-B42Template @thisTempateParams
         $returnObject = [ordered]@{}
         foreach ($parameter in $thisTemplate.parameters.Keys) {
-            $returnObject.Add($parameter, $thisTemplate.parameters[$parameter].defaultValue)
+            $keyValue = $thisTemplate.parameters[$parameter].defaultValue
+            if ($TemplateParams.Contains($parameter)) {
+                $keyValue = $TemplateParams.$parameter
+            }
+            $returnObject.Add($parameter, $keyValue)
         }
 
         if ($AsJson) {
