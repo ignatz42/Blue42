@@ -86,7 +86,11 @@
     FunctionsToExport = @(
         'New-B42Password',
         'Set-B42Globals',
-        'Get-B42Globals'
+        'Get-B42Globals',
+        "Find-B42Template",
+        "Get-B42Template",
+        "Get-B42TemplateParameters",
+        "ConvertTo-B42Json"
     )
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.

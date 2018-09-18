@@ -1,0 +1,20 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "Blue42Password": {
+      "value": "get[PASSWORD]"
+    },
+    "Blue42Location": {
+      "value": "azure[LOCATION]"
+    },
+    "Blue42UID": {
+      "value": "root[UID]"
+    },
+    "CopySource": {
+      "value": [
+        "singleEntry"
+      ]
+    }
+  }
+}

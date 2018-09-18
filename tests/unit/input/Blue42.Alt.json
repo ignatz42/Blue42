@@ -41,5 +41,10 @@
       "location": "[resourceGroup().location]"
     }
   ],
-  "outputs": {}
+  "outputs": {
+    "Blue42Password_Value": {
+      "type": "string",
+      "value": "[parameters('Blue42Password')]"
+    }
+  }
 }
