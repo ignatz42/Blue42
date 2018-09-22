@@ -33,12 +33,9 @@
     Description = 'An Azure Resource Manager template helper.'
 
     # Minimum version of the Windows PowerShell engine required by this module
-    PowerShellVersion = if($PSEdition -eq 'Core')
-    {
+    PowerShellVersion = if($PSEdition -eq 'Core') {
         '6.1'
-    }
-    else # Desktop
-    {
+    } else { # Desktop
         '5.1'
     }
 
@@ -58,12 +55,9 @@
     # ProcessorArchitecture = ''
 
     # Modules that must be imported into the global environment prior to importing this module
-    RequiredModules = if($PSEdition -eq 'Core')
-    {
+    RequiredModules = if($PSEdition -eq 'Core') {
         @('AzureRM.Netcore')
-    }
-    else # Desktop
-    {
+    } else { # Desktop
         @('AzureRM')
     }
 
