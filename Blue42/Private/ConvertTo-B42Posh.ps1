@@ -14,9 +14,7 @@ function ConvertTo-B42Posh {
         $InputObject
     )
 
-    begin {
-        Write-Verbose "Starting ConvertTo-B42Posh"
-    }
+    begin { }
 
     process {
         $resultObject = $null
@@ -38,7 +36,5 @@ function ConvertTo-B42Posh {
         $resultObject
     }
 
-    end {
-        Write-Verbose "Ending ConvertTo-B42Posh"
-    }
+    end { }
 }

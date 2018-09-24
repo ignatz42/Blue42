@@ -1,0 +1,64 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vnetName": {
+      "type": "string",
+      "defaultValue": "vnet[UID]",
+      "metadata": {
+        "description": "Virtual Network Name."
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "defaultValue": "Sub[UID]",
+      "metadata": {
+        "description": "Subnet name."
+      }
+    },
+    "subnetAddressPrefix": {
+      "type": "string",
+      "defaultValue": "10.0.0.0/24",
+      "metadata": {
+        "description": "Address space of the subnet to add"
+      }
+    },
+    "subnetServiceEndpoints": {
+      "type": "array",
+      "defaultValue": [
+        "Microsoft.Storage",
+        "Microsoft.Sql"
+      ],
+      "metadata": {
+        "description": "An array of service names that will be translated into endpoint mappings."
+      }
+    }
+  },
+  "variables": {
+    "subnetPropertiesEndpoints": {
+      "addressPrefix": "[parameters('subnetAddressPrefix')]",
+      "copy": [
+        {
+          "name": "serviceEndpoints",
+          "count": "[max(length(parameters('subnetServiceEndpoints')), 1) ]",
+          "input": {
+            "service": "[if(greater(length(parameters('subnetServiceEndpoints')), 0), parameters('subnetServiceEndpoints')[copyIndex('serviceEndpoints')], '')]"
+          }
+        }
+      ]
+    },
+    "subnetPropertiesNoEndpoints": {
+      "addressPrefix": "[parameters('subnetAddressPrefix')]"
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2016-12-01",
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "name": "[concat(parameters('vnetName'), '/', parameters('subnetName'))]",
+      "location": "[resourceGroup().location]",
+      "properties": "[if(greater(length(parameters('subnetServiceEndpoints')), 0), variables('subnetPropertiesEndpoints'), variables('subnetPropertiesNoEndpoints'))]"
+    }
+  ],
+  "outputs": {}
+}

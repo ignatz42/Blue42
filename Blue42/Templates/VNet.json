@@ -1,0 +1,59 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vnetName": {
+      "type": "string",
+      "defaultValue": "vnet[UID]",
+      "metadata": {
+        "description": "Virtual Network Name."
+      }
+    },
+    "vnetAddressPrefix": {
+      "type": "string",
+      "defaultValue": "10.0.0.0/20",
+      "metadata": {
+        "description": "Address prefix for the virtual network"
+      }
+    },
+    "vnetEnableDdosProtection": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Enable DDOS Protection"
+      }
+    },
+    "ddosPlanName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Name of the DDoS Standard Plan."
+      }
+    }
+  },
+  "variables": {
+    "ddosProtectionPlanResourceId": {
+      "id": "[resourceId('Microsoft.Network/ddosProtectionPlans', parameters('ddosPlanName'))]"
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-04-01",
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[parameters('vnetName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {},
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('vnetAddressPrefix')]"
+          ]
+        },
+        "subnets": [],
+        "enableDdosProtection": "[not(empty(parameters('ddosPlanName')))]",
+        "ddosProtectionPlan": "[if(empty(parameters('ddosPlanName')), json('null'), variables('ddosProtectionPlanResourceId'))]"
+      }
+    }
+  ],
+  "outputs": {}
+}

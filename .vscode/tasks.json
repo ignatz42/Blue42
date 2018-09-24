@@ -38,7 +38,13 @@
       "group": "test",
       "problemMatcher": [ "$msCompile" ],
       "command": "Invoke-Pester -Script .\\tests* -ExcludeTag RequiresAzureContext"
-
+    },
+    {
+      "label": "Integration",
+      "type": "shell",
+      "group": "test",
+      "problemMatcher": [ "$msCompile" ],
+      "command": "Invoke-Pester -Script .\\tests\\integration* -Tag RequiresAzureContext"
     }
   ]
 }

@@ -28,7 +28,7 @@ function New-B42Deployment {
 
         # A list of override parameters. If empty, the default parameters supplied in the template will be used insted
         [Parameter(Mandatory=$false)]
-        [hashtable] $TemplateParams,
+        [hashtable] $TemplateParams = @{},
 
         # Perform a 'Complete' deployment instead of the default 'Incremental'
         [Parameter(Mandatory=$false)]

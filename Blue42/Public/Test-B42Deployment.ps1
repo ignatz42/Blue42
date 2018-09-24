@@ -28,11 +28,18 @@ function Test-B42Deployment {
 
         # A list of override parameters. If empty, the default parameters supplied in the template will be used insted
         [Parameter(Mandatory=$false)]
-        [hashtable] $TemplateParams
+        [hashtable] $TemplateParams = @{}
     )
 
     begin {
         Write-Verbose "Starting Test-B42Deployment"
+        $globals = Get-B42Globals
+        if ([string]::IsNullOrEmpty($TemplatePath)) {
+            $TemplatePath = $globals.TemplatePath
+        }
+        if ([string]::IsNullOrEmpty($Location)) {
+            $Location = $globals.Location
+        }
 
         $combinedParameters = Get-B42TemplateParameters -Templates $Templates -TemplatePath $TemplatePath -TemplateParams $TemplateParams
     }
@@ -41,14 +48,29 @@ function Test-B42Deployment {
         $finalReport = [B42DeploymentReport]::new()
         $finalReport.Deployments = Get-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName
         foreach ($deployment in $finalReport.Deployments) {
-            $finalReport.SuccessfulDeploymentCount += [int]($deployment.ProvisioningState -eq "Succeeded")
+            if ($deployment.ProvisioningState -eq "Succeeded") {
+                $finalReport.SuccessfulDeploymentCount += 1
+            } else {
+                Write-Verbose ("{0} was not Successful" -f $deployment.DeploymentName)
+            }
 
             foreach ($parameter in $deployment.Parameters.Keys) {
                 if ($combinedParameters.Contains($parameter)) {
-                    $finalReport.MismatchedParameters += [int] !($combinedParameters.$parameter -eq $deployment.Parameters.$parameter)
+                    $deploymentValue = $deployment.Parameters.$parameter.Value
+                    $matched = ($combinedParameters.$parameter -eq $deploymentValue)
+                    # This works around a bug where the value is an emtpy JArray. Should look into writing a bug report.
+                    if ($deployment.Parameters.$parameter.Type -eq "Array") {
+                        Write-Verbose "Comparing an array."
+                        $deploymentValue = ($deployment.Parameters.$parameter.Value.ToString() | ConvertFrom-Json)
+                        $matched = ($null -eq (Compare-Object -ReferenceObject $deploymentValue -DifferenceObject $combinedParameters.$parameter))
+                    }
+
+                    if (!($matched)) {
+                        $finalReport.MismatchedParameters += 1
+                        Write-Verbose ("Found mismatched parameter {0} with value {1}" -f $parameter, $deploymentValue)
+                    }
                 }
             }
-
         }
         $finalReport
     }
