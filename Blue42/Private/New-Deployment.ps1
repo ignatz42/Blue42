@@ -1,5 +1,4 @@
 function New-Deployment {
-    [CmdletBinding()]
     <#
         .SYNOPSIS
         Retrieves service pack and operating system information from one or more remote computers.
@@ -9,6 +8,7 @@ function New-Deployment {
         .NOTES
         You need to run this function after establishing an AzureRm context using Login-AzureRmAccount.
     #>
+    [CmdletBinding()]
     param (
         # The destination Resource Group Name
         [Parameter(Mandatory=$true)]

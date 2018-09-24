@@ -1,5 +1,4 @@
 function Get-B42Globals {
-    [CmdletBinding()]
     <#
         .SYNOPSIS
         Retrieves the current set of globals parameters and their values.
@@ -8,6 +7,8 @@ function Get-B42Globals {
         .NOTES
         Run Set-B42Globals to change or update the values.
     #>
+    [OutputType('System.Collections.Hashtable')]
+    [CmdletBinding()]
     param ()
 
     begin {}

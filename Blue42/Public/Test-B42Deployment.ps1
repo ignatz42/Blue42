@@ -1,6 +1,4 @@
 function Test-B42Deployment {
-    [OutputType('B42DeploymentReport')]
-    [CmdletBinding()]
     <#
         .SYNOPSIS
         Test a Deployment
@@ -9,6 +7,8 @@ function Test-B42Deployment {
         .NOTES
         I'm not sure how to test this in the abstract.
     #>
+    [OutputType('B42DeploymentReport')]
+    [CmdletBinding()]
     param (
         # The destination Resource Group Name
         [Parameter(Mandatory=$true)]

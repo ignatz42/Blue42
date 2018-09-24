@@ -1,5 +1,4 @@
 function Get-B42Template {
-    [CmdletBinding()]
     <#
         .SYNOPSIS
         Retrieves an ARM template in native PowerShell objects.
@@ -7,7 +6,8 @@ function Get-B42Template {
         The Get-B42Template function creates a new template by combining the supplied atomic templates and returns it in Hashtable/array format.
         .NOTES
         This function is mostly useful for creating templates by stacking the atomic elements.
-    #>    
+    #>
+    [CmdletBinding()]
     param (
         # An array of template names that will be combined into a single template then deployed to Azure
         [Parameter(Mandatory=$true)]

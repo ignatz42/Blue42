@@ -1,5 +1,4 @@
 function New-B42Password {
-    [CmdletBinding()]
     <#
         .SYNOPSIS
         Generates a reasonable secure password.
@@ -8,6 +7,7 @@ function New-B42Password {
         .NOTES
         The function verifies the output before returning.
     #>
+    [CmdletBinding()]
     param ()
 
     begin {}

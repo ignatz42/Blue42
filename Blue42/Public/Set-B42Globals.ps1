@@ -1,5 +1,4 @@
 function Set-B42Globals {
-    [CmdletBinding()]
     <#
         .SYNOPSIS
         Sets the default values for Location, TemplatePath, and a Unique Identifer.
@@ -8,6 +7,7 @@ function Set-B42Globals {
         .NOTES
         The unique identifer is used to relate default resource names.
     #>
+    [CmdletBinding()]
     param (
         # The default unique identifer used in name generation
         [Parameter(Mandatory=$false)]

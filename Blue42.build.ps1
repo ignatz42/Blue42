@@ -58,6 +58,8 @@ task RunTests {
     $testResults = Invoke-Pester @invokePesterParams
 
     $testResults | ConvertTo-Json -Depth 5 | Set-Content (Join-Path $Artifacts "PesterResults.json")
+
+    Invoke-PSCodeHealth -Path "$ModulePath" -Recurse -TestsResult $testResults -HtmlReportPath (Join-Path $Artifacts "PSCodeHealthReport.html")
 }
 
 #Synopsis: Confirm that tests passed.

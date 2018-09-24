@@ -20,6 +20,7 @@ Blue42 requires the following modules for development.
 + InvokeBuild
 + Pester
 + PSScriptAnalyzer
++ PSCodeHealth
 
 ## File Structure
 

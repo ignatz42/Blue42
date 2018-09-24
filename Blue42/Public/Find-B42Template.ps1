@@ -1,5 +1,4 @@
 function Find-B42Template {
-    [CmdletBinding()]
     <#
         .SYNOPSIS
         Retrieves a list of templates (files with json extension) in the path.
@@ -8,6 +7,7 @@ function Find-B42Template {
         .NOTES
         This function is mostly useful for listing templates in the default directory.
     #>
+    [CmdletBinding()]
     param (
         # The template search path.
         [Parameter(Mandatory=$false)]
