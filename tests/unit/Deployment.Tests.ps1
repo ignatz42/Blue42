@@ -7,6 +7,18 @@ Describe "Deployments" {
     Mock -ModuleName $ModuleName Get-AzureRmResourceGroup { return $null }
     Mock -ModuleName $ModuleName New-AzureRmResourceGroup { return $null }
     Mock -ModuleName $ModuleName New-AzureRmResourceGroupDeployment {
+        $theReturn = @{}
+        foreach ($key in $TemplateParameterObject.Keys) {
+            $deploymentVariableMock = @{
+                Type = ($TemplateParameterObject.$key).GetType().Name
+                Value = $TemplateParameterObject.$key
+            }
+            if (($deploymentVariableMock.Type -eq "Object[]") -or ($deploymentVariableMock.Type -eq "Hashtable")) {
+                    $deploymentVariableMock.Type = ($TemplateParameterObject.$key).GetType().BaseType.Name
+                    $deploymentVariableMock.Value = (,$TemplateParameterObject.$key | ConvertTo-Json)
+            }
+            $theReturn.Add($key, $deploymentVariableMock)
+        }
         $mockDeploymentResult = [ordered]@{
             DeploymentName          = $Name
             ResourceGroupName       = $ResourceGroupName
@@ -14,7 +26,7 @@ Describe "Deployments" {
             Timestamp               = "NOTSTAMPED"
             Mode                    = $Mode
             TemplateLink            = ""
-            Parameters              = $TemplateParameterObject
+            Parameters              = $theReturn
             Outputs                 = ""
             DeploymentDebugLogLevel = $DeploymentDebugLogLevel
         }
@@ -51,15 +63,15 @@ Describe "Deployments" {
         $deploymentResults[0].Parameters.Contains("Blue42UID") | Should Be ($true)
         $deploymentResults[0].Parameters.Contains("CopySource") | Should Be ($true)
 
-        ($deploymentResults[0].Parameters["Blue42Password"] -eq "CustomPasswordValue") | Should Be ($true)
-        ($deploymentResults[0].Parameters["CopySource"] -eq "OnlyInTemplate1") | Should Be ($true)
+        ($deploymentResults[0].Parameters["Blue42Password"].Value -eq "CustomPasswordValue") | Should Be ($true)
+        ($deploymentResults[0].Parameters["CopySource"].Value -eq "OnlyInTemplate1") | Should Be ($true)
 
         $deploymentResults[1].Parameters.Count | Should Be (2)
         $deploymentResults[1].Parameters.Contains("Blue42Password") | Should Be ($true)
         $deploymentResults[1].Parameters.Contains("NewCopySource") | Should Be ($true)
 
-        ($deploymentResults[1].Parameters["Blue42Password"] -eq "CustomPasswordValue") | Should Be ($true)
-        ($deploymentResults[1].Parameters["NewCopySource"] -eq "OnlyInTemplate2") | Should Be ($true)
+        ($deploymentResults[1].Parameters["Blue42Password"].Value -eq "CustomPasswordValue") | Should Be ($true)
+        ($deploymentResults[1].Parameters["NewCopySource"].Value -eq "OnlyInTemplate2") | Should Be ($true)
     }
 
     It "performs a deployment test" {

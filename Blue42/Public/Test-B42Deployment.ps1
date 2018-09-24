@@ -64,6 +64,13 @@ function Test-B42Deployment {
                         $deploymentValue = ($deployment.Parameters.$parameter.Value.ToString() | ConvertFrom-Json)
                         $matched = ($null -eq (Compare-Object -ReferenceObject $deploymentValue -DifferenceObject $combinedParameters.$parameter))
                     }
+                    # Both the Array and Object entries should be done with the internal B42 POSH function
+                    # And the POSH function should be made public and renamed.
+                    if ($deployment.Parameters.$parameter.Type -eq "Object") {
+                        Write-Verbose "Comparing an object."
+                        $deploymentValue = ($deployment.Parameters.$parameter.Value.ToString() | ConvertFrom-Json -AsHashtable)
+                        $matched = ($null -eq (Compare-Object -ReferenceObject $deploymentValue -DifferenceObject $combinedParameters.$parameter))
+                    }
 
                     if (!($matched)) {
                         $finalReport.MismatchedParameters += 1
