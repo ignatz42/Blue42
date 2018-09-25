@@ -7,7 +7,7 @@ Describe "Deployments" {
     Mock -ModuleName $ModuleName Get-AzureRmResourceGroup { return $null }
     Mock -ModuleName $ModuleName New-AzureRmResourceGroup { return $null }
     Mock -ModuleName $ModuleName New-AzureRmResourceGroupDeployment {
-        $theReturn = @{}
+        $mockDeploymentParameters = @{}
         foreach ($key in $TemplateParameterObject.Keys) {
             $deploymentVariableMock = @{
                 Type = ($TemplateParameterObject.$key).GetType().Name
@@ -17,7 +17,7 @@ Describe "Deployments" {
                     $deploymentVariableMock.Type = ($TemplateParameterObject.$key).GetType().BaseType.Name
                     $deploymentVariableMock.Value = (,$TemplateParameterObject.$key | ConvertTo-Json)
             }
-            $theReturn.Add($key, $deploymentVariableMock)
+            $mockDeploymentParameters.Add($key, $deploymentVariableMock)
         }
         $mockDeploymentResult = [ordered]@{
             DeploymentName          = $Name
@@ -26,7 +26,7 @@ Describe "Deployments" {
             Timestamp               = "NOTSTAMPED"
             Mode                    = $Mode
             TemplateLink            = ""
-            Parameters              = $theReturn
+            Parameters              = $mockDeploymentParameters
             Outputs                 = ""
             DeploymentDebugLogLevel = $DeploymentDebugLogLevel
         }
