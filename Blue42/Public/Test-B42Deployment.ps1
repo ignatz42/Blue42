@@ -14,10 +14,6 @@ function Test-B42Deployment {
         [Parameter(Mandatory=$true)]
         [string] $ResourceGroupName,
 
-        # The destination Azure region
-        [Parameter(Mandatory=$false)]
-        [string] $Location,
-
         # An array of template names that will be combined into a single template then deployed to Azure
         [Parameter(Mandatory=$true)]
         [array] $Templates,
@@ -33,14 +29,6 @@ function Test-B42Deployment {
 
     begin {
         Write-Verbose "Starting Test-B42Deployment"
-        $globals = Get-B42Globals
-        if ([string]::IsNullOrEmpty($TemplatePath)) {
-            $TemplatePath = $globals.TemplatePath
-        }
-        if ([string]::IsNullOrEmpty($Location)) {
-            $Location = $globals.Location
-        }
-
         $combinedParameters = Get-B42TemplateParameters -Templates $Templates -TemplatePath $TemplatePath -TemplateParams $TemplateParams
     }
 
@@ -55,27 +43,17 @@ function Test-B42Deployment {
             }
 
             foreach ($parameter in $deployment.Parameters.Keys) {
-                if ($combinedParameters.Contains($parameter)) {
-                    $deploymentValue = $deployment.Parameters.$parameter.Value
-                    $matched = ($combinedParameters.$parameter -eq $deploymentValue)
-                    # This works around a bug where the value is an emtpy JArray. Should look into writing a bug report.
-                    if ($deployment.Parameters.$parameter.Type -eq "Array") {
-                        Write-Verbose "Comparing an array."
-                        $deploymentValue = ($deployment.Parameters.$parameter.Value.ToString() | ConvertFrom-Json)
-                        $matched = ($null -eq (Compare-Object -ReferenceObject $deploymentValue -DifferenceObject $combinedParameters.$parameter))
-                    }
-                    # Both the Array and Object entries should be done with the internal B42 POSH function
-                    # And the POSH function should be made public and renamed.
-                    if ($deployment.Parameters.$parameter.Type -eq "Object") {
-                        Write-Verbose "Comparing an object."
-                        $deploymentValue = ($deployment.Parameters.$parameter.Value.ToString() | ConvertFrom-Json -AsHashtable)
-                        $matched = ($null -eq (Compare-Object -ReferenceObject $deploymentValue -DifferenceObject $combinedParameters.$parameter))
-                    }
+                if (!($combinedParameters.Contains($parameter))) { continue }
 
-                    if (!($matched)) {
-                        $finalReport.MismatchedParameters += 1
-                        Write-Verbose ("Found mismatched parameter {0} with value {1}" -f $parameter, $deploymentValue)
-                    }
+                $deploymentValue = $deployment.Parameters.$parameter.Value
+                # This works around a bug where the value is an emtpy JArray. Should look into writing a bug report.
+                if (($deployment.Parameters.$parameter.Type -eq "Array") -or ($deployment.Parameters.$parameter.Type -eq "Object")) {
+                    $deploymentValue = ($deployment.Parameters.$parameter.Value.ToString() | ConvertFrom-Json -AsHashtable)
+                }
+
+                if (!(($null -eq (Compare-Object -ReferenceObject $deploymentValue -DifferenceObject $combinedParameters.$parameter)))) {
+                    $finalReport.MismatchedParameters += 1
+                    Write-Verbose ("Found mismatched parameter {0} with value {1}" -f $parameter, $deploymentValue)
                 }
             }
         }

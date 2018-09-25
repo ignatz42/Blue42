@@ -24,21 +24,20 @@ function Get-Template {
     }
 
     process {
-        $template = (Get-Content -Path $TemplatePath -Raw | ConvertFrom-Json | ConvertTo-B42Posh)
-        if (!$SkipTokenReplacement){
-            foreach ($parameter in $template.parameters.Keys) {
-                if ($template.parameters[$parameter].type -eq "securestring" -or
-                    $template.parameters[$parameter].type -eq "string") {
-                    $thisDefaultValue = $template.parameters[$parameter].defaultValue
-                    if ($thisDefaultValue -match "(?<Head>.*)\[(?<Function>.+)\](?<Tail>.*)") {
-                        switch ( $Matches.Function ) {
-                            'PASSWORD' { $thisDefaultValue = New-B42Password }
-                            'LOCATION' { $thisDefaultValue = $globals.Location }
-                            'UID'      { $thisDefaultValue = $Matches.Head + $globals.UID + $Matches.Tail }
-                        }
-                        $template.parameters[$parameter].defaultValue = $thisDefaultValue
-                    }
-                }
+        $template = (Get-Content -Path $TemplatePath -Raw | ConvertFrom-Json | ConvertFrom-B42Json)
+        if ($SkipTokenReplacement) {return $template}
+
+        foreach ($parameterKey in $template.parameters.Keys) {
+            if (!($template.parameters.$parameterKey.type.EndsWith("string"))) {continue}
+            if (!($template.parameters.$parameterKey.defaultValue -match "(?<Head>.*)\[(?<Function>.+)\](?<Tail>.*)")) {continue}
+            if ('PASSWORD' -eq $Matches.Function) {
+                $template.parameters.$parameterKey.defaultValue = New-B42Password
+            }
+            if ('LOCATION' -eq $Matches.Function) {
+                $template.parameters.$parameterKey.defaultValue = $globals.Location
+            }
+            if ('UID' -eq $Matches.Function) {
+                $template.parameters.$parameterKey.defaultValue = $Matches.Head + $globals.UID + $Matches.Tail
             }
         }
         $template

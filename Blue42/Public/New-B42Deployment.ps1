@@ -44,28 +44,20 @@ function New-B42Deployment {
         if ([string]::IsNullOrEmpty($Location)) {
             $Location = $globals.Location
         }
-
         $combinedParameters = Get-B42TemplateParameters -Templates $Templates -TemplatePath $TemplatePath -TemplateParams $TemplateParams
-    }
-
-    process {
         $mode = "Incremental"
         if ($Complete) {
             $mode = "Complete"
         }
-        foreach ($template in $Templates) {
-            $defaultTemplateParameters = Get-B42TemplateParameters -Templates @($template) -TemplatePath $TemplatePath
-            foreach ($key in $combinedParameters.Keys) {
-                if ($defaultTemplateParameters.Contains($key)) {
-                    $defaultTemplateParameters.$key = $combinedParameters.$key
-                }
-            }
+    }
 
+    process {
+        foreach ($template in $Templates) {
             $deploymentParameters = @{
                 ResourceGroupName       = $ResourceGroupName
                 Location                = $Location
                 TemplatePath            = ("{0}\{1}.json" -f $TemplatePath, $template)
-                TemplateParams          = $defaultTemplateParameters
+                TemplateParams          = (Get-B42TemplateParameters -Templates @($template) -TemplatePath $TemplatePath -TemplateParams $combinedParameters)
                 Mode                    = $mode
                 DeploymentDebugLogLevel = "None"
                 Name                    = ("{0}_{1}" -f $template, (Get-DateTime15))

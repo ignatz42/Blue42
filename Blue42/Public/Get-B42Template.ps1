@@ -47,27 +47,20 @@ function Get-B42Template {
             # Todo Are these values always the same?
             $combinedTemplate.'$schema' = $thisTemplate.'$schema'
             $combinedTemplate.contentVersion = $thisTemplate.contentVersion
-            foreach ($key in $thisTemplate.parameters.Keys) {
-                if ($combinedTemplate.parameters.Contains($key)) {continue}
-                $combinedTemplate.parameters.Add($key, $thisTemplate.parameters[$key])
-            }
-            foreach ($key in $thisTemplate.variables.Keys) {
-                if ($combinedTemplate.variables.Contains($key)) {continue}
-                $combinedTemplate.variables.Add($key, $thisTemplate.variables[$key])
+            foreach ($part in @("parameters", "variables", "outputs")) {
+                foreach ($key in $thisTemplate.$part.Keys) {
+                    if ($combinedTemplate.$part.Contains($key)) {continue}
+                    $combinedTemplate.$part.Add($key, $thisTemplate.$part.$key)
+                }
             }
             foreach ($resource in $thisTemplate.resources) {
                 $combinedTemplate.resources += $resource
-            }
-            foreach ($key in $thisTemplate.outputs.Keys) {
-                if ($combinedTemplate.outputs.Contains($key)) {continue}
-                $combinedTemplate.outputs.Add($key, $thisTemplate.outputs[$key])
             }
         }
         $returnObject = $combinedTemplate
         if ($AsJson) {
             $returnObject = ConvertTo-B42Json -TemplateObject $combinedTemplate
         }
-
         $returnObject
     }
 

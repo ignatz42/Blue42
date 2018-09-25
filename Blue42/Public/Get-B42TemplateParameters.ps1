@@ -22,52 +22,42 @@ function Get-B42TemplateParameters {
         [hashtable] $TemplateParams = @{},
 
         # Return object in JSON format
+        [Parameter(Mandatory = $false)]
         [switch] $AsJson,
 
         # Skip token replacement.
+        [Parameter(Mandatory = $false)]
         [switch] $SkipTokenReplacement
     )
 
     begin {
         Write-Verbose "Starting Get-B42TemplateParameters"
-        if ([string]::IsNullOrEmpty($TemplatePath)) {
-            $globals = Get-B42Globals
-            $TemplatePath = $globals.TemplatePath
-        }
     }
 
     process {
-        $thisTempateParams = @{
-            Templates    = $Templates
-            TemplatePath = $TemplatePath
-        }
-        if ($SkipTokenReplacement) {
-            $thisTempateParams.Add("SkipTokenReplacement", $true)
-        }
-        $thisTemplate = Get-B42Template @thisTempateParams
-        $returnObject = [ordered]@{}
-        foreach ($parameter in $thisTemplate.parameters.Keys) {
-            $keyValue = $thisTemplate.parameters[$parameter].defaultValue
-            if ($TemplateParams.Contains($parameter)) {
-                $keyValue = $TemplateParams.$parameter
+        $thisTemplate = Get-B42Template -Templates $Templates -TemplatePath $TemplatePath -SkipTokenReplacement:$SkipTokenReplacement
+        $templateParameters = [ordered]@{}
+        foreach ($parameterKey in $thisTemplate.parameters.Keys) {
+            $keyValue = $thisTemplate.parameters.$parameterKey.defaultValue
+            if ($TemplateParams.Contains($parameterKey)) {
+                $keyValue = $TemplateParams.$parameterKey
             }
-            $returnObject.Add($parameter, $keyValue)
+            $templateParameters.Add($parameterKey, $keyValue)
         }
 
         if ($AsJson) {
-            $combinedTemplate = [ordered]@{
+            $parametersJson = [ordered]@{
                 '$schema'      = "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#"
                 contentVersion = "1.0.0.0"
                 parameters     = [ordered]@{}
             }
-            foreach ($parameter in $returnObject.Keys) {
-                $combinedTemplate.parameters.Add($parameter, @{value = $returnObject[$parameter]})
+            foreach ($templateParameterKey in $templateParameters.Keys) {
+                $parametersJson.parameters.Add($templateParameterKey, @{value = $templateParameters.$templateParameterKey})
             }
-
-            $returnObject = ConvertTo-B42Json -TemplateObject $combinedTemplate
+            $templateParameters = ConvertTo-B42Json -TemplateObject $parametersJson
         }
 
-        $returnObject
+        $templateParameters
     }
 
     end {
