@@ -19,7 +19,7 @@ function Get-B42TemplateParameters {
 
         # A list of override parameters. If empty, the default parameters supplied in the template will be used instead
         [Parameter(Mandatory = $false)]
-        [hashtable] $TemplateParams = @{},
+        [hashtable] $TemplateParameters = @{},
 
         # Return object in JSON format
         [Parameter(Mandatory = $false)]
@@ -36,13 +36,13 @@ function Get-B42TemplateParameters {
 
     process {
         $thisTemplate = Get-B42Template -Templates $Templates -TemplatePath $TemplatePath -SkipTokenReplacement:$SkipTokenReplacement
-        $templateParameters = [ordered]@{}
+        $outputTemplateParameters = [ordered]@{}
         foreach ($parameterKey in $thisTemplate.parameters.Keys) {
             $keyValue = $thisTemplate.parameters.$parameterKey.defaultValue
-            if ($TemplateParams.Contains($parameterKey)) {
-                $keyValue = $TemplateParams.$parameterKey
+            if ($TemplateParameters.Contains($parameterKey)) {
+                $keyValue = $TemplateParameters.$parameterKey
             }
-            $templateParameters.Add($parameterKey, $keyValue)
+            $outputTemplateParameters.Add($parameterKey, $keyValue)
         }
 
         if ($AsJson) {
@@ -51,13 +51,13 @@ function Get-B42TemplateParameters {
                 contentVersion = "1.0.0.0"
                 parameters     = [ordered]@{}
             }
-            foreach ($templateParameterKey in $templateParameters.Keys) {
-                $parametersJson.parameters.Add($templateParameterKey, @{value = $templateParameters.$templateParameterKey})
+            foreach ($templateParameterKey in $outputTemplateParameters.Keys) {
+                $parametersJson.parameters.Add($templateParameterKey, @{value = $outputTemplateParameters.$templateParameterKey})
             }
-            $templateParameters = ConvertTo-B42Json -TemplateObject $parametersJson
+            $outputTemplateParameters = ConvertTo-B42Json -TemplateObject $parametersJson
         }
 
-        $templateParameters
+        $outputTemplateParameters
     }
 
     end {

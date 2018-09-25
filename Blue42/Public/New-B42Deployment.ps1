@@ -28,7 +28,7 @@ function New-B42Deployment {
 
         # A list of override parameters. If empty, the default parameters supplied in the template will be used insted
         [Parameter(Mandatory=$false)]
-        [hashtable] $TemplateParams = @{},
+        [hashtable] $TemplateParameters = @{},
 
         # Perform a 'Complete' deployment instead of the default 'Incremental'
         [Parameter(Mandatory=$false)]
@@ -44,7 +44,7 @@ function New-B42Deployment {
         if ([string]::IsNullOrEmpty($Location)) {
             $Location = $globals.Location
         }
-        $combinedParameters = Get-B42TemplateParameters -Templates $Templates -TemplatePath $TemplatePath -TemplateParams $TemplateParams
+        $combinedParameters = Get-B42TemplateParameters -Templates $Templates -TemplatePath $TemplatePath -TemplateParameters $TemplateParameters
         $mode = "Incremental"
         if ($Complete) {
             $mode = "Complete"
@@ -57,7 +57,7 @@ function New-B42Deployment {
                 ResourceGroupName       = $ResourceGroupName
                 Location                = $Location
                 TemplatePath            = ("{0}\{1}.json" -f $TemplatePath, $template)
-                TemplateParams          = (Get-B42TemplateParameters -Templates @($template) -TemplatePath $TemplatePath -TemplateParams $combinedParameters)
+                TemplateParameters      = (Get-B42TemplateParameters -Templates @($template) -TemplatePath $TemplatePath -TemplateParameters $combinedParameters)
                 Mode                    = $mode
                 DeploymentDebugLogLevel = "None"
                 Name                    = ("{0}_{1}" -f $template, (Get-DateTime15))

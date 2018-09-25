@@ -52,7 +52,7 @@ Describe "the basic module" {
                     Blue42Location = "azure[LOCATION]"
                 }
 
-                $deploymentResult = New-Deployment -Location "blueMan" -ResourceGroupName "deploymenttest-rg" -TemplatePath "$PSScriptRoot\input\Blue42.Test.json" -TemplateParams $mockParameters
+                $deploymentResult = New-Deployment -Location "blueMan" -ResourceGroupName "deploymenttest-rg" -TemplatePath "$PSScriptRoot\input\Blue42.Test.json" -TemplateParameters $mockParameters
                 ($deploymentResult.Parameters.Count) | Should Be (3)
 
                 $deploymentResult.Parameters.Contains("Blue42Password") | Should Be ($true)

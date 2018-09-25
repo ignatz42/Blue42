@@ -24,7 +24,7 @@ function New-Deployment {
 
         # The collection of template parameters
         [Parameter(Mandatory=$true)]
-        [hashtable] $TemplateParams,
+        [hashtable] $TemplateParameters,
 
         # The name of the Azure Deployment
         [Parameter(Mandatory=$false)]
@@ -54,7 +54,7 @@ function New-Deployment {
         $deploymentParameters = @{
             ResourceGroupName       = $ResourceGroupName
             TemplateFile            = $TemplatePath
-            TemplateParameterObject = $TemplateParams
+            TemplateParameterObject = $TemplateParameters
             Name                    = $Name
             Mode                    = $Mode
             DeploymentDebugLogLevel = $DeploymentDebugLogLevel

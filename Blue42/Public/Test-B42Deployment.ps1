@@ -24,12 +24,12 @@ function Test-B42Deployment {
 
         # A list of override parameters. If empty, the default parameters supplied in the template will be used insted
         [Parameter(Mandatory=$false)]
-        [hashtable] $TemplateParams = @{}
+        [hashtable] $TemplateParameters = @{}
     )
 
     begin {
         Write-Verbose "Starting Test-B42Deployment"
-        $combinedParameters = Get-B42TemplateParameters -Templates $Templates -TemplatePath $TemplatePath -TemplateParams $TemplateParams
+        $combinedParameters = Get-B42TemplateParameters -Templates $Templates -TemplatePath $TemplatePath -TemplateParameters $TemplateParameters
     }
 
     process {

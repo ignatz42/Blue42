@@ -37,7 +37,7 @@ Describe "Deployments" {
             $currentValues = [hashtable]@{
                 Blue42Password = "PasswordPasswordPassword"
             }
-            return New-B42Deployment -ResourceGroupName "stackedDeploymentTest" -Templates @("Blue42.Test", "Blue42.Alt") -TemplatePath $ResourceGroupName -TemplateParams $currentValues
+            return New-B42Deployment -ResourceGroupName "stackedDeploymentTest" -Templates @("Blue42.Test", "Blue42.Alt") -TemplatePath $ResourceGroupName -TemplateParameters $currentValues
         }
     }
 
@@ -55,7 +55,7 @@ Describe "Deployments" {
             CopySource     = "OnlyInTemplate1"
             NewCopySource  = "OnlyInTemplate2"
         }
-        $deploymentResults = New-B42Deployment -ResourceGroupName "deploymenttest-rg" -Templates $Script:stackedTemplates -TemplateParams $customValues -Complete
+        $deploymentResults = New-B42Deployment -ResourceGroupName "deploymenttest-rg" -Templates $Script:stackedTemplates -TemplateParameters $customValues -Complete
 
         $deploymentResults[0].Parameters.Count | Should Be (4)
         $deploymentResults[0].Parameters.Contains("Blue42Password") | Should Be ($true)
@@ -78,7 +78,7 @@ Describe "Deployments" {
         $currentValues = [hashtable]@{
             Blue42Password = "PasswordPasswordPassword"
         }
-        $finalReport = Test-B42Deployment -ResourceGroupName "$PSScriptRoot\input" -Templates $Script:stackedTemplates -TemplateParams $currentValues
+        $finalReport = Test-B42Deployment -ResourceGroupName "$PSScriptRoot\input" -Templates $Script:stackedTemplates -TemplateParameters $currentValues
         $finalReport.SimpleReport() | Should Be ($true)
     }
 

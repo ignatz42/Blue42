@@ -41,7 +41,7 @@ Describe "Templates" {
             Blue42Location = "MockValue"
             Blue42UID      = "MockValue"
         }
-        $testParameters = Get-B42TemplateParameters -Templates @("Blue42.Test") -TemplateParams $customValues
+        $testParameters = Get-B42TemplateParameters -Templates @("Blue42.Test") -TemplateParameters $customValues
         foreach ($key in $customValues.Keys) {
             $testParameters.Contains($key) | Should Be ($true)
             ($testParameters[$key] -eq $customValues.$key) | Should Be ($true)
