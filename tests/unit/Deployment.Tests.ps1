@@ -82,6 +82,14 @@ Describe "Deployments" {
         $finalReport.SimpleReport() | Should Be ($true)
     }
 
+    It "fails a deployment test" {
+        $currentValues = [hashtable]@{
+            Blue42Password = "Password"
+        }
+        $finalReport = Test-B42Deployment -ResourceGroupName "$PSScriptRoot\input" -Templates $Script:stackedTemplates -TemplateParameters $currentValues
+        $finalReport.SimpleReport() | Should Be ($false)
+    }
+
     AfterAll {
         Remove-Module $ModuleName
     }

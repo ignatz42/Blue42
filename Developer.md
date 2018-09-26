@@ -11,9 +11,13 @@ Development for Blue42 is done with VSCode. After cloning the repository, open t
 + PSScriptAnalyzer
 + PSCodeHealth
 
-note - 6.1 is required for unit testing.
-
 ## File Structure
+
+### base directory
+
+Blue42.build.ps1 - Invoke-Build build script
+
+Blue42.setting.ps1 - Custom script settings
 
 ### /Blue42/ directory
 

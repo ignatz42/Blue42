@@ -54,12 +54,13 @@ task RunTests {
         ExcludeTag = "RequiresAzureContext"
         CodeCoverage = (Get-ChildItem -Path "$ModulePath\*.ps1" -Exclude "*.Tests.*" -Recurse).FullName
     }
-
     $testResults = Invoke-Pester @invokePesterParams
-
     $testResults | ConvertTo-Json -Depth 5 | Set-Content (Join-Path $Artifacts "PesterResults.json")
 
+    # Experimenting with Code Coverage. The tool doesn't get any 'Per Function Information' when the test results are supplied
+    # but the additional information doesn't warrant the test time because it doesn't match the PSScriptAnalyzer output
     Invoke-PSCodeHealth -Path "$ModulePath" -Recurse -TestsResult $testResults -HtmlReportPath (Join-Path $Artifacts "PSCodeHealthReport.html")
+    #Invoke-PSCodeHealth -Path "$ModulePath" -Recurse -TestsPath "$PSScriptRoot\tests\unit" -HtmlReportPath (Join-Path $Artifacts "PSCodeHealthReport.html")
 }
 
 #Synopsis: Confirm that tests passed.
