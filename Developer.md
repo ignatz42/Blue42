@@ -1,7 +1,7 @@
 # Blue42 Development
 
 ## Getting started
-Development for Blue42 is done with VSCode. After cloning the repository, open the folder with VSCode. The test task named 'Coverage' will run all the unit tests and generate a html page in the build_artifacts directory with statistics. The test named 'Unit' skips the code coverage and physical module test. The test named 'Integration' may only be run once an AzureRM is established in VSCode's integrated PowerShell terminal.
+Development for Blue42 is done with VSCode. After cloning the repository, open the folder with VSCode. The test task named 'Coverage' will run all the unit tests and generate a html page in the build_artifacts directory with statistics. The test named 'Unit' skips the code coverage and physical module test. The test named 'Integration' may only be run once an AzureRM Context is established in VSCode's integrated PowerShell terminal.
 
 ## Requirements
 + PowerShell Core 6.1
