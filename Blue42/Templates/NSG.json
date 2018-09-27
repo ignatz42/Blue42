@@ -1,0 +1,85 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "nsgName": {
+            "type": "string",
+            "defaultValue": "nsg[UID]",
+            "metadata": {
+                "description": "The Network Security Group name."
+            }
+        },
+        "nsgLocation": {
+            "type": "string",
+            "defaultValue": "azure[LOCATION]",
+            "metadata": {
+              "description": "Network Security Group Location."
+            }
+          },
+        "nsgDisplayName": {
+            "type": "string",
+            "defaultValue": "NSG - HTTPS",
+            "metadata": {
+                "description": "The NSG display name tag."
+            }
+        },
+        "nsgSecurityRules": {
+            "type": "array",
+            "defaultValue": [
+                {
+                    "name": "Inbound-HTTPS",
+                    "description": "Allow HTTPS",
+                    "protocol": "*",
+                    "sourcePortRange": "*",
+                    "destinationPortRange": "443",
+                    "sourceAddressPrefix": "*",
+                    "destinationAddressPrefix": "*",
+                    "access": "Allow",
+                    "priority": 100,
+                    "direction": "Inbound"
+                }
+            ],
+            "metadata": {
+                "description": "An array that will be translated into NSG security rules."
+            }
+        }
+    },
+    "variables": {
+        "nsgLocation": "[if(empty(parameters('nsgLocation')), resourceGroup().location, parameters('nsgLocation'))]",
+        "nsgRulesCollection": {
+            "copy": [
+                {
+                    "condition": "[greater(length(parameters('nsgSecurityRules')),0)]",
+                    "name": "securityRules",
+                    "count": "[length(parameters('nsgSecurityRules'))]",
+                    "input": {
+                        "name": "[parameters('nsgSecurityRules')[copyIndex('securityRules')].name]",
+                        "properties": {
+                            "priority": "[parameters('nsgSecurityRules')[copyIndex('securityRules')].priority]",
+                            "protocol": "[parameters('nsgSecurityRules')[copyIndex('securityRules')].protocol]",
+                            "access": "[parameters('nsgSecurityRules')[copyIndex('securityRules')].access]",
+                            "direction": "[parameters('nsgSecurityRules')[copyIndex('securityRules')].direction]",
+                            "sourceAddressPrefix": "[parameters('nsgSecurityRules')[copyIndex('securityRules')].sourceAddressPrefix]",
+                            "sourcePortRange": "[parameters('nsgSecurityRules')[copyIndex('securityRules')].sourcePortRange]",
+                            "destinationAddressPrefix": "[parameters('nsgSecurityRules')[copyIndex('securityRules')].destinationAddressPrefix]",
+                            "destinationPortRange": "[parameters('nsgSecurityRules')[copyIndex('securityRules')].destinationPortRange]"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2018-08-01",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[parameters('nsgName')]",
+            "location": "[variables('nsgLocation')]",
+            "tags": {
+                "displayName": "[parameters('nsgDisplayName')]"
+            },
+            "properties": "[variables('nsgRulesCollection')]"
+        }
+    ],
+    "outputs": {}
+}

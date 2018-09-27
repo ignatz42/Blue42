@@ -77,5 +77,5 @@ task ConfirmTestsPassed {
 }
 
 task Publish {
-    Write-Host "TODO"
+    Publish-Module -NuGetApiKey $env:NUGET_API_KEY -Path $ModulePath
 }

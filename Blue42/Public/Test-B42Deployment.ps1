@@ -46,7 +46,7 @@ function Test-B42Deployment {
                 if (!($combinedParameters.Contains($parameter))) { continue }
 
                 $deploymentValue = $deployment.Parameters.$parameter.Value
-                # This works around a bug where the value is an emtpy JArray. Should look into writing a bug report.
+                # This works around a issue https://github.com/Azure/azure-powershell/issues/7410
                 if (($deployment.Parameters.$parameter.Type -eq "Array") -or ($deployment.Parameters.$parameter.Type -eq "Object")) {
                     $deploymentValue = ($deployment.Parameters.$parameter.Value.ToString() | ConvertFrom-Json -AsHashtable)
                 }
