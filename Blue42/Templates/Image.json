@@ -1,0 +1,78 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "imageName": {
+      "type": "string",
+      "defaultValue": "image[UID]",
+      "metadata": {
+        "description": "The managed image name."
+      }
+    },
+    "imageOsType": {
+      "type": "string",
+      "defaultValue": "Windows",
+      "metadata": {
+        "description": "The managed OS type"
+      }
+    },
+    "imageOsState": {
+      "type": "string",
+      "defaultValue": "Generalized",
+      "metadata": {
+        "description": "The managed image generalized state."
+      }
+    },
+    "imageOsDiskBlobUri": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The managed image Blob URI."
+      }
+    },
+    "imageOsDiskCaching": {
+      "type": "string",
+      "defaultValue": "ReadWrite",
+      "metadata": {
+        "description": "The managed image OS disk caching."
+      }
+    },
+    "imageOsAccountType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "metadata": {
+        "description": "The managed image OS storage account type name."
+      }
+    },
+    "imageZoneResilient": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "The managed image zone resiliency."
+      }
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "apiVersion": "2018-06-01",
+      "type": "Microsoft.Compute/images",
+      "name": "[parameters('imageName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "storageProfile": {
+          "zoneResilient": "[parameters('imageZoneResilient')]",
+          "osDisk": {
+            "osType": "[parameters('imageOsType')]",
+            "osState": "[parameters('imageOsState')]",
+            "blobUri": "[parameters('imageOsDiskBlobUri')]",
+            "caching": "[parameters('imageOsDiskCaching')]",
+            "storageAccountType": "[parameters('imageOsAccountType')]"
+          },
+          "dataDisks": []
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}

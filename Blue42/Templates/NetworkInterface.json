@@ -1,0 +1,82 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "networkInterfaceName": {
+      "type": "string",
+      "defaultValue": "nic[UID]",
+      "metadata": {
+        "description": "Network Interface Name"
+      }
+    },
+    "vnetName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Virtual Network Name."
+      }
+    },
+    "vnetResourceGroupName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Virtual Network Resource Group."
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "defaultValue": "nicSubnetName",
+      "metadata": {
+        "description": "Subnet name."
+      }
+    },
+    "publicIPName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Name of Public IP"
+      }
+    },
+    "nsgName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The Network Security Group name."
+      }
+    }
+  },
+  "variables": {
+    "subnetResourceID": "[concat(resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/', parameters('vnetName')), '/', 'subnets', '/', parameters('subnetName'))]",
+    "publicIpAddressResourceID": {
+      "id": "[resourceId('Microsoft.Network/publicIpAddresses', parameters('publicIPName'))]"
+    },
+    "nsgResourceID": {
+      "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgName'))]"
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-08-01",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[parameters('networkInterfaceName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "subnet": {
+                "id": "[variables('subnetResourceID')]"
+              },
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": "[if(empty(parameters('publicIPName')), json('null'), variables('publicIpAddressResourceID'))]"
+            }
+          }
+        ],
+        "enableAcceleratedNetworking": false,
+        "networkSecurityGroup": "[if(empty(parameters('nsgName')), json('null'), variables('nsgResourceID'))]"
+      }
+    }
+  ],
+  "outputs": {}
+}

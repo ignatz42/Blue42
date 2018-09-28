@@ -1,0 +1,197 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vmName": {
+      "type": "string",
+      "defaultValue": "[UID]",
+      "metadata": {
+        "description": "Name of the Virtual Machine"
+      }
+    },
+    "vmIdentity": {
+      "type": "string",
+      "defaultValue": "None",
+      "allowedValues": [
+        "UserAssigned",
+        "SystemAssigned",
+        "None"
+      ],
+      "metadata": {
+        "description": "The Virtual Machine's Identity Type"
+      }
+    },
+    "vmSize": {
+      "type": "string",
+      "defaultValue": "Standard_A2_v2",
+      "allowedValues": [
+        "Standard_A0",
+        "Standard_A1",
+        "Standard_A2",
+        "Standard_A2_v2",
+        "Standard_A3",
+        "Standard_A4",
+        "Standard_D4s_v3"
+      ],
+      "metadata": {
+        "description": "Size of the VM"
+      }
+    },
+    "vmImageStorageAccountType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Premium_LRS"
+      ],
+      "metadata": {
+        "description": "Type of storage account"
+      }
+    },
+    "imageName": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "vmImagePublisher": {
+      "type": "string",
+      "defaultValue": "MicrosoftWindowsServer",
+      "metadata": {
+        "description": "Image Publisher"
+      }
+    },
+    "vmImageOffer": {
+      "type": "string",
+      "defaultValue": "WindowsServer",
+      "metadata": {
+        "description": "Image Offer"
+      }
+    },
+    "vmImageSKU": {
+      "type": "string",
+      "defaultValue": "2016-Datacenter",
+      "metadata": {
+        "description": "Image SKU"
+      }
+    },
+    "vmAdminUsername": {
+      "type": "string",
+      "defaultValue": "azaa",
+      "metadata": {
+        "description": "VM Admin Username"
+      }
+    },
+    "vmAdminPassword": {
+      "type": "securestring",
+      "defaultValue": "get[PASSWORD]",
+      "metadata": {
+        "description": "VM Password"
+      }
+    },
+    "networkInterfaceName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Network Interface Name"
+      }
+    },
+    "keyVaultResourceGroupName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Resource Group Name where the keyvault lives. Leave blank for Linux"
+      }
+    },
+    "keyVaultName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Name of the keyvault. Leave blank for Linux"
+      }
+    },
+    "vmCertificateSecretUrl": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Certificate that will be copied to the virtual machines. Leave blank for Linux."
+      }
+    }
+  },
+  "variables": {
+    "certificateSecret": [
+      {
+        "sourceVault": {
+          "id": "[resourceId(parameters('keyVaultResourceGroupName'), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+        },
+        "vaultCertificates": [
+          {
+            "certificateUrl": "[parameters('vmCertificateSecretUrl')]",
+            "certificateStore": "My"
+          }
+        ]
+      }
+    ],
+    "defaultImageReference": {
+      "publisher": "[parameters('vmImagePublisher')]",
+      "offer": "[parameters('vmImageOffer')]",
+      "sku": "[parameters('vmImageSKU')]",
+      "version": "latest"
+    },
+    "customImageReference": {
+      "id": "[resourceId('Microsoft.Compute/images', parameters('imageName'))]"
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-06-01",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[parameters('vmName')]",
+      "location": "[resourceGroup().location]",
+      "identity": {
+        "type": "[parameters('vmIdentity')]"
+      },
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[parameters('vmName')]",
+          "adminUsername": "[parameters('vmAdminUsername')]",
+          "adminPassword": "[parameters('vmAdminPassword')]",
+          "windowsConfiguration": {
+            "winRM": {
+              "listeners": [
+                {
+                  "protocol": "Http"
+                },
+                {
+                  "protocol": "Https",
+                  "certificateUrl": "[parameters('vmCertificateSecretUrl')]"
+                }
+              ]
+            },
+            "provisionVmAgent": "true"
+          },
+          "secrets": "[variables('certificateSecret')]"
+        },
+        "storageProfile": {
+          "imageReference": "[if(empty(parameters('imageName')), variables('defaultImageReference'), variables('customImageReference'))]",
+          "osDisk": {
+            "createOption": "FromImage",
+            "managedDisk": {
+              "storageAccountType": "[parameters('vmImageStorageAccountType')]"
+            }
+          },
+          "dataDisks": []
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaceName'))]"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}

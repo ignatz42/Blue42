@@ -1,0 +1,86 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "publicIPName": {
+      "type": "string",
+      "defaultValue": "pubip[UID]",
+      "metadata": {
+        "description": "Name of Public IP"
+      }
+    },
+    "publicIPLocation": {
+      "type": "string",
+      "defaultValue": "azure[LOCATION]",
+      "metadata": {
+        "description": "Public IP Location."
+      }
+    },
+    "publicIPSku": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "Standard"
+      ],
+      "metadata": {
+        "description": "The SKU of the Public IP"
+      }
+    },
+    "publicIPAllocationMethod": {
+      "type": "string",
+      "defaultValue": "Dynamic",
+      "allowedValues": [
+        "Dynamic",
+        "Static"
+      ],
+      "metadata": {
+        "description": "The Public IP allocation method."
+      }
+    },
+    "publicIPIdleTimeoutInMinutes": {
+      "type": "int",
+      "defaultValue": 4,
+      "metadata": {
+        "description": "The Public IP idle timeout."
+      }
+    },
+    "publicIPDomainNameLabel": {
+      "type": "string",
+      "defaultValue": "pubip[UID]",
+      "metadata": {
+        "description": "The Public IP Domain Name label."
+      }
+    },
+    "publicIpAddressVersion": {
+      "type": "string",
+      "defaultValue": "IPv4",
+      "metadata": {
+        "description": "The Public IP Address version."
+      }
+    }
+  },
+  "variables": {
+    "publicIPLocation": "[if(empty(parameters('publicIPLocation')), resourceGroup().location, parameters('publicIPLocation'))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-08-01",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[parameters('publicIPName')]",
+      "location": "[variables('publicIPLocation')]",
+      "sku": {
+        "name": "[parameters('publicIPSku')]"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "[parameters('publicIPAllocationMethod')]",
+        "idleTimeoutInMinutes": "[parameters('publicIPIdleTimeoutInMinutes')]",
+        "publicIpAddressVersion": "[parameters('publicIpAddressVersion')]",
+        "dnsSettings": {
+          "domainNameLabel": "[parameters('publicIPDomainNameLabel')]"
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}

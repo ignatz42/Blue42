@@ -1,0 +1,67 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vmExtensionName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the VM"
+      }
+    },
+    "vmName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Name of the Virtual Machine"
+      }
+    },
+    "vmExtensionFileUris": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "An Array or URIs to scripts that will be used."
+      }
+    },
+    "vmExtensionCommandToExecute": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The command to execute."
+      }
+    },
+    "vmExtensionPublisher": {
+      "type": "string",
+      "defaultValue": "Microsoft.Azure.Extensions"
+    },
+    "vmExtensionType": {
+      "type": "string",
+      "defaultValue": "CustomScript"
+    },
+    "vmExtensionTypeHandlerVersion": {
+      "type": "string",
+      "defaultValue": "2.0"
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "name": "[concat(parameters('vmName'),'/', parameters('vmExtensionName'))]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "apiVersion": "2018-06-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publisher": "[parameters('vmExtensionPublisher')]",
+        "type": "[parameters('vmExtensionType')]",
+        "typeHandlerVersion": "[parameters('vmExtensionTypeHandlerVersion')]",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": "[parameters('vmExtensionFileUris')]"
+        },
+        "protectedSettings": {
+          "commandToExecute": "[parameters('vmExtensionCommandToExecute')]"
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}
