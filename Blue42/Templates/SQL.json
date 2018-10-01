@@ -1,0 +1,81 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "sqlServerPrimaryName": {
+      "type": "string",
+      "defaultValue": "sql[SUFFIX]",
+      "metadata": {
+        "description": "The primary name of the SQL Server."
+      }
+    },
+    "sqlAdminName": {
+      "type": "string",
+      "defaultValue": "azsa",
+      "metadata": {
+        "description": "The SQL Server administrator name."
+      }
+    },
+    "sqlAdminPassword": {
+      "type": "securestring",
+      "defaultValue": "get[PASSWORD]",
+      "metadata": {
+        "description": "The SQL Server adminstrator password."
+      }
+    },
+    "vnetName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Virtual Network Name."
+      }
+    },
+    "vnetResourceGroupName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Virtual Network Resource Group."
+      }
+    },
+    "sqlAllowedSubnets": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "A list of subnet names that will be translated into allowed access rules."
+      }
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "name": "[parameters('sqlServerPrimaryName')]",
+      "type": "Microsoft.Sql/servers",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-05-01-preview",
+      "kind": "v12.0",
+      "tags": {},
+      "properties": {
+        "administratorLogin": "[parameters('sqlAdminName')]",
+        "administratorLoginPassword": "[parameters('sqlAdminPassword')]",
+        "version": "12.0"
+      }
+    },
+    {
+      "type": "Microsoft.Sql/servers/virtualNetworkRules",
+      "name": "[concat(parameters('sqlServerPrimaryName'), '/newVnetRule', copyIndex('virtualNetworkRules'))]",
+      "apiVersion": "2015-05-01-preview",
+      "properties": {
+        "virtualNetworkSubnetId": "[concat(resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/', parameters('vnetName')), '/', 'subnets', '/', parameters('sqlAllowedSubnets')[copyIndex('virtualNetworkRules')])]",
+        "ignoreMissingVnetServiceEndpoint": true
+      },
+      "copy": {
+        "name": "virtualNetworkRules",
+        "count": "[length(parameters('sqlAllowedSubnets'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers/', parameters('sqlServerPrimaryName'))]"
+      ]
+    }
+  ],
+  "outputs": {}
+}

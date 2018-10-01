@@ -1,0 +1,78 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vnetName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Virtual Network Name."
+      }
+    },
+    "vnetPeerName": {
+      "type": "string",
+      "defaultValue": "ThePeer",
+      "metadata": {
+        "description": "The name of the virtual network peer"
+      }
+    },
+    "peerAllowVirtualNetworkAccess": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Allow virtual network access?"
+      }
+    },
+    "peerAllowForwardedTraffic": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Allow forwarded traffic?"
+      }
+    },
+    "peerAllowGatewayTransit": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Allow gateway transit?"
+      }
+    },
+    "peerUseRemoteGateways": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Use of remote gateways?"
+      }
+    },
+    "peerVnetResourceGroupName": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "peerVnetName": {
+      "type": "string",
+      "defaultValue": ""
+    }
+  },
+  "variables": {
+    "peerName": "[concat(parameters('vnetName'), '/', parameters('vnetPeerName'))]",
+    "peerVnetResourceID": "[resourceId(parameters('peerVnetResourceGroupName'), 'Microsoft.Network/virtualNetworks', parameters('peerVnetName'))]"
+  },
+  "resources": [
+    {
+      "name": "[variables('peerName')]",
+      "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+      "apiVersion": "2018-08-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "allowVirtualNetworkAccess": "[parameters('peerAllowVirtualNetworkAccess')]",
+        "allowForwardedTraffic": "[parameters('peerAllowForwardedTraffic')]",
+        "allowGatewayTransit": "[parameters('peerAllowGatewayTransit')]",
+        "useRemoteGateways": "[parameters('peerUseRemoteGateways')]",
+        "remoteVirtualNetwork": {
+          "id": "[variables('peerVnetResourceID')]"
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}

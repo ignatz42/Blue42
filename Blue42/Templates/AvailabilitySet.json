@@ -1,0 +1,42 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "asetName": {
+      "type": "string",
+      "defaultValue": "aset[UID]",
+      "metadata": {
+        "description": "The name of the availability set."
+      }
+    },
+    "asetFaultDomain": {
+      "type": "int",
+      "defaultValue": 2,
+      "metadata": {
+        "description": "The number of fault domains."
+      }
+    },
+    "asetUpdateDomain": {
+      "type": "int",
+      "defaultValue": 5,
+      "metadata": {
+        "description": "The number of update domains."
+      }
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "name": "[parameters('asetName')]",
+      "type": "Microsoft.Compute/availabilitySets",
+      "apiVersion": "2018-06-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "platformFaultDomainCount": "[parameters('asetFaultDomain')]",
+        "platformUpdateDomainCount": "[parameters('asetUpdateDomain')]",
+        "managed": true
+      }
+    }
+  ],
+  "outputs": {}
+}

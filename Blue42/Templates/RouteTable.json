@@ -1,0 +1,53 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "routeTableName": {
+      "type": "string",
+      "defaultValue": "routeTable[UID]",
+      "metadata": {
+        "description": "The RouteTable name."
+      }
+    },
+    "routeTableRoutes": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "name": "internet-route",
+          "addressPrefix": "0.0.0.0/0",
+          "nextHopType": "Internet"
+        }
+      ],
+      "metadata": {
+        "description": "An array that will be translated into routes."
+      }
+    }
+  },
+  "variables": {
+    "tableProperties": {
+      "copy": [
+        {
+          "name": "routes",
+          "count": "[length(parameters('routeTableRoutes'))]",
+          "input": {
+            "name": "[parameters('routeTableRoutes')[copyIndex('routes')].name]",
+            "properties": {
+              "addressPrefix": "[parameters('routeTableRoutes')[copyIndex('routes')].addressPrefix]",
+              "nextHopType": "[parameters('routeTableRoutes')[copyIndex('routes')].nextHopType]"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2017-10-01",
+      "type": "Microsoft.Network/routeTables",
+      "name": "[parameters('routeTableName')]",
+      "location": "[resourceGroup().location]",
+      "properties": "[variables('tableProperties')]"
+    }
+  ],
+  "outputs": {}
+}
