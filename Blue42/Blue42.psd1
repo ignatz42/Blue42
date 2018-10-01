@@ -79,6 +79,7 @@
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
     FunctionsToExport = @(
         'New-B42Password',
+        'Get-B42KeyVaultAccessPolicy',
         'Set-B42Globals',
         'Get-B42Globals',
         "Find-B42Template",

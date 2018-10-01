@@ -4,23 +4,10 @@ $SuppressImportModule = $false
 . "$PSScriptRoot\..\LoadModule.ps1"
 
 Describe "the basic module" {
-    Context "Private functions with Azure mocks" {
-        Mock -ModuleName $ModuleName Get-AzureRmResourceGroup { return $null }
-        Mock -ModuleName $ModuleName New-AzureRmResourceGroup { return $null }
-        Mock -ModuleName $ModuleName New-AzureRmResourceGroupDeployment {
-            $mockDeploymentResult = [ordered]@{
-                DeploymentName          = $Name
-                ResourceGroupName       = $ResourceGroupName
-                ProvisioningState       = "Succeeded"
-                Timestamp               = "NOTSTAMPED"
-                Mode                    = $Mode
-                TemplateLink            = ""
-                Parameters              = $TemplateParameterObject
-                Outputs                 = ""
-                DeploymentDebugLogLevel = $DeploymentDebugLogLevel
-            }
-            return $mockDeploymentResult
-        }
+    # All contexts require the Azure Mocks.
+    . "$PSScriptRoot\..\AzureMocks.ps1"
+
+    Context "Private functions with internal mocks" {
         Mock -ModuleName $ModuleName New-B42Password { "ExpectedTestResult" }
         Mock -ModuleName $ModuleName Get-B42Globals {
             @{
@@ -91,6 +78,11 @@ Describe "the basic module" {
             ($password -match ("[A-Z]")) | Should Be ($true)
             ($password -match ("[a-z]")) | Should Be ($true)
             ($password.Length -gt 36) | Should Be ($true)
+        }
+
+        It "generates a KeyVault Access Policy" {
+            $accessPolicy = Get-B42KeyVaultAccessPolicy
+            ($null -eq $accessPolicy) | Should Be ($false)
         }
     }
 

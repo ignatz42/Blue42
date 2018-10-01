@@ -4,42 +4,7 @@ $SuppressImportModule = $false
 . "$PSScriptRoot\..\LoadModule.ps1"
 
 Describe "Deployments" {
-    Mock -ModuleName $ModuleName Get-AzureRmResourceGroup { return $null }
-    Mock -ModuleName $ModuleName New-AzureRmResourceGroup { return $null }
-    Mock -ModuleName $ModuleName New-AzureRmResourceGroupDeployment {
-        $mockDeploymentParameters = @{}
-        foreach ($key in $TemplateParameterObject.Keys) {
-            $deploymentVariableMock = @{
-                Type = ($TemplateParameterObject.$key).GetType().Name
-                Value = $TemplateParameterObject.$key
-            }
-            if (($deploymentVariableMock.Type -eq "Object[]") -or ($deploymentVariableMock.Type -eq "Hashtable")) {
-                    $deploymentVariableMock.Type = ($TemplateParameterObject.$key).GetType().BaseType.Name
-                    $deploymentVariableMock.Value = (,$TemplateParameterObject.$key | ConvertTo-Json)
-            }
-            $mockDeploymentParameters.Add($key, $deploymentVariableMock)
-        }
-        $mockDeploymentResult = [ordered]@{
-            DeploymentName          = $Name
-            ResourceGroupName       = $ResourceGroupName
-            ProvisioningState       = "Succeeded"
-            Timestamp               = "NOTSTAMPED"
-            Mode                    = $Mode
-            TemplateLink            = ""
-            Parameters              = $mockDeploymentParameters
-            Outputs                 = ""
-            DeploymentDebugLogLevel = $DeploymentDebugLogLevel
-        }
-        return $mockDeploymentResult
-    }
-    Mock -ModuleName $ModuleName Get-AzureRmResourceGroupDeployment {
-        if (![string]::IsNullOrEmpty($ResourceGroupName)) {
-            $currentValues = [hashtable]@{
-                Blue42Password = "PasswordPasswordPassword"
-            }
-            return New-B42Deployment -ResourceGroupName "stackedDeploymentTest" -Templates @("Blue42.Test", "Blue42.Alt") -TemplatePath $ResourceGroupName -TemplateParameters $currentValues
-        }
-    }
+    . "$PSScriptRoot\..\AzureMocks.ps1"
 
     BeforeAll {
         $Script:stackedTemplates = @("Blue42.Test", "Blue42.Alt")
