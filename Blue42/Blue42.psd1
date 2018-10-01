@@ -12,7 +12,7 @@
     RootModule        = 'Blue42.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.2.0'
+    ModuleVersion     = '0.2.1'
 
     # Supported PSEditions
     CompatiblePSEditions = @('Desktop', 'Core')
@@ -27,7 +27,7 @@
     CompanyName       = 'nerdysouth.org'
 
     # Copyright statement for this module
-    Copyright         = '(c) 2018. All rights reserved.'
+    Copyright         = '(c) 2018 Ignacio Galarza. All rights reserved.'
 
     # Description of the functionality provided by this module
     Description = 'An Azure Resource Manager template helper.'
@@ -117,13 +117,13 @@
         PSData = @{
 
             # Tags applied to this module. These help with module discovery in online galleries.
-            # Tags = @()
+            Tags = @('PowerShell', 'Azure', 'ARM')
 
             # A URL to the license for this module.
-            # LicenseUri = ''
+            LicenseUri = 'https://github.com/ignatz42/Blue42/blob/master/LICENSE'
 
             # A URL to the main website for this project.
-            # ProjectUri = ''
+            ProjectUri = 'https://github.com/ignatz42/Blue42'
 
             # A URL to an icon representing this module.
             # IconUri = ''
