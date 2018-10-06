@@ -1,0 +1,151 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "loadBalancerName": {
+      "type": "string",
+      "defaultValue": "lb[UID]",
+      "metadata": {
+        "description": "The name of the Load Balancer."
+      }
+    },
+    "loadBalancerSKU": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "metadata": {
+        "description": "The SKU of the Load Balancer."
+      }
+    },
+    "publicIPName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Name of Public IP"
+      }
+    },
+    "publicIPResourceGroupName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Resource Group Name of Public IP"
+      }
+    },
+    "vnetName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Virtual Network Name."
+      }
+    },
+    "vnetResourceGroupName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Virtual Network Resource Group."
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Subnet name."
+      }
+    },
+    "loadBalancerPrivateIPAllocationMethod": {
+      "type": "string",
+      "defaultValue": "Dynamic",
+      "metadata": {
+        "description": "The Private IP allocation mMethod for the Load Balancer."
+      }
+    },
+    "loadBalancerFrontEndPoolName": {
+      "type": "string",
+      "defaultValue": "myFrontendPool",
+      "metadata": {
+        "description": "The first front end name to be added to the load balancer."
+      }
+    },
+    "loadBalancerBackEndPoolName": {
+      "type": "string",
+      "defaultValue": "myBackendPool",
+      "metadata": {
+        "description": "The first backend pool to be added to the load balancer."
+      }
+    },
+    "loadBalancerNatPools": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "name": "WinRM",
+          "protocol": "Tcp",
+          "rstart": 60000,
+          "rend": 60119,
+          "port": 5986
+        }
+      ],
+      "metadata": {
+        "description": "An array of ports names that will be translated into NSG Allow rules."
+      }
+    }
+  },
+  "variables": {
+    "subnetResourceID": "[concat(resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/', parameters('vnetName')), '/', 'subnets', '/', parameters('subnetName'))]",
+    "loadBalancerResourceID": "[resourceId('Microsoft.Network/loadBalancers/', parameters('loadBalancerName'))]",
+    "loadBalancerFrontEndResourceID": "[concat(variables('loadBalancerResourceID'), '/frontendIPConfigurations/', parameters('loadBalancerFrontEndPoolName'))]",
+    "publicProperties": {
+      "publicIPAddress": {
+        "id": "[resourceId(parameters('publicIPResourceGroupName'), 'Microsoft.Network/publicIPAddresses', parameters('publicIPName'))]"
+      }
+    },
+    "privateProperties": {
+      "privateIPAllocationMethod": "[parameters('loadBalancerPrivateIPAllocationMethod')]",
+      "subnet": {
+        "id": "[variables('subnetResourceID')]"
+      }
+    },
+    "copy": [
+      {
+        "name": "validNatRules",
+        "count": "[length(parameters('loadBalancerNatPools'))]",
+        "input": {
+          "name": "[parameters('loadBalancerNatPools')[copyIndex('validNatRules')].name]",
+          "properties": {
+            "frontendIPConfiguration": {
+              "id": "[variables('loadBalancerFrontEndResourceID')]"
+            },
+            "protocol": "[parameters('loadBalancerNatPools')[copyIndex('validNatRules')].protocol]",
+            "frontendPortRangeStart": "[int(parameters('loadBalancerNatPools')[copyIndex('validNatRules')].rstart)]",
+            "frontendPortRangeEnd": "[int(parameters('loadBalancerNatPools')[copyIndex('validNatRules')].rend)]",
+            "backendPort": "[int(parameters('loadBalancerNatPools')[copyIndex('validNatRules')].port)]"
+          }
+        }
+      }
+    ]
+  },
+  "resources": [
+    {
+      "apiVersion": "2017-08-01",
+      "name": "[parameters('loadBalancerName')]",
+      "type": "Microsoft.Network/loadBalancers",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "[parameters('loadBalancerSKU')]"
+      },
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "[parameters('loadBalancerFrontEndPoolName')]",
+            "properties": "[if(equals(parameters('publicIPName'),''), variables('privateProperties'), variables('publicProperties'))]"
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "[parameters('loadBalancerBackEndPoolName')]"
+          }
+        ],
+        "inboundNatPools": "[variables('validNatRules')]"
+      }
+    }
+  ],
+  "outputs": {}
+}

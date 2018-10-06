@@ -1,0 +1,264 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vnetName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Virtual Network Name."
+      }
+    },
+    "vnetResourceGroupName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Virtual Network Resource Group."
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Subnet name."
+      }
+    },
+    "vmssName": {
+      "type": "string",
+      "defaultValue": "vmss[UID]",
+      "metadata": {
+        "description": "ScaleSet name."
+      }
+    },
+    "vmssIdentity": {
+      "type": "string",
+      "defaultValue": "None",
+      "allowedValues": [
+        "UserAssigned",
+        "SystemAssigned",
+        "None"
+      ],
+      "metadata": {
+        "description": "The Virtual Machine's Identity Type"
+      }
+    },
+    "imageName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The managed image name."
+      }
+    },
+    "imageResourceGroupName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The managed image resource group name."
+      }
+    },
+    "vmssVmSKU": {
+      "type": "string",
+      "defaultValue": "Standard_A1",
+      "metadata": {
+        "description": "ScaleSet VM SKU name."
+      }
+    },
+    "vmssInstanceCount": {
+      "type": "int",
+      "defaultValue": 1,
+      "maxValue": 100,
+      "metadata": {
+        "description": "ScaleSet instance count"
+      }
+    },
+    "vmssNamePrefix": {
+      "type": "string",
+      "defaultValue": "vmss",
+      "metadata": {
+        "description": "ScaleSet VM name prefix."
+      }
+    },
+    "vmssAdminUsername": {
+      "type": "string",
+      "defaultValue": "aass",
+      "metadata": {
+        "description": "ScaleSet Admin username."
+      }
+    },
+    "vmssAdminPassword": {
+      "type": "securestring",
+      "defaultValue": "get[PASSWORD]",
+      "metadata": {
+        "description": "ScaleSet Admin password."
+      }
+    },
+    "loadBalancerName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The name of the Load Balancer."
+      }
+    },
+    "loadBalancerResourceGroupName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The resource group name of the Load Balancer."
+      }
+    },
+    "loadBalancerNatpoolName": {
+      "type": "string",
+      "defaultValue": "WinRM",
+      "metadata": {
+        "description": "Natpool name."
+      }
+    },
+    "loadBalancerBackendName": {
+      "type": "string",
+      "defaultValue": "myBackendPool",
+      "metadata": {
+        "description": "Backend name."
+      }
+    },
+    "keyVaultResourceGroupName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Resource Group Name where the keyvault lives."
+      }
+    },
+    "keyVaultName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Name of the keyvault."
+      }
+    },
+    "vmCertificateSecretUrl": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Certificate that will be copied to the virtual machines."
+      }
+    }
+  },
+  "variables": {
+    "subnetResourceID": "[concat(resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/', parameters('vnetName')), '/', 'subnets', '/', parameters('subnetName'))]",
+    "imageResourceID": "[resourceId(parameters('imageResourceGroupName'), 'Microsoft.Compute/images/', parameters('imageName'))]",
+    "loadBalancerResourceID": "[resourceId(parameters('loadBalancerResourceGroupName'), 'Microsoft.Network/loadBalancers/', parameters('loadBalancerName'))]",
+    "loadBalancerNatPoolResourceID": "[concat(variables('loadBalancerResourceID'), '/inboundNatPools/', parameters('loadBalancerNatpoolName'))]",
+    "loadBalancerBackEndResourceID": "[concat(variables('loadBalancerResourceID'), '/backendAddressPools/', parameters('loadBalancerBackendName'))]",
+    "certificateSecret": [
+      {
+        "sourceVault": {
+          "id": "[resourceId(parameters('keyVaultResourceGroupName'), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+        },
+        "vaultCertificates": [
+          {
+            "certificateUrl": "[parameters('vmCertificateSecretUrl')]",
+            "certificateStore": "My"
+          }
+        ]
+      }
+    ]
+  },
+  "resources": [
+    {
+      "apiVersion": "2017-12-01",
+      "name": "[parameters('vmssName')]",
+      "type": "Microsoft.Compute/virtualMachineScaleSets",
+      "location": "[resourceGroup().location]",
+      "identity": {
+        "type": "[parameters('vmssIdentity')]"
+      },
+      "sku": {
+        "name": "[parameters('vmssVmSKU')]",
+        "tier": "Standard",
+        "capacity": "[int(parameters('vmssInstanceCount'))]"
+      },
+      "tags": {},
+      "scale": null,
+      "properties": {
+        "singlePlacementGroup": true,
+        "upgradePolicy": {
+          "mode": "Automatic",
+          "automaticOSUpgrade": false
+        },
+        "virtualMachineProfile": {
+          "osProfile": {
+            "computerNamePrefix": "[parameters('vmssNamePrefix')]",
+            "adminUsername": "[parameters('vmssAdminUsername')]",
+            "adminPassword": "[parameters('vmssAdminPassword')]",
+            "windowsConfiguration": {
+              "winRM": {
+                "listeners": [
+                  {
+                    "protocol": "Http"
+                  },
+                  {
+                    "protocol": "Https",
+                    "certificateUrl": "[parameters('vmCertificateSecretUrl')]"
+                  }
+                ]
+              },
+              "provisionVmAgent": "true"
+            },
+            "secrets": "[if(equals(parameters('vmCertificateSecretUrl'),''), json('null'), variables('certificateSecret'))]"
+          },
+          "storageProfile": {
+            "osDisk": {
+              "createOption": "FromImage",
+              "caching": "None",
+              "writeAcceleratorEnabled": false,
+              "managedDisk": {
+                "storageAccountType": "Standard_LRS"
+              }
+            },
+            "imageReference": {
+              "id": "[variables('imageResourceID')]"
+            }
+          },
+          "networkProfile": {
+            "networkInterfaceConfigurations": [
+              {
+                "name": "network-config",
+                "properties": {
+                  "primary": true,
+                  "enableAcceleratedNetworking": false,
+                  "dnsSettings": {
+                    "dnsServers": []
+                  },
+                  "enableIPForwarding": false,
+                  "ipConfigurations": [
+                    {
+                      "name": "myIPConfig",
+                      "properties": {
+                        "primary": false,
+                        "subnet": {
+                          "id": "[variables('subnetResourceID')]"
+                        },
+                        "privateIPAddressVersion": "IPv4",
+                        "loadBalancerBackendAddressPools": [
+                          {
+                            "id": "[variables('loadBalancerBackEndResourceID')]"
+                          }
+                        ],
+                        "loadBalancerInboundNatPools": [
+                          {
+                            "id": "[variables('loadBalancerNatPoolResourceID')]"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "overprovision": true
+      }
+    }
+  ],
+  "outputs": {}
+}

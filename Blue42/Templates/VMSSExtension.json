@@ -1,0 +1,68 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vmssExtensionName": {
+      "type": "string",
+      "defaultValue": "mvssx[UID]",
+      "metadata": {
+        "description": "Name of the VM Extension"
+      }
+    },
+    "vmssName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Name of the Virtual Machine"
+      }
+    },
+    "vmssExtensionFileUris": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "An Array or URIs to scripts that will be used."
+      }
+    },
+    "vmssExtensionCommandToExecute": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The command to execute."
+      }
+    },
+    "vmssExtensionPublisher": {
+      "type": "string",
+      "defaultValue": "Microsoft.Azure.Extensions"
+    },
+    "vmssExtensionType": {
+      "type": "string",
+      "defaultValue": "CustomScript"
+    },
+    "vmssExtensionTypeHandlerVersion": {
+      "type": "string",
+      "defaultValue": "2.0"
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "name": "[concat(parameters('vmssName'),'/', parameters('vmssExtensionName'))]",
+      "type": "Microsoft.Compute/virtualMachineScaleSets/extensions",
+      "apiVersion": "2017-12-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publisher": "[parameters('vmssExtensionPublisher')]",
+        "type": "[parameters('vmssExtensionType')]",
+        "typeHandlerVersion": "[parameters('vmssExtensionTypeHandlerVersion')]",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": "[parameters('vmssExtensionFileUris')]"
+        },
+        "protectedSettings": {
+          "commandToExecute": "[parameters('vmssExtensionCommandToExecute')]"
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}
