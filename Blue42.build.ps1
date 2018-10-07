@@ -2,20 +2,18 @@
 . './Blue42.settings.ps1'
 
 #Synopsis: Run/Publish Tests and Fail Build on Error.
-task Test Clean, RunTests, ConfirmTestsPassed
+task Test Clean, Analyze, RunTests, ConfirmTestsPassed
+
+#Synopsis: Run/Publish Tests and Fail Build on Error.
+task Health Clean, CodeHealth
 
 #Synopsis: Run full Pipeline.
-task . Clean, Analyze, Test, Publish
+task . Test, Publish
 
 #Synopsis: Install dependencies.
 task InstallDependencies {
     & "./Setup.ps1"
 }
-
-$Artifacts = "build_artifacts/"
-$ModuleName = "Blue42"
-$ModulePath = (Resolve-Path "$PSScriptRoot\$ModuleName")
-
 
 #Synopsis: Clean Artifact directory.
 task Clean {
@@ -26,7 +24,7 @@ task Clean {
     New-Item -ItemType Directory -Path $Artifacts -Force
 }
 
-#Synopsis: Analyze code.
+#Synopsis: Analyze code using PSScriptAnalyzer.
 task Analyze {
     $scriptAnalyzerParams = @{
         Path = $ModulePath
@@ -41,7 +39,7 @@ task Analyze {
     $saResults | ConvertTo-Json | Set-Content (Join-Path $Artifacts "ScriptAnalysisResults.json")
 }
 
-#Synopsis: Run tests.
+#Synopsis: Run Pester tests.
 task RunTests {
     $invokePesterParams = @{
         OutputFile = (Join-Path $Artifacts "TestResults.xml")
@@ -56,11 +54,6 @@ task RunTests {
     }
     $testResults = Invoke-Pester @invokePesterParams
     $testResults | ConvertTo-Json -Depth 5 | Set-Content (Join-Path $Artifacts "PesterResults.json")
-
-    # Experimenting with Code Coverage. The tool doesn't get any 'Per Function Information' when the test results are supplied
-    # but the additional information doesn't warrant the test time because it doesn't match the PSScriptAnalyzer output
-    Invoke-PSCodeHealth -Path "$ModulePath" -Recurse -TestsResult $testResults -HtmlReportPath (Join-Path $Artifacts "PSCodeHealthReport.html")
-    #Invoke-PSCodeHealth -Path "$ModulePath" -Recurse -TestsPath "$PSScriptRoot\tests\unit" -HtmlReportPath (Join-Path $Artifacts "PSCodeHealthReport.html")
 }
 
 #Synopsis: Confirm that tests passed.
@@ -76,6 +69,14 @@ task ConfirmTestsPassed {
     assert($OverallCoverage -gt $PercentCompliance) ('A Code Coverage of "{0}" does not meet the build requirement of "{1}"' -f $overallCoverage, $PercentCompliance)
 }
 
+#Synopsis: Produce the PSCodeHealth report.
+task CodeHealth {
+    # Experimenting with Health report. The tool's output doesn't match the PSScriptAnalyzer output for function coverage.
+    # The limiting Pester options and/or the Pester results may give a clue.
+    Invoke-PSCodeHealth -Path "$ModulePath" -Recurse -TestsPath "$PSScriptRoot\tests\unit" -HtmlReportPath (Join-Path $Artifacts "PSCodeHealthReport.html")
+}
+
+#Synopsis: Publish the module.
 task Publish {
     Publish-Module -NuGetApiKey $env:NUGET_API_KEY -Path $ModulePath
 }

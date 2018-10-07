@@ -8,6 +8,7 @@ function Get-B42KeyVaultAccessPolicy {
         .NOTES
         This function is mostly useful for assigning the KeyVault creator instat access.
     #>
+    [OutputType('System.Collections.Hashtable')]
     [CmdletBinding()]
     param (
         # The user principal name to add to an access policy.  If none is supplied, the current user will be used.
