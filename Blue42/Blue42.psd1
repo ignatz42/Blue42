@@ -82,12 +82,12 @@
         'Get-B42KeyVaultAccessPolicy',
         'Set-B42Globals',
         'Get-B42Globals',
-        "Find-B42Template",
-        "Get-B42Template",
-        "Get-B42TemplateParameters",
-        "ConvertTo-B42Json",
-        "New-B42Deployment",
-        "Test-B42Deployment"
+        'Find-B42Template',
+        'Get-B42Template',
+        'Get-B42TemplateParameters',
+        'ConvertTo-B42Json',
+        'New-B42Deployment',
+        'Test-B42Deployment'
     )
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
@@ -129,7 +129,7 @@
             # IconUri = ''
 
             # ReleaseNotes of this module
-            # ReleaseNotes = ''
+            ReleaseNotes = 'https://github.com/ignatz42/Blue42/blob/master/CHANGELOG.md'
 
         } # End of PSData hashtable
 
