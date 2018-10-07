@@ -1,0 +1,51 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "webAppName": {
+      "type": "string",
+      "defaultValue": "webApp[UID]",
+      "metadata": {
+        "description": "The Web App Name"
+      }
+    },
+    "aspName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The App Service Plan Name"
+      }
+    },
+    "aseName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Name of the App Service Environment"
+      }
+    },
+    "aspResourceGroupName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Resource Group Name of the App Service Environment"
+      }
+    }
+  },
+  "variables": {
+    "aspResourceID": "[resourceId(parameters('aspResourceGroupName'), 'Microsoft.Web/serverfarms/', parameters('aspName'))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2016-08-01",
+      "type": "Microsoft.Web/sites",
+      "name": "[parameters('webAppName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "name": "[parameters('webAppName')]",
+        "serverFarmId": "[variables('aspResourceID')]",
+        "hostingEnvironment": "[if(empty(parameters('aseName')), json('null'), parameters('aseName'))]"
+      }
+    }
+  ],
+  "outputs": {}
+}

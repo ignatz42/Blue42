@@ -1,0 +1,106 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vnetName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Virtual Network Name."
+      }
+    },
+    "vnetResourceGroupName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Virtual Network Resource Group."
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Subnet name."
+      }
+    },
+    "aseName": {
+      "type": "string",
+      "defaultValue": "ent[UID]",
+      "metadata": {
+        "description": "Name of the App Service Environment"
+      }
+    },
+    "aseLocation": {
+      "type": "string",
+      "defaultValue": "East US",
+      "metadata": {
+        "description": "Location of the App Service Environment"
+      }
+    },
+    "aseInternalLoadBalancingMode": {
+      "type": "int",
+      "defaultValue": 3,
+      "allowedValues": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "metadata": {
+        "description": "0 = public VIP only, 1 = only ports 80/443 are mapped to ILB VIP, 2 = only FTP ports are mapped to ILB VIP, 3 = both ports 80/443 and FTP ports are mapped to an ILB VIP."
+      }
+    },
+    "aseDnsSuffix": {
+      "type": "string",
+      "defaultValue": "dev.local",
+      "metadata": {
+        "description": "Used *only* when deploying an ILB enabled ASE.  Set this to the root domain associated with the ASE.  For example: contoso.com"
+      }
+    },
+    "aseKind": {
+      "type": "string",
+      "defaultValue": "ASEV2",
+      "metadata": {
+        "description": "Determines which ASE version to use."
+      }
+    },
+    "aseCertificateThumbprint": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The hexadecimal certificate thumbprint of the certificate contained in pfxBlobString.  All spaces need to be removed from the hex string."
+      }
+    }
+  },
+  "variables": {
+    "vnetResourceID": "[resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/', parameters('vnetName'))]",
+    "aseClusterSettings": [
+      {
+        "name": "DefaultSslCertificateThumbprint",
+        "value": "[parameters('aseCertificateThumbprint')]"
+      }
+    ]
+  },
+  "resources": [
+    {
+      "apiVersion": "2016-09-01",
+      "type": "Microsoft.Web/hostingEnvironments",
+      "name": "[parameters('aseName')]",
+      "location": "[parameters('aseLocation')]",
+      "kind": "[parameters('aseKind')]",
+      "properties": {
+        "name": "[parameters('aseName')]",
+        "location": "[parameters('aseLocation')]",
+        "dnsSuffix": "[parameters('aseDnsSuffix')]",
+        "internalLoadBalancingMode": "[parameters('aseInternalLoadBalancingMode')]",
+        "virtualNetwork": {
+          "id": "[variables('vnetResourceID')]",
+          "type": "Microsoft.Network/virtualNetworks",
+          "subnet": "[parameters('subnetName')]"
+        },
+        "clusterSettings": "[if(empty(parameters('aseCertificateThumbprint')), json('null'), variables('aseClusterSettings'))]"
+      }
+    }
+  ],
+  "outputs": {}
+}

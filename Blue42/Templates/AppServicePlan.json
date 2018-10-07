@@ -1,0 +1,118 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "aspName": {
+      "type": "string",
+      "defaultValue": "ASP[UID]",
+      "metadata": {
+        "description": "The App Service Plan Name"
+      }
+    },
+    "aspSkuTier": {
+      "type": "string",
+      "defaultValue": "Free",
+      "allowedValues": [
+        "Shared",
+        "Free",
+        "Basic",
+        "Standard",
+        "PremiumV2",
+        "Isolated"
+      ],
+      "metadata": {
+        "description": "The App Service Plan SKU (Tier)"
+      }
+    },
+    "aspSkuName": {
+      "type": "string",
+      "defaultValue": "F1",
+      "allowedValues": [
+        "D1",
+        "F1",
+        "B1",
+        "B2",
+        "B3",
+        "S1",
+        "S2",
+        "S3",
+        "P1V2",
+        "P2V2",
+        "P3V2",
+        "I1",
+        "I2",
+        "I3"
+      ],
+      "metadata": {
+        "description": "The App Service Plan SKU (Name)"
+      }
+    },
+    "aspKind": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The Kind of App Service Plan"
+      }
+    },
+    "aspWorkerSize": {
+      "type": "string",
+      "defaultValue": "0",
+      "metadata": {
+        "description": "The App Service Plan Worker Size. Ignored when aseName is empty."
+      }
+    },
+    "aspWorkerSizeId": {
+      "type": "string",
+      "defaultValue": "0",
+      "metadata": {
+        "description": "The App Service Plan Worker Size ID. Ignored when aseName is empty."
+      }
+    },
+    "aspNumberOfWorkers": {
+      "type": "string",
+      "defaultValue": "1",
+      "metadata": {
+        "description": "The App Service Plan Number of Workers. Ignored when aseName is empty."
+      }
+    },
+    "aspReserved": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Windows (false) or Linux (true)"
+      }
+    },
+    "aseName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Name of the App Service Environment"
+      }
+    }
+  },
+  "variables": {
+    "aspProperties": {
+      "name": "[parameters('aspName')]",
+      "workerSize": "[parameters('aspWorkerSize')]",
+      "workerSizeId": "[parameters('aspWorkerSizeId')]",
+      "numberOfWorkers": "[parameters('aspNumberOfWorkers')]",
+      "reserved": "[parameters('aspReserved')]",
+      "hostingEnvironment": "[parameters('aseName')]"
+    }
+  },
+  "resources": [
+    {
+      "name": "[parameters('aspName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2016-09-01",
+      "sku": {
+        "tier": "[parameters('aspSkuTier')]",
+        "name": "[parameters('aspSkuName')]"
+      },
+      "kind": "[parameters('aspKind')]",
+      "location": "[resourceGroup().location]",
+      "properties": "[if(empty(parameters('aseName')), json('null'), variables('aspProperties'))]"
+    }
+  ],
+  "outputs": {}
+}

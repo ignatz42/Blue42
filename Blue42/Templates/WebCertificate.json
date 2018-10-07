@@ -1,0 +1,65 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "certificateName": {
+      "type": "string",
+      "defaultValue": "DefaultCertificateFor_ent[UID]_InternalLoadBalancingASE",
+      "metadata": {
+        "description": "The name of the Web Certificate to be used with an ASE."
+      }
+    },
+    "certificateLocation": {
+      "type": "string",
+      "defaultValue": "East US",
+      "metadata": {
+        "description": "Location of the App Service Environment"
+      }
+    },
+    "certificatePassword": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The password for the pfx filed contained in pfxBlobString."
+      }
+    },
+    "aseResourceGroupName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Resource Group Name of the App Service Environment"
+      }
+    },
+    "aseName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Name of the App Service Environment"
+      }
+    },
+    "certificatePfxBlobString": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "A pfx file encoded as a base-64 string.  The pfx contains the SSL certificate that will be configured as the default SSL certificate for the ASE."
+      }
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "apiVersion": "2015-08-01",
+      "type": "Microsoft.Web/certificates",
+      "name": "[parameters('certificateName')]",
+      "location": "[parameters('certificateLocation')]",
+      "properties": {
+        "pfxBlob": "[parameters('certificatePfxBlobString')]",
+        "password": "[parameters('certificatePassword')]",
+        "hostingEnvironmentProfile": {
+          "id": "[resourceId(parameters('aseResourceGroupName'), 'Microsoft.Web/hostingEnvironments', parameters('aseName'))]"
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}
