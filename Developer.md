@@ -1,9 +1,11 @@
 # Blue42 Development
 
 ## Getting started
+
 Development for Blue42 is done with VSCode. After cloning the repository, open the folder with VSCode. The test task named 'Coverage' will run all the unit tests and generate a html page in the build_artifacts directory with statistics. The test named 'Unit' skips the code coverage and physical module test. The test named 'Integration' may only be run once an AzureRM Context is established in VSCode's integrated PowerShell terminal.
 
 ## Requirements
+
 + PowerShell Core 6.1
 + AzureRm.Netcore
 + InvokeBuild
@@ -18,6 +20,8 @@ Development for Blue42 is done with VSCode. After cloning the repository, open t
 Blue42.build.ps1 - Invoke-Build build script
 
 Blue42.setting.ps1 - Custom script settings
+
+Setup.ps1 - Installs the required modules.
 
 ### /Blue42/ directory
 
@@ -50,5 +54,6 @@ Pester tests that do not require an Azure context.
 Pester tests that require an Azure context to run.
 
 ### /.vscode/ directory
+
 tasks.json - Defines the primary build actions.
 settings.json - Contains custom project settings.
