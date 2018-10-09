@@ -40,7 +40,7 @@ The module has the following functions
 
 #### Paramater Helpers
 
-+ [New-B42Password](./docs/New-B42Password.md]) - creates a password useful for defaults
++ [New-B42Password](./docs/New-B42Password.md) - creates a password useful for defaults
 + [Get-B42KeyVaultAccessPolicy](./docs/Get-B42KeyVaultAccessPolicy.md) - creates a key vault access policy suitable for a new deployment
 + [ConvertTo-B42Json](./docs/ConvertTo-B42Json.md) - converts a B42 powershell template to json
 
