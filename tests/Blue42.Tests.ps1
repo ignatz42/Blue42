@@ -72,6 +72,9 @@ Describe "the physical manifest" {
                 $functionFileName.FullName | Should -FileContentMatch "begin {"
                 $functionFileName.FullName | Should -FileContentMatch "process {"
                 $functionFileName.FullName | Should -FileContentMatch "end {"
+                if ($sourceDirectory -eq "Public") {
+                    $functionFileName.FullName | Should -FileContentMatch ".EXAMPLE"
+                }
             }
         }
     }

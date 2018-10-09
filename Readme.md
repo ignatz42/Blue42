@@ -7,6 +7,33 @@ Blue42 is a PowerShell script module that facilitates the process of writing and
 
 ## The Module
 
+### Requirements
+
+Blue42 requires the following modules to function as intended.
+
++ PowerShell Core 6.1
++ AzureRm.Netcore
+
+( PowerShell Desktop 5.1/AzrueRM has limitations noted above. )
+
+### Installation
+
+#### From the PowerShell Gallery
+
+[![PS Gallery](https://img.shields.io/badge/install-PS%20Gallery-blue.svg)](https://www.powershellgallery.com/packages/Blue42)
+
+The preferred way to install Blue42 is via the [PowerShell Gallery](https://www.powershellgallery.com/). For more information, see the [PowerShell Gallery Getting Started](https://msdn.microsoft.com/en-us/powershell/gallery/psgallery/psgallery_gettingstarted) page.
+
+Run the following command to install Blue42 and its dependencies :
+
+```powershell
+Install-Module -Name Blue42 -Repository PSGallery
+```
+
+#### From Github
+
+As an alternative, you can clone this repository to a location on your system then kindly review Developer.md
+
 ### Functions
 
 The module has the following functions
@@ -43,33 +70,6 @@ The module includes a group of templates that have the following characteristics
 + Have default values that take advantage of the following special values; [PASSWORD], [LOCATOIN], [UID]
 
 The result is that these templates may be 'stacked' to create more complex templates. For example, create a new template that contains a Key Vault and Storage Account suitable.
-
-### Requirements
-
-Blue42 requires the following modules to function as intended.
-
-+ PowerShell Core 6.1
-+ AzureRm.Netcore
-
-( PowerShell Desktop 5.1/AzrueRM has limitations noted above. )
-
-### Installation
-
-#### From the PowerShell Gallery
-
-[![PS Gallery](https://img.shields.io/badge/install-PS%20Gallery-blue.svg)](https://www.powershellgallery.com/packages/Blue42)
-
-The preferred way to install Blue42 is via the [PowerShell Gallery](https://www.powershellgallery.com/). For more information, see the [PowerShell Gallery Getting Started](https://msdn.microsoft.com/en-us/powershell/gallery/psgallery/psgallery_gettingstarted) page.
-
-Run the following command to install Blue42 and its dependencies :
-
-```powershell
-Install-Module -Name Blue42 -Repository PSGallery
-```
-
-#### From Github
-
-As an alternative, you can clone this repository to a location on your system then kindly review Developer.md
 
 ## License
 

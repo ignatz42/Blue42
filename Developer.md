@@ -12,6 +12,7 @@ Development for Blue42 is done with VSCode. After cloning the repository, open t
 + Pester
 + PSScriptAnalyzer
 + PSCodeHealth
++ platyPS
 
 ## File Structure
 
@@ -57,3 +58,11 @@ Pester tests that require an Azure context to run.
 
 tasks.json - Defines the primary build actions.
 settings.json - Contains custom project settings.
+
+## Overview
+
+1. Install the pre-requisite modules by runnng Setup.ps1
+2. Run `Invoke-Build Test Blue42.build.ps1` to run the unit tests and PSScriptAnalyzer
+3. Run `Invoke-Build Publish Blue42.build.ps1` to publish the module
+4. Run `Invoke-Build Docs Blue42.build.ps1` to create Markdown help files from the function comments.
+5. Open the folder with VSCode and find the following tasks defined: Coverage, Unit, Integration. Coverage is the same as number two above. Unit only runs the unit tests for quick development. Integration requires an existing Azure Context to perform actual ARM template deployments.
