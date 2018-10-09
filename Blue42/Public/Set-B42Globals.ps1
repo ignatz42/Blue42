@@ -4,6 +4,8 @@ function Set-B42Globals {
         Sets the default values for Location, TemplatePath, and a Unique Identifer.
         .DESCRIPTION
         The Set-B42Globals function sets some helper values with a Module Global scope.
+        .EXAMPLE
+        Set-B42Globals -UID "uniqueString" -Location "azureLocation" -TemplatePath "pathToCustomTemplates"
         .NOTES
         The unique identifer is used to relate default resource names.
     #>

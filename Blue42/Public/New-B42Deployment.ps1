@@ -5,6 +5,8 @@ function New-B42Deployment {
         .DESCRIPTION
         The New-B42Deployment function uses the AzureRM module to perform a New-AzureRmResourceGroupDeployment using the supplied
         template and a (partial) parameter set. If no parameter set is supplied, the templates default parameters will be used.
+        .EXAMPLE
+        New-B42Deployment -Templates @("Vnet", "Subnet")
         .NOTES
         You need to run this function after establishing an AzureRm context using Login-AzureRmAccount
     #>

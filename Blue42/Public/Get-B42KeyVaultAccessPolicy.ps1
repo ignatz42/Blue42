@@ -5,6 +5,8 @@ function Get-B42KeyVaultAccessPolicy {
         .DESCRIPTION
         The Get-B42KeyVaultAccessPolicy function returns a hashtable that represents all possible permissions to an Azure KeyVault.
         Remove the unwanted permissions before passing it along to a KeyVault template as a parameter.
+        .EXAMPLE
+        Get-B42KeyVaultAccessPolicy -UserPrincipalName user@domain.com
         .NOTES
         This function is mostly useful for assigning the KeyVault creator instat access.
     #>

@@ -4,6 +4,8 @@ function Get-B42Globals {
         Retrieves the current set of globals parameters and their values.
         .DESCRIPTION
         The Get-B42Globals function displays the Unique Identifer, Location, and Module Template Path
+        .EXAMPLE
+        Get-B42Globals
         .NOTES
         Run Set-B42Globals to change or update the values.
     #>

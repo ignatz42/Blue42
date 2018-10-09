@@ -1,11 +1,15 @@
 function Test-B42Deployment {
     <#
         .SYNOPSIS
-        Test a Deployment
+        Test the Resource Group Deployments
         .DESCRIPTION
-        The Test-B42Deployment function tests a deployment and attempts to return a go/no-go value
+        The Test-B42Deployment function tests a group of resource deployment and attempts to return a go/no-go value
+        First it verifies that each deployment is successful, then it compares the expected parameter values for each
+        deployment match expected.
+        .EXAMPLE
+        Test-B42Deployment -Templates @("Vnet", "Subnet")
         .NOTES
-        I'm not sure how to test this in the abstract.
+        The custom class B42DeploymentReport has additonal details.
     #>
     [OutputType('B42DeploymentReport')]
     [CmdletBinding()]

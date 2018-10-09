@@ -4,6 +4,8 @@ function Get-B42Template {
         Retrieves an ARM template in native PowerShell objects.
         .DESCRIPTION
         The Get-B42Template function creates a new template by combining the supplied atomic templates and returns it in Hashtable/array format.
+        .EXAMPLE
+        Get-B42Template -Templates @("Vnet", "Subnet")
         .NOTES
         This function is mostly useful for creating templates by stacking the atomic elements.
     #>

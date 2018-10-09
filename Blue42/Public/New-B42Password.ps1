@@ -4,6 +4,8 @@ function New-B42Password {
         Generates a reasonable secure password.
         .DESCRIPTION
         The New-B42Password function creates a GUID, splits it by the hyphen charater, then randomly capitalizes the blocks and reassemables them with random special character seperators.
+        .EXAMPLE
+        New-B42Password
         .NOTES
         The function verifies the output before returning.
     #>

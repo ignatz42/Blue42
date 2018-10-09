@@ -4,6 +4,8 @@ function Get-B42TemplateParameters {
         Retrieves a hashtable of template parameters suitable for deployment.
         .DESCRIPTION
         The Get-B42TemplateParameters function returns a hashtable of template parameters suitable for deployment. The template's default values are used as a starting place. Special tokens are replaced.
+        .EXAMPLE
+        Get-B42TemplateParameters -Templates @("Vnet", "Subnet")
         .NOTES
         This function does a token replacement on [PASSWORD] and [UID] contained in the template's default value field.
     #>

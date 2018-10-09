@@ -4,6 +4,8 @@ function Find-B42Template {
         Retrieves a list of templates (files with json extension) in the path.
         .DESCRIPTION
         The Find-B42Template function lists the json file names in the given directory. Use Get-B42Globals to view the default directory.
+        .EXAMPLE
+        Find-B42Template
         .NOTES
         This function is mostly useful for listing templates in the default directory.
     #>
