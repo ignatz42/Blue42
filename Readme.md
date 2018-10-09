@@ -32,7 +32,7 @@ Install-Module -Name Blue42 -Repository PSGallery
 
 #### From Github
 
-As an alternative, you can clone this repository to a location on your system then kindly review Developer.md
+As an alternative, you can clone this repository to a location on your system then kindly review [Developer docs](./Developer.md)
 
 ### Functions
 
@@ -40,25 +40,25 @@ The module has the following functions
 
 #### Paramater Helpers
 
-+ New-B42Password - creates a password useful for defaults
-+ Get-B42KeyVaultAccessPolicy - creates a key vault access policy suitable for a new deployment
-+ ConvertTo-B42Json - converts a B42 powershell template to json
++ [New-B42Password](./docs/New-B42Password.md]) - creates a password useful for defaults
++ [Get-B42KeyVaultAccessPolicy](./docs/Get-B42KeyVaultAccessPolicy.md) - creates a key vault access policy suitable for a new deployment
++ [ConvertTo-B42Json](./docs/ConvertTo-B42Json.md) - converts a B42 powershell template to json
 
 #### Global Session Variables
 
-+ Set-B42Globals - sets current session values
-+ Get-B42Globals - retrieves current session values
++ [Set-B42Globals](./docs/Set-B42Globals.md) - sets current session values
++ [Get-B42Globals](./docs/Get-B42Globals.md) - retrieves current session values
 
 #### Templates tools
 
-+ Find-B42Template - Lists available templates in session template directory
-+ Get-B42Template - Retreieves a powershell object representation of an ARM template's json
-+ Get-B42TemplateParameters - Retrieves a powershell object representation of an ARM template's json parameters.
++ [Find-B42Template](./docs/Find-B42Template.md) - Lists available templates in session template directory
++ [Get-B42Template](./docs/Get-B42Template.md) - Retreieves a powershell object representation of an ARM template's json
++ [Get-B42TemplateParameters](./docs/Get-B42TemplateParameters.md) - Retrieves a powershell object representation of an ARM template's json parameters.
 
 #### Deployment tools
 
-+ New-B42Deployment - creates a new AzureRmReourceGroup deployment with supplied parameters
-+ Test-B42Deployment - verifies that a resource group's AzureRmResourceGroupDeployment variables matched expected values (Incompatible with PowerShell 5.1)
++ [New-B42Deployment](./docs/New-B42Deployment.md) - creates a new AzureRmReourceGroup deployment with supplied parameters
++ [Test-B42Deployment](./docs/Test-B42Deployment.md) - verifies that a resource group's AzureRmResourceGroupDeployment variables matched expected values (Incompatible with PowerShell 5.1)
 
 ### Templates
 The module includes a group of templates that have the following characteristics:
@@ -73,4 +73,4 @@ The result is that these templates may be 'stacked' to create more complex templ
 
 ## License
 
-This project is [licensed under the MIT License](LICENSE).
+This project is [licensed under the MIT License](./LICENSE).
