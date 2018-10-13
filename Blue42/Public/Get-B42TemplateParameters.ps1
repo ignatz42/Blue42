@@ -56,7 +56,7 @@ function Get-B42TemplateParameters {
             foreach ($templateParameterKey in $outputTemplateParameters.Keys) {
                 $parametersJson.parameters.Add($templateParameterKey, @{value = $outputTemplateParameters.$templateParameterKey})
             }
-            $outputTemplateParameters = ConvertTo-B42Json -TemplateObject $parametersJson
+            $outputTemplateParameters = ConvertTo-B42Json -InputObject $parametersJson
         }
 
         $outputTemplateParameters

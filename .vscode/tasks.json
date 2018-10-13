@@ -26,11 +26,18 @@
   },
   "tasks": [
     {
-      "label": "Coverage",
+      "label": "Invoke-Build Test",
       "type": "shell",
       "group": "test",
       "problemMatcher": [ "$msCompile" ],
       "command": "Invoke-Build -Task Test"
+    },
+    {
+      "label": "Invoke-Build Health",
+      "type": "shell",
+      "group": "test",
+      "problemMatcher": [ "$msCompile" ],
+      "command": "Invoke-Build -Task Health"
     },
     {
       "label": "Unit",

@@ -74,9 +74,9 @@ task ConfirmTestsPassed {
 
 #Synopsis: Produce the PSCodeHealth report.
 task CodeHealth {
-    # Experimenting with Health report. The tool's output doesn't match the PSScriptAnalyzer output for function coverage.
-    # The limiting Pester options and/or the Pester results may give a clue.
-    Invoke-PSCodeHealth -Path "$ModulePath" -Recurse -TestsPath "$PSScriptRoot\tests\unit" -HtmlReportPath (Join-Path $Artifacts "PSCodeHealthReport.html")
+    # The tool's output doesn't match the PSScriptAnalyzer output for function coverage.
+    # The following command shows that the total missed lines is equal to 5 but the function coverage here shows 20+
+    Invoke-PSCodeHealth -Verbose -Path "$ModulePath" -Recurse -TestsPath "$PSScriptRoot\tests\unit\*" -HtmlReportPath (Join-Path $Artifacts "PSCodeHealthReport.html") 4> (Join-Path $Artifacts "PSCodeHealthReport.Verbose.Log")
 }
 
 #Synopsis: Publish the module.

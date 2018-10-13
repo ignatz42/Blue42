@@ -61,7 +61,7 @@ function Get-B42Template {
         }
         $returnObject = $combinedTemplate
         if ($AsJson) {
-            $returnObject = ConvertTo-B42Json -TemplateObject $combinedTemplate
+            $returnObject = ConvertTo-B42Json -InputObject $combinedTemplate
         }
         $returnObject
     }
