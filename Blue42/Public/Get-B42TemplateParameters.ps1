@@ -9,6 +9,7 @@ function Get-B42TemplateParameters {
         .NOTES
         This function does a token replacement on [PASSWORD] and [UID] contained in the template's default value field.
     #>
+    [OutputType('System.Collections.Specialized.OrderedDictionary')]
     [CmdletBinding()]
     param (
         # An array of template names that will be combined into a single template then deployed to Azure

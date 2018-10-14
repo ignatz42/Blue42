@@ -9,6 +9,7 @@ function New-B42Password {
         .NOTES
         The function verifies the output before returning.
     #>
+    [OutputType('System.String')]
     [CmdletBinding()]
     param ()
 

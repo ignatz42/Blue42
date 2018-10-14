@@ -7,6 +7,7 @@ function Get-DateTime15 {
         .NOTES
         This feels new
     #>
+    [OutputType('System.String')]
     [CmdletBinding()]
     param ()
 

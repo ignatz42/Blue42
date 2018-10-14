@@ -11,15 +11,16 @@ function ConvertTo-B42Json {
         .NOTES
         This function removes extra unicode formatting leftove from ConvertTo-Json
     #>
+    [OutputType('System.String')]
     [CmdletBinding()]
     param (
         # Powershell object in ordered dictionary collection
+        [Parameter(Mandatory=$true)]
         [System.Collections.Specialized.OrderedDictionary] $InputObject
     )
 
     begin {
         Write-Verbose "Starting ConvertTo-B42Json"
-
     }
 
     process {
