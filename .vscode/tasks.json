@@ -40,14 +40,14 @@
       "command": "Invoke-Build -Task Health"
     },
     {
-      "label": "Unit",
+      "label": "Invoke-Pester -ExcludeTag RequiresAzureContext",
       "type": "shell",
       "group": "test",
       "problemMatcher": [ "$msCompile" ],
       "command": "Invoke-Pester -Script .\\tests* -ExcludeTag RequiresAzureContext"
     },
     {
-      "label": "Integration",
+      "label": "Invoke-Pester -Tag RequiresAzureContext",
       "type": "shell",
       "group": "test",
       "problemMatcher": [ "$msCompile" ],
