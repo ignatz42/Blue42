@@ -6,31 +6,23 @@ function Get-B42KeyVaultAccessPolicy {
         The Get-B42KeyVaultAccessPolicy function returns a hashtable that represents all possible permissions to an Azure KeyVault.
         Remove the unwanted permissions before passing it along to a KeyVault template as a parameter.
         .EXAMPLE
-        Get-B42KeyVaultAccessPolicy -UserPrincipalName user@domain.com
+        Get-B42KeyVaultAccessPolicy -ObjectID "2dd39430-f77b-4f9e-83dd-61c26e222df1" -TenantID "52154619-1815-4178-a7e7-44a1ac3a5f98"
         .NOTES
         This function is mostly useful for assigning the KeyVault creator instat access.
     #>
     [OutputType('System.Collections.Hashtable')]
     [CmdletBinding()]
     param (
-        # The user principal name to add to an access policy.  If none is supplied, the current user will be used.
-        [Parameter(Mandatory = $false)]
-        [string] $UserPrincipalName
+        # The ObjectId to add to an access policy.
+        [Parameter(Mandatory = $true)]
+        [string] $ObjectID,
+
+        # The TenantId to add to an access policy.
+        [Parameter(Mandatory = $true)]
+        [string] $TenantID
     )
 
     begin {
-        $currentContext = Get-AzureRmContext
-        if ($null -eq $currentContext) {
-            throw "Must establish an Azure Context to the tenant where the User Principal lives"
-        }
-        $TenantID = $currentContext.Tenant.Id
-        if ([string]::IsNullOrEmpty($UserPrincipalName)) {
-            $UserPrincipalName = $currentContext.Account.Id
-        }
-        $ObjectID = (Get-AzureRmADUser -UserPrincipalName $UserPrincipalName).Id.ToString()
-        if ([string]::IsNullOrEmpty($ObjectID)) {
-            throw ("User Principal {0} not found in Tenant {1}" -f $UserPrincipalName, $TenantID)
-        }
     }
 
     process {
