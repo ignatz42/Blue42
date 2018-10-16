@@ -37,6 +37,7 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## OUTPUTS
 
 ### System.Collections.Hashtable
+
 ## NOTES
 Run Set-B42Globals to change or update the values.
 

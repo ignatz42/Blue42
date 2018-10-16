@@ -13,7 +13,7 @@ Creates a hashtable that is suitable to pass to a KeyVault during creation.
 ## SYNTAX
 
 ```
-Get-B42KeyVaultAccessPolicy [[-UserPrincipalName] <String>] [<CommonParameters>]
+Get-B42KeyVaultAccessPolicy [-ObjectID] <String> [-TenantID] <String> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -24,22 +24,36 @@ Remove the unwanted permissions before passing it along to a KeyVault template a
 
 ### EXAMPLE 1
 ```
-Get-B42KeyVaultAccessPolicy -UserPrincipalName user@domain.com
+Get-B42KeyVaultAccessPolicy -ObjectID "2dd39430-f77b-4f9e-83dd-61c26e222df1" -TenantID "52154619-1815-4178-a7e7-44a1ac3a5f98"
 ```
 
 ## PARAMETERS
 
-### -UserPrincipalName
-The user principal name to add to an access policy. 
-If none is supplied, the current user will be used.
+### -ObjectID
+The ObjectId to add to an access policy.
 
 ```yaml
 Type: String
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 1
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -TenantID
+The TenantId to add to an access policy.
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -54,6 +68,7 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## OUTPUTS
 
 ### System.Collections.Hashtable
+
 ## NOTES
 This function is mostly useful for assigning the KeyVault creator instat access.
 

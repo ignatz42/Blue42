@@ -13,7 +13,7 @@ Just enough JSON beauty for human readable output
 ## SYNTAX
 
 ```
-ConvertTo-B42Json [[-InputObject] <OrderedDictionary>] [<CommonParameters>]
+ConvertTo-B42Json [-InputObject] <OrderedDictionary> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -41,7 +41,7 @@ Type: OrderedDictionary
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 1
 Default value: None
 Accept pipeline input: False
@@ -55,6 +55,8 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## INPUTS
 
 ## OUTPUTS
+
+### System.String
 
 ## NOTES
 This function removes extra unicode formatting leftove from ConvertTo-Json
