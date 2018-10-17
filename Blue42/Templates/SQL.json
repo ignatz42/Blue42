@@ -2,7 +2,7 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "sqlServerPrimaryName": {
+    "sqlName": {
       "type": "string",
       "defaultValue": "sql[SUFFIX]",
       "metadata": {
@@ -48,7 +48,7 @@
   "variables": {},
   "resources": [
     {
-      "name": "[parameters('sqlServerPrimaryName')]",
+      "name": "[parameters('sqlName')]",
       "type": "Microsoft.Sql/servers",
       "location": "[resourceGroup().location]",
       "apiVersion": "2015-05-01-preview",
@@ -62,7 +62,7 @@
     },
     {
       "type": "Microsoft.Sql/servers/virtualNetworkRules",
-      "name": "[concat(parameters('sqlServerPrimaryName'), '/newVnetRule', copyIndex('virtualNetworkRules'))]",
+      "name": "[concat(parameters('sqlName'), '/newVnetRule', copyIndex('virtualNetworkRules'))]",
       "apiVersion": "2015-05-01-preview",
       "properties": {
         "virtualNetworkSubnetId": "[concat(resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/', parameters('vnetName')), '/', 'subnets', '/', parameters('sqlAllowedSubnets')[copyIndex('virtualNetworkRules')])]",
@@ -73,7 +73,7 @@
         "count": "[length(parameters('sqlAllowedSubnets'))]"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Sql/servers/', parameters('sqlServerPrimaryName'))]"
+        "[resourceId('Microsoft.Sql/servers/', parameters('sqlName'))]"
       ]
     }
   ],

@@ -4,6 +4,7 @@
   "parameters": {
     "vmExtensionName": {
       "type": "string",
+      "defaultValue": "mvx[UID]",
       "metadata": {
         "description": "Name of the VM"
       }

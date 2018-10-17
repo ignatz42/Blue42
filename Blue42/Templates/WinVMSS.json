@@ -177,7 +177,6 @@
         "capacity": "[int(parameters('vmssInstanceCount'))]"
       },
       "tags": {},
-      "scale": null,
       "properties": {
         "singlePlacementGroup": true,
         "upgradePolicy": {
