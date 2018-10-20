@@ -49,16 +49,24 @@ The module has the following functions
 + [Set-B42Globals](./docs/Set-B42Globals.md) - sets current session values
 + [Get-B42Globals](./docs/Get-B42Globals.md) - retrieves current session values
 
-#### Templates tools
+#### Templates Tools
 
 + [Find-B42Template](./docs/Find-B42Template.md) - Lists available templates in session template directory
 + [Get-B42Template](./docs/Get-B42Template.md) - Retreieves a powershell object representation of an ARM template's json
 + [Get-B42TemplateParameters](./docs/Get-B42TemplateParameters.md) - Retrieves a powershell object representation of an ARM template's json parameters.
 
-#### Deployment tools
+#### Deployment Tools
 
 + [New-B42Deployment](./docs/New-B42Deployment.md) - creates a new AzureRmReourceGroup deployment with supplied parameters
 + [Test-B42Deployment](./docs/Test-B42Deployment.md) - verifies that a resource group's AzureRmResourceGroupDeployment variables matched expected values (Incompatible with PowerShell 5.1)
+
+#### Deployment Helpers
++ [Deploy-B42VNet](./docs/Deploy-B42VNetmd) - deploys a virtual network and 0 or more subnets
++ [Deploy-B42VM](./docs/Deploy-B42VM.md) - deploys a virtual machine with 0 or more script extensions.
++ [Deploy-B42VMSS](./docs/Deploy-B42VMSS.md) - deploys a virtual machine scale set with 0 or more script extensions.
++ [Deploy-B42SQL](./docs/Deploy-B42SQL.md) - deploys a SQL server and 0 or more databases.
++ [Deploy-B42AppService](./docs/Deploy-B42AppService.md) - deploys an application service plan and 0 or more web apps.
++ [Deploy-B42ASE](./docs/Deploy-B42ASE.md) - deploys an application service environment.
 
 ### Templates
 The module includes a group of templates that have the following characteristics:
