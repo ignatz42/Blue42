@@ -9,6 +9,13 @@
         "description": "The name of the Key Vault"
       }
     },
+    "keyVaultLocation": {
+      "type": "string",
+      "defaultValue": "azure[LOCATION]",
+      "metadata": {
+        "description": "Key Vault Location."
+      }
+    },
     "keyVaultSku": {
       "type": "string",
       "defaultValue": "Standard",
@@ -68,13 +75,15 @@
       }
     }
   },
-  "variables": {},
+  "variables": {
+    "keyVaultLocation": "[if(empty(parameters('keyVaultLocation')), resourceGroup().location, parameters('keyVaultLocation'))]"
+  },
   "resources": [
     {
       "apiVersion": "2018-02-14",
       "name": "[parameters('keyVaultName')]",
       "type": "Microsoft.KeyVault/vaults",
-      "location": "[resourceGroup().location]",
+      "location": "[variables('keyVaultLocation')]",
       "properties": {
         "enabledForDeployment": "[parameters('keyVaultEnabledForDeployment')]",
         "enabledForTemplateDeployment": "[parameters('keyVaultEnabledForTemplateDeployment')]",

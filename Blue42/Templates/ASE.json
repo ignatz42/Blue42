@@ -32,7 +32,7 @@
     },
     "aseLocation": {
       "type": "string",
-      "defaultValue": "East US",
+      "defaultValue": "azure[LOCATION]",
       "metadata": {
         "description": "Location of the App Service Environment"
       }
@@ -73,6 +73,7 @@
     }
   },
   "variables": {
+    "aseLocation": "[if(empty(parameters('aseLocation')), resourceGroup().location, parameters('aseLocation'))]",
     "vnetResourceID": "[resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/', parameters('vnetName'))]",
     "aseClusterSettings": [
       {
@@ -86,7 +87,7 @@
       "apiVersion": "2016-09-01",
       "type": "Microsoft.Web/hostingEnvironments",
       "name": "[parameters('aseName')]",
-      "location": "[parameters('aseLocation')]",
+      "location": "[variables('aseLocation')]",
       "kind": "[parameters('aseKind')]",
       "properties": {
         "name": "[parameters('aseName')]",

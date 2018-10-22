@@ -9,6 +9,13 @@
         "description": "The RouteTable name."
       }
     },
+    "routeTableLocation": {
+      "type": "string",
+      "defaultValue": "azure[LOCATION]",
+      "metadata": {
+        "description": "RouteTable Location."
+      }
+    },
     "routeTableRoutes": {
       "type": "array",
       "defaultValue": [
@@ -24,6 +31,7 @@
     }
   },
   "variables": {
+    "routeTableLocation": "[if(empty(parameters('routeTableLocation')), resourceGroup().location, parameters('routeTableLocation'))]",
     "tableProperties": {
       "copy": [
         {
@@ -45,7 +53,7 @@
       "apiVersion": "2017-10-01",
       "type": "Microsoft.Network/routeTables",
       "name": "[parameters('routeTableName')]",
-      "location": "[resourceGroup().location]",
+      "location": "[variables('routeTableLocation')]",
       "properties": "[variables('tableProperties')]"
     }
   ],

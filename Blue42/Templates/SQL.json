@@ -9,6 +9,13 @@
         "description": "The primary name of the SQL Server."
       }
     },
+    "sqlLocation": {
+      "type": "string",
+      "defaultValue": "azure[LOCATION]",
+      "metadata": {
+        "description": "SQL Location."
+      }
+    },
     "sqlAdminName": {
       "type": "string",
       "defaultValue": "azsa",
@@ -45,12 +52,14 @@
       }
     }
   },
-  "variables": {},
+  "variables": {
+    "sqlLocation": "[if(empty(parameters('sqlLocation')), resourceGroup().location, parameters('sqlLocation'))]"
+  },
   "resources": [
     {
       "name": "[parameters('sqlName')]",
       "type": "Microsoft.Sql/servers",
-      "location": "[resourceGroup().location]",
+      "location": "[variables('sqlLocation')]",
       "apiVersion": "2015-05-01-preview",
       "kind": "v12.0",
       "tags": {},

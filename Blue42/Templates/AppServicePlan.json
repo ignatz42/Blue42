@@ -9,6 +9,13 @@
         "description": "The App Service Plan Name"
       }
     },
+    "aspLocation": {
+      "type": "string",
+      "defaultValue": "azure[LOCATION]",
+      "metadata": {
+        "description": "App Service Plan Location."
+      }
+    },
     "aspSkuTier": {
       "type": "string",
       "defaultValue": "Free",
@@ -91,6 +98,7 @@
     }
   },
   "variables": {
+    "aspLocation": "[if(empty(parameters('aspLocation')), resourceGroup().location, parameters('aspLocation'))]",
     "aspProperties": {
       "name": "[parameters('aspName')]",
       "workerSize": "[parameters('aspWorkerSize')]",
@@ -110,7 +118,7 @@
         "name": "[parameters('aspSkuName')]"
       },
       "kind": "[parameters('aspKind')]",
-      "location": "[resourceGroup().location]",
+      "location": "[variables('aspLocation')]",
       "properties": "[if(empty(parameters('aseName')), json('null'), variables('aspProperties'))]"
     }
   ],

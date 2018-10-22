@@ -9,6 +9,13 @@
         "description": "Name of the VM"
       }
     },
+    "vmExtensionLocation": {
+      "type": "string",
+      "defaultValue": "azure[LOCATION]",
+      "metadata": {
+        "description": "VM Extension Location."
+      }
+    },
     "vmName": {
       "type": "string",
       "defaultValue": "",
@@ -43,13 +50,15 @@
       "defaultValue": "2.0"
     }
   },
-  "variables": {},
+  "variables": {
+    "vmExtensionLocation": "[if(empty(parameters('vmExtensionLocation')), resourceGroup().location, parameters('vmExtensionLocation'))]"
+  },
   "resources": [
     {
       "name": "[concat(parameters('vmName'),'/', parameters('vmExtensionName'))]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "apiVersion": "2018-06-01",
-      "location": "[resourceGroup().location]",
+      "location": "[variables('vmExtensionLocation')]",
       "properties": {
         "publisher": "[parameters('vmExtensionPublisher')]",
         "type": "[parameters('vmExtensionType')]",

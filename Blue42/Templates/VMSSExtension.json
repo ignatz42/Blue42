@@ -9,6 +9,13 @@
         "description": "Name of the VM Extension"
       }
     },
+    "vmssExtensionLocation": {
+      "type": "string",
+      "defaultValue": "azure[LOCATION]",
+      "metadata": {
+        "description": "VM Extension Location."
+      }
+    },
     "vmssName": {
       "type": "string",
       "defaultValue": "",
@@ -43,13 +50,15 @@
       "defaultValue": "2.0"
     }
   },
-  "variables": {},
+  "variables": {
+    "vmssExtensionLocation": "[if(empty(parameters('vmssExtensionLocation')), resourceGroup().location, parameters('vmssExtensionLocation'))]"
+  },
   "resources": [
     {
       "name": "[concat(parameters('vmssName'),'/', parameters('vmssExtensionName'))]",
       "type": "Microsoft.Compute/virtualMachineScaleSets/extensions",
       "apiVersion": "2017-12-01",
-      "location": "[resourceGroup().location]",
+      "location": "[variables('vmssExtensionLocation')]",
       "properties": {
         "publisher": "[parameters('vmssExtensionPublisher')]",
         "type": "[parameters('vmssExtensionType')]",

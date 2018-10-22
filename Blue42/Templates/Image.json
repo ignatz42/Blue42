@@ -9,6 +9,13 @@
         "description": "The managed image name."
       }
     },
+    "imageLocation": {
+      "type": "string",
+      "defaultValue": "azure[LOCATION]",
+      "metadata": {
+        "description": "Image Location."
+      }
+    },
     "imageOsType": {
       "type": "string",
       "defaultValue": "Windows",
@@ -52,13 +59,15 @@
       }
     }
   },
-  "variables": {},
+  "variables": {
+    "imageLocation": "[if(empty(parameters('imageLocation')), resourceGroup().location, parameters('imageLocation'))]"
+  },
   "resources": [
     {
       "apiVersion": "2018-06-01",
       "type": "Microsoft.Compute/images",
       "name": "[parameters('imageName')]",
-      "location": "[resourceGroup().location]",
+      "location": "[variables('imageLocation')]",
       "properties": {
         "storageProfile": {
           "zoneResilient": "[parameters('imageZoneResilient')]",

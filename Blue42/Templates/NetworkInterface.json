@@ -9,6 +9,13 @@
         "description": "Network Interface Name"
       }
     },
+    "networkInterfaceLocation": {
+      "type": "string",
+      "defaultValue": "azure[LOCATION]",
+      "metadata": {
+        "description": "Network Interface Location."
+      }
+    },
     "vnetName": {
       "type": "string",
       "defaultValue": "",
@@ -46,6 +53,7 @@
     }
   },
   "variables": {
+    "networkInterfaceLocation": "[if(empty(parameters('networkInterfaceLocation')), resourceGroup().location, parameters('networkInterfaceLocation'))]",
     "subnetResourceID": "[concat(resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/', parameters('vnetName')), '/', 'subnets', '/', parameters('subnetName'))]",
     "publicIpAddressResourceID": {
       "id": "[resourceId('Microsoft.Network/publicIpAddresses', parameters('publicIPName'))]"
@@ -59,7 +67,7 @@
       "apiVersion": "2018-08-01",
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[parameters('networkInterfaceName')]",
-      "location": "[resourceGroup().location]",
+      "location": "[variables('networkInterfaceLocation')]",
       "properties": {
         "ipConfigurations": [
           {

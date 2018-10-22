@@ -11,9 +11,9 @@
     },
     "certificateLocation": {
       "type": "string",
-      "defaultValue": "East US",
+      "defaultValue": "azure[LOCATION]",
       "metadata": {
-        "description": "Location of the App Service Environment"
+        "description": "Location of the Web Certificate"
       }
     },
     "certificatePassword": {

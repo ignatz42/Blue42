@@ -9,6 +9,13 @@
         "description": "The name of the Load Balancer."
       }
     },
+    "loadBalancerLocation": {
+      "type": "string",
+      "defaultValue": "azure[LOCATION]",
+      "metadata": {
+        "description": "Load Balancer Location."
+      }
+    },
     "loadBalancerSKU": {
       "type": "string",
       "defaultValue": "Basic",
@@ -89,6 +96,7 @@
     }
   },
   "variables": {
+    "loadBalancerLocation": "[if(empty(parameters('loadBalancerLocation')), resourceGroup().location, parameters('loadBalancerLocation'))]",
     "subnetResourceID": "[concat(resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/', parameters('vnetName')), '/', 'subnets', '/', parameters('subnetName'))]",
     "loadBalancerResourceID": "[resourceId('Microsoft.Network/loadBalancers/', parameters('loadBalancerName'))]",
     "loadBalancerFrontEndResourceID": "[concat(variables('loadBalancerResourceID'), '/frontendIPConfigurations/', parameters('loadBalancerFrontEndPoolName'))]",
@@ -127,7 +135,7 @@
       "apiVersion": "2017-08-01",
       "name": "[parameters('loadBalancerName')]",
       "type": "Microsoft.Network/loadBalancers",
-      "location": "[resourceGroup().location]",
+      "location": "[variables('loadBalancerLocation')]",
       "sku": {
         "name": "[parameters('loadBalancerSKU')]"
       },

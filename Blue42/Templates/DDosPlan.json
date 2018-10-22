@@ -8,15 +8,24 @@
       "metadata": {
         "description": "Name of the DDoS Standard Plan."
       }
+    },
+    "ddosLocation": {
+      "type": "string",
+      "defaultValue": "azure[LOCATION]",
+      "metadata": {
+        "description": "DDoS Location."
+      }
     }
   },
-  "variables": {},
+  "variables": {
+    "ddosLocation": "[if(empty(parameters('ddosLocation')), resourceGroup().location, parameters('ddosLocation'))]"
+  },
   "resources": [
     {
       "apiVersion": "2018-02-01",
       "type": "Microsoft.Network/ddosProtectionPlans",
       "name": "[parameters('ddosPlanName')]",
-      "location": "[resourceGroup().location]"
+      "location": "[variables('ddosLocation')]"
     }
   ],
   "outputs": {}

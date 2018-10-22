@@ -16,6 +16,13 @@
         "description": "The name of the virtual network peer"
       }
     },
+    "peerLocation": {
+      "type": "string",
+      "defaultValue": "azure[LOCATION]",
+      "metadata": {
+        "description": "virtual network peer Location."
+      }
+    },
     "peerAllowVirtualNetworkAccess": {
       "type": "bool",
       "defaultValue": true,
@@ -55,6 +62,7 @@
   },
   "variables": {
     "peerName": "[concat(parameters('vnetName'), '/', parameters('vnetPeerName'))]",
+    "peerLocation": "[if(empty(parameters('peerLocation')), resourceGroup().location, parameters('peerLocation'))]",
     "peerVnetResourceID": "[resourceId(parameters('peerVnetResourceGroupName'), 'Microsoft.Network/virtualNetworks', parameters('peerVnetName'))]"
   },
   "resources": [
@@ -62,7 +70,7 @@
       "name": "[variables('peerName')]",
       "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
       "apiVersion": "2018-08-01",
-      "location": "[resourceGroup().location]",
+      "location": "[variables('peerLocation')]",
       "properties": {
         "allowVirtualNetworkAccess": "[parameters('peerAllowVirtualNetworkAccess')]",
         "allowForwardedTraffic": "[parameters('peerAllowForwardedTraffic')]",

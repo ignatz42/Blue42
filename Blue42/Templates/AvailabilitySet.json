@@ -9,6 +9,13 @@
         "description": "The name of the availability set."
       }
     },
+    "asetLocation": {
+      "type": "string",
+      "defaultValue": "azure[LOCATION]",
+      "metadata": {
+        "description": "Availability Set Location."
+      }
+    },
     "asetFaultDomain": {
       "type": "int",
       "defaultValue": 2,
@@ -24,13 +31,15 @@
       }
     }
   },
-  "variables": {},
+  "variables": {
+    "asetLocation": "[if(empty(parameters('asetLocation')), resourceGroup().location, parameters('asetLocation'))]"
+  },
   "resources": [
     {
       "name": "[parameters('asetName')]",
       "type": "Microsoft.Compute/availabilitySets",
       "apiVersion": "2018-06-01",
-      "location": "[resourceGroup().location]",
+      "location": "[variables('asetlocation')]",
       "properties": {
         "platformFaultDomainCount": "[parameters('asetFaultDomain')]",
         "platformUpdateDomainCount": "[parameters('asetUpdateDomain')]",

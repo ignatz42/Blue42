@@ -30,6 +30,13 @@
         "description": "ScaleSet name."
       }
     },
+    "vmssLocation": {
+      "type": "string",
+      "defaultValue": "azure[LOCATION]",
+      "metadata": {
+        "description": "Scaleset Location."
+      }
+    },
     "vmssIdentity": {
       "type": "string",
       "defaultValue": "None",
@@ -143,6 +150,7 @@
     }
   },
   "variables": {
+    "vmssLocation": "[if(empty(parameters('vmssLocation')), resourceGroup().location, parameters('vmssLocation'))]",
     "subnetResourceID": "[concat(resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/', parameters('vnetName')), '/', 'subnets', '/', parameters('subnetName'))]",
     "imageResourceID": "[resourceId(parameters('imageResourceGroupName'), 'Microsoft.Compute/images/', parameters('imageName'))]",
     "loadBalancerResourceID": "[resourceId(parameters('loadBalancerResourceGroupName'), 'Microsoft.Network/loadBalancers/', parameters('loadBalancerName'))]",
@@ -167,7 +175,7 @@
       "apiVersion": "2017-12-01",
       "name": "[parameters('vmssName')]",
       "type": "Microsoft.Compute/virtualMachineScaleSets",
-      "location": "[resourceGroup().location]",
+      "location": "[variables('vmssLocation')]",
       "identity": {
         "type": "[parameters('vmssIdentity')]"
       },

@@ -9,6 +9,13 @@
         "description": "The Web App Name"
       }
     },
+    "webAppLocation": {
+      "type": "string",
+      "defaultValue": "azure[LOCATION]",
+      "metadata": {
+        "description": "Web App Location."
+      }
+    },
     "aspName": {
       "type": "string",
       "defaultValue": "",
@@ -32,14 +39,15 @@
     }
   },
   "variables": {
-    "aspResourceID": "[resourceId(parameters('aspResourceGroupName'), 'Microsoft.Web/serverfarms/', parameters('aspName'))]"
+    "aspResourceID": "[resourceId(parameters('aspResourceGroupName'), 'Microsoft.Web/serverfarms/', parameters('aspName'))]",
+    "webAppLocation": "[if(empty(parameters('webAppLocation')), resourceGroup().location, parameters('webAppLocation'))]"
   },
   "resources": [
     {
       "apiVersion": "2016-08-01",
       "type": "Microsoft.Web/sites",
       "name": "[parameters('webAppName')]",
-      "location": "[resourceGroup().location]",
+      "location": "[variables('webAppLocation')]",
       "properties": {
         "name": "[parameters('webAppName')]",
         "serverFarmId": "[variables('aspResourceID')]",

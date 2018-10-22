@@ -16,6 +16,13 @@
         "description": "Subnet name."
       }
     },
+    "subnetLocation": {
+      "type": "string",
+      "defaultValue": "azure[LOCATION]",
+      "metadata": {
+        "description": "Subnet Location."
+      }
+    },
     "subnetAddressPrefix": {
       "type": "string",
       "defaultValue": "10.0.0.0/24",
@@ -35,6 +42,7 @@
     }
   },
   "variables": {
+    "subnetLocation": "[if(empty(parameters('subnetLocation')), resourceGroup().location, parameters('subnetLocation'))]",
     "subnetPropertiesEndpoints": {
       "addressPrefix": "[parameters('subnetAddressPrefix')]",
       "copy": [
@@ -56,7 +64,7 @@
       "apiVersion": "2016-12-01",
       "type": "Microsoft.Network/virtualNetworks/subnets",
       "name": "[concat(parameters('vnetName'), '/', parameters('subnetName'))]",
-      "location": "[resourceGroup().location]",
+      "location": "[variables('subnetLocation')]",
       "properties": "[if(greater(length(parameters('subnetServiceEndpoints')), 0), variables('subnetPropertiesEndpoints'), variables('subnetPropertiesNoEndpoints'))]"
     }
   ],
