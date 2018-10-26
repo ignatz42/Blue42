@@ -8,11 +8,14 @@ Describe "Deployments" {
 
     It "deploys the Vnet" {
         # TODO Should this return a Report card maybe?
-        Deploy-B42VNet -ResourceGroupName "mockdeployment-rg" -IncludeDDos -Subnets @{}
+        Deploy-B42VNet -ResourceGroupName "mockdeployment-rg" -IncludeDDos -Subnets @{} -PrivateDNSZone "testing.local"
         Assert-MockCalled -ModuleName $ModuleName -CommandName Get-AzureRmResourceGroup -Scope It
         Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzureRmResourceGroup -Scope It
         Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzureRmResourceGroupDeployment -Scope It
         # Assert-MockCalled -ModuleName $ModuleName -CommandName Get-AzureRmResourceGroupDeployment -Scope It
+        Assert-MockCalled -ModuleName $ModuleName -CommandName Get-AzureRmVirtualNetwork -Scope It
+        Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzureRmDnsZone -Scope It
+        Assert-MockCalled -ModuleName $ModuleName -CommandName Set-AzureRmDnsZone -Scope It
     }
 
     It "deploys the VM" {

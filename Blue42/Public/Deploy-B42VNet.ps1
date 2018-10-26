@@ -29,7 +29,11 @@ function Deploy-B42VNet {
 
         # Include a Distributed Denial of Service plan
         [Parameter(Mandatory = $false)]
-        [switch] $IncludeDDos
+        [switch] $IncludeDDos,
+
+        # If supplied, a private DNS Zone will be created using the parameter's value
+        [Parameter(Mandatory = $false)]
+        [string] $PrivateDNSZone = ""
     )
 
     begin {
@@ -41,15 +45,21 @@ function Deploy-B42VNet {
         if ($IncludeDDos) {
             $templates = @("DDosPlan", "VNet")
         }
-        $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Templates $templates -Location "$Location"
+        $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates $templates
         $vnetName = $deploymentResult.Parameters.vnetName.Value
         if ([string]::IsNullOrEmpty($vnetName)) {throw "Failed to obtain VNet name"}
+
+        if (![string]::IsNullOrEmpty($PrivateDNSZone)) {
+            $thisVnet = Get-AzureRmVirtualNetwork -Name $vnetName -ResourceGroupName $ResourceGroupName
+            $null = New-AzureRmDnsZone -Name $PrivateDNSZone -ResourceGroupName $ResourceGroupName -ZoneType Private -ResolutionVirtualNetworkId @($thisVnet.Id)
+            $null = Set-AzureRmDnsZone -Name $PrivateDNSZone -ResourceGroupName $ResourceGroupName -ResolutionVirtualNetworkId @($thisVnet.Id)
+        }
 
         foreach ($subnet in $Subnets) {
             if (!$subnet.Contains("vnetName")) {
                 $subnet.Add("vnetName", $vnetName)
             }
-            $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Templates @("Subnet") -Location "$Location"
+            $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates @("Subnet") -TemplateParameters $subnet
         }
     }
 

@@ -60,3 +60,11 @@ Mock -ModuleName $ModuleName Get-AzureRmADUser {
         Type              = "User"
     }
 }
+
+Mock -ModuleName $ModuleName Get-AzureRmVirtualNetwork {
+    @{Id = "3ff12cf5-4a81-4f3c-a5f0-bb5ee8a58ede"}
+}
+
+Mock -ModuleName $ModuleName New-AzureRmDnsZone { return $null }
+
+Mock -ModuleName $ModuleName Set-AzureRmDnsZone { return $null }
