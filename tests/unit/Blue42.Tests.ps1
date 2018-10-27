@@ -53,6 +53,16 @@ Describe "the basic module" {
                 $test.SuccessfulDeploymentCount | Should Be (0)
                 $test.MismatchedParameters | Should Be (0)
             }
+
+            It "makes an NSG list" {
+                $list = Get-NSGList
+                ($list.Count -eq 1) | Should Be ($true)
+                ($list[0].destinationPortRange -eq "5986") | Should Be ($true)
+
+                $list = Get-NSGList -IsLinux
+                ($list.Count -eq 1) | Should Be ($true)
+                ($list[0].destinationPortRange -eq "22") | Should Be ($true)
+            }
         }
     }
 
