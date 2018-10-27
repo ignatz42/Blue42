@@ -54,7 +54,7 @@ Describe "the basic module" {
                 $test.MismatchedParameters | Should Be (0)
             }
 
-            It "makes an NSG list" {
+            It "generates an NSG list" {
                 $list = Get-NSGList
                 ($list.Count -eq 1) | Should Be ($true)
                 ($list[0].destinationPortRange -eq "5986") | Should Be ($true)
@@ -62,6 +62,15 @@ Describe "the basic module" {
                 $list = Get-NSGList -IsLinux
                 ($list.Count -eq 1) | Should Be ($true)
                 ($list[0].destinationPortRange -eq "22") | Should Be ($true)
+            }
+
+            It "adds a secret" {
+                $secretMeta = Add-Secret -KeyVaultName "testvault" -SecretName "AdminUser" -SecretValue "Password"
+                ($secretMeta.SecretValueText -eq "Password") | Should Be ($true)
+
+                $securePassword = (ConvertTo-SecureString -AsPlainText -Force -String "Password")
+                $secretMeta = Add-Secret -KeyVaultName "testvault" -SecretName "AdminUser" -SecretValue $securePassword
+                ($secretMeta.SecretValue -eq $securePassword) | Should Be ($true)
             }
         }
     }

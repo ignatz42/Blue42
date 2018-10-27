@@ -68,3 +68,15 @@ Mock -ModuleName $ModuleName Get-AzureRmVirtualNetwork {
 Mock -ModuleName $ModuleName New-AzureRmDnsZone { return $null }
 
 Mock -ModuleName $ModuleName Set-AzureRmDnsZone { return $null }
+
+Mock -ModuleName $ModuleName Set-AzureKeyVaultSecret {
+    $credentials = New-Object System.Net.NetworkCredential("TestUsername", $SecretValue, "TestDomain")
+    @{
+        VaultName       = $VaultName
+        Name            = $Name
+        Version         = "UID"
+        Id              = "https://contoso.vault.azure.net:443/secrets/$Name/UID"
+        SecretValue     = $SecretValue
+        SecretValueText = $credentials.Password
+    }
+}
