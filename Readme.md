@@ -13,8 +13,9 @@ Blue42 requires the following modules to function as intended.
 
 + PowerShell Core 6.1
 + AzureRm.Netcore
++ WindowsCompatibility - Required for PKI support
 
-( PowerShell Desktop 5.1/AzrueRM has limitations noted above. )
+( PowerShell Desktop 5.1/AzrueRM has limitations noted below. )
 
 ### Installation
 

@@ -56,7 +56,7 @@
 
     # Modules that must be imported into the global environment prior to importing this module
     RequiredModules = if($PSEdition -eq 'Core') {
-        @('AzureRM.Netcore')
+        @('AzureRM.Netcore', 'WindowsCompatibility')
     } else { # Desktop
         @('AzureRM')
     }
@@ -80,6 +80,7 @@
     FunctionsToExport = @(
         'New-B42Password',
         'Get-B42KeyVaultAccessPolicy',
+        'Get-B42CertificateForms',
         'Set-B42Globals',
         'Get-B42Globals',
         'Find-B42Template',
