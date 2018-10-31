@@ -11,6 +11,7 @@ Describe "the basic module" {
         # When calling functions via WindowsCompatibility, the TestDrive PSDrive is lost.
         $testDrivePath = Convert-Path -Path "TestDrive:"
     }
+
     Context "Private functions with internal mocks" {
         Mock -ModuleName $ModuleName New-B42Password { "ExpectedTestResult" }
         Mock -ModuleName $ModuleName Get-B42Globals {
@@ -115,15 +116,15 @@ Describe "the basic module" {
         }
 
         # Currently, this test only work in PowerShell 5.1 due to the interaction between WindowsCompatibility and PKI modules.
-        #It "generates a Certificate and converts it to usable forms" {
-        #    $certifacteResults = Get-B42CertificateForms -CertificatePath ("{0}Blue42TemplateTest.pfx" -f $testDrivePath) -DomainNames @("testing.local")
-        #    ($certifacteResults.Path -eq ("{0}Blue42TemplateTest.pfx" -f $testDrivePath)) | Should Be ($true)
-        #    ([string]::IsNullOrEmpty($certifacteResults.Password)) | Should Be ($false)
-        #    ([string]::IsNullOrEmpty($certifacteResults.Thumbprint)) | Should Be ($false)
-        #    ([string]::IsNullOrEmpty($certifacteResults.JsonArray)) | Should Be ($false)
-        #    ([string]::IsNullOrEmpty($certifacteResults.IntegerEncoded)) | Should Be ($false)
-        #    ([string]::IsNullOrEmpty($certifacteResults.PkcsSecret)) | Should Be ($false)
-        #}
+        It "generates a Certificate and converts it to usable forms" {
+            $certifacteResults = Get-B42CertificateForms -CertificatePath ("{0}Blue42TemplateTest.pfx" -f $testDrivePath) -DomainNames @("testing.local")
+            ($certifacteResults.Path -eq ("{0}Blue42TemplateTest.pfx" -f $testDrivePath)) | Should Be ($true)
+            ([string]::IsNullOrEmpty($certifacteResults.Password)) | Should Be ($false)
+            ([string]::IsNullOrEmpty($certifacteResults.Thumbprint)) | Should Be ($false)
+            ([string]::IsNullOrEmpty($certifacteResults.JsonArray)) | Should Be ($false)
+            ([string]::IsNullOrEmpty($certifacteResults.IntegerEncoded)) | Should Be ($false)
+            ([string]::IsNullOrEmpty($certifacteResults.PkcsSecret)) | Should Be ($false)
+        }
     }
 
     AfterAll {
