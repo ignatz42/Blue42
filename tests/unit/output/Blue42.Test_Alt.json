@@ -79,7 +79,8 @@
   "outputs": {
     "Blue42Password_Value": {
       "type": "string",
-      "value": "[parameters('Blue42Password')]"
+      "value": "[parameters('Blue42Password')]",
+      "special": null
     }
   }
 }

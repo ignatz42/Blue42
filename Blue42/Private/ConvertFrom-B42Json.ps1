@@ -11,8 +11,8 @@ function ConvertFrom-B42Json {
     [CmdletBinding()]
     param (
         # Input object in Json format
-        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-        $InputObject
+        [Parameter(Mandatory = $false, ValueFromPipeline = $true)]
+        $InputObject = $null
     )
 
     begin { }
