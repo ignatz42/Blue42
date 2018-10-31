@@ -8,7 +8,7 @@ function Get-NSGList {
         Linux Port 22; Windows 5986;
     #>
     [CmdletBinding()]
-    param(
+    param (
         # If true, the nsg will allow traffic on port 22 else on port 5986
         [Parameter (Mandatory = $false)]
         [switch] $IsLinux
