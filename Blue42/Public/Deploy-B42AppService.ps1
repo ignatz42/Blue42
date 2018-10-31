@@ -34,7 +34,7 @@ function Deploy-B42AppService {
 
     process {
         $templates = @("AppServicePlan")
-        $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Templates $templates -Location "$Location"
+        $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates $templates
         $aspName = $deploymentResult.Parameters.aspName.Value
         if ([string]::IsNullOrEmpty($aspName)) {throw "Failed to obtain App Service name"}
 
@@ -42,7 +42,7 @@ function Deploy-B42AppService {
             if (!$webApp.Contains("aspName")) {
                 $webApp.Add("aspName", $aspName)
             }
-            $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Templates @("webApp") -Location "$Location"
+            $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates @("webApp") -TemplateParameters $webApp
         }
     }
 
