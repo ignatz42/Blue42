@@ -80,3 +80,12 @@ Mock -ModuleName $ModuleName Set-AzureKeyVaultSecret {
         SecretValueText = $credentials.Password
     }
 }
+
+Mock -ModuleName $ModuleName Set-AzureRmSqlServerActiveDirectoryAdministrator {
+    @{
+        ResourceGroupName = "$ResourceGroupName"
+        ServerName        = "$ServerName"
+        DisplayName       = "$DisplayName"
+        ObjectId          = "AN ACTUAL GUID WOULD BE RETURNED"
+    }
+}
