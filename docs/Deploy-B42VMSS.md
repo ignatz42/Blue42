@@ -13,8 +13,8 @@ Deploys a VMSS.
 ## SYNTAX
 
 ```
-Deploy-B42VMSS [-ResourceGroupName] <String> [[-Location] <String>] [[-VMSSParameters] <OrderedDictionary>]
- [[-ScriptExtensions] <OrderedDictionary[]>] [<CommonParameters>]
+Deploy-B42VMSS [-ResourceGroupName] <String> [[-Location] <String>] [-ImageOsDiskBlobUri] <String>
+ [[-VMSSParameters] <OrderedDictionary>] [-IsLinux] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -59,8 +59,23 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -ImageOsDiskBlobUri
+The URI of the Blob where a disk image is store
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 3
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -VMSSParameters
-Parameters used for VMSS creation
+Parameters used for VM creation
 
 ```yaml
 Type: OrderedDictionary
@@ -68,23 +83,24 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 3
+Position: 4
 Default value: [ordered]@{}
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ScriptExtensions
-An array of script extensions parameters blocks; one per desired extension.
+### -IsLinux
+If true, the vm will use linux specific configuraiton settings.
+If false, the vm will use windows specific configuration settings.
 
 ```yaml
-Type: OrderedDictionary[]
+Type: SwitchParameter
 Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 4
-Default value: @()
+Position: Named
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

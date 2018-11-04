@@ -14,7 +14,7 @@ Deploys a VM.
 
 ```
 Deploy-B42VM [-ResourceGroupName] <String> [[-Location] <String>] [[-VMParameters] <OrderedDictionary>]
- [[-ScriptExtensions] <OrderedDictionary[]>] [<CommonParameters>]
+ [-IncludePublicInterface] [-IsLinux] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -74,17 +74,33 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ScriptExtensions
-An array of script extensions parameters blocks; one per desired extension.
+### -IncludePublicInterface
+If true, a Public IP and NSG will be created for the VM
 
 ```yaml
-Type: OrderedDictionary[]
+Type: SwitchParameter
 Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 4
-Default value: @()
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -IsLinux
+If true, the vm will use linux specific configuraiton settings.
+If false, the vm will use windows specific configuration settings.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

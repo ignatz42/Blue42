@@ -37,6 +37,7 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## OUTPUTS
 
 ### System.String
+
 ## NOTES
 The function verifies the output before returning.
 

@@ -14,7 +14,7 @@ Deploys a VNet.
 
 ```
 Deploy-B42VNet [-ResourceGroupName] <String> [[-Location] <String>] [[-VNetParameters] <OrderedDictionary>]
- [[-Subnets] <OrderedDictionary[]>] [-IncludeDDos] [<CommonParameters>]
+ [[-Subnets] <OrderedDictionary[]>] [-IncludeDDos] [[-PrivateDNSZone] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -100,6 +100,21 @@ Aliases:
 Required: False
 Position: Named
 Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -PrivateDNSZone
+If supplied, a private DNS Zone will be created using the parameter's value
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 5
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

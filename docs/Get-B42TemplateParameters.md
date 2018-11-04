@@ -117,6 +117,7 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## OUTPUTS
 
 ### System.Collections.Specialized.OrderedDictionary
+
 ## NOTES
 This function does a token replacement on \[PASSWORD\] and \[UID\] contained in the template's default value field.
 

@@ -42,7 +42,7 @@ function ConvertFrom-PFX {
 
             $returnBytes = $collection.Export($pkcs12ContentType)
         } else {
-            # The parameter set change between 5.1 and 6.1
+            # The parameter set changes between 5.1 and 6.1
             $params = @{Encoding = "Byte"}
             if($PSEdition -eq "Core") {
                 $params = @{AsByteStream = $true}
