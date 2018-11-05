@@ -14,7 +14,8 @@ Deploys an App Service with optional Web Apps.
 
 ```
 Deploy-B42AppService [-ResourceGroupName] <String> [[-Location] <String>]
- [[-AppServiceParameters] <OrderedDictionary>] [[-WebApps] <OrderedDictionary[]>] [<CommonParameters>]
+ [[-AppServiceParameters] <OrderedDictionary>] [[-WebApps] <OrderedDictionary[]>]
+ [[-SQLParameters] <OrderedDictionary>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -85,6 +86,23 @@ Aliases:
 Required: False
 Position: 4
 Default value: @()
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -SQLParameters
+If $null, no database will be created.
+If an empty \[ordered\] list is supplied, a new SQL Local instant and database will be created.
+If the \[ordered\] list contains, sqlServerName, sqlAdminUser, sqlAdminPass a new database will be deployed to the specified local instance.
+
+```yaml
+Type: OrderedDictionary
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 5
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

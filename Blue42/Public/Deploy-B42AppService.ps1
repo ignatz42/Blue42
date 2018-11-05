@@ -25,7 +25,13 @@ function Deploy-B42AppService {
 
         # An array of web application parameters blocks; one per desired web app.
         [Parameter(Mandatory = $false)]
-        [System.Collections.Specialized.OrderedDictionary[]] $WebApps = @()
+        [System.Collections.Specialized.OrderedDictionary[]] $WebApps = @(),
+
+        # If $null, no database will be created.
+        # If an empty [ordered] list is supplied, a new SQL Local instant and database will be created.
+        # If the [ordered] list contains, sqlServerName, sqlAdminUser, sqlAdminPass a new database will be deployed to the specified local instance.
+        [Parameter(Mandatory = $false)]
+        [System.Collections.Specialized.OrderedDictionary] $SQLParameters = $null
     )
 
     begin {
@@ -43,6 +49,37 @@ function Deploy-B42AppService {
                 $webApp.Add("aspName", $aspName)
             }
             $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates @("webApp") -TemplateParameters $webApp
+
+            if ($null -ne $SQLParameters) {
+                # Do the database here.
+                if (!$SQLParameters.Contains("sqlAdminUser")) {
+                    $SQLParameters.Add("sqlAdminUser", "azsa")
+                }
+                if (!$SQLParameters.Contains("sqlAdminPass")) {
+                    $SQLParameters.Add("sqlAdminPass", (New-B42Password))
+                }
+                $sqlDeploymentResult = New-B42SQL -ResourceGroupName $ResourceGroupName -Location "$Location" -SQLParameters $SQLParameters -DBs @{databaseName = $webApp}
+
+                # Create a user for the webApp to use for connection.
+                $steps = @(
+                    @{
+                        database   = "master"
+                        sqlCommand = ("CREATE LOGIN [{0}] WITH PASSWORD = N'{1}'" -f $sqlAppUser, $sqlAppPwd)
+                    }, # Creating Login
+                    @{
+                        database   = "$webApp"
+                        sqlCommand = ("CREATE USER [{0}] FOR LOGIN [{0}]" -f $sqlAppUser)
+                    }, # Creating User
+                    @{
+                        database   = "$webApp"
+                        sqlCommand = ("ALTER ROLE [db_owner] ADD MEMBER [{0}]" -f $sqlAppUser)
+                    } # Making User dbo
+                )
+
+                foreach ($step in $steps) {
+                    New-SQLCommand -SqlServerName $sqlDeploymentResult.Para.sqlName -SqlDatabaseName $step.database -SqlUserName $SQLParameters.sqlAdminUser -SqlUserPassword $SQLParameters.sqlAdminPassword -SqlCommand $step.sqlCommand
+                }
+            }
         }
     }
 

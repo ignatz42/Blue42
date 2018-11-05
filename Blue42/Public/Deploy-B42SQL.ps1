@@ -29,7 +29,7 @@ function Deploy-B42SQL {
 
         # Display Name of the Azure Active Directory User or Group that will become the SQL Server Administrator
         [Parameter(Mandatory = $false)]
-        [string] $DisplayName = ""
+        [string] $AADDisplayName = ""
     )
 
     begin {
@@ -38,12 +38,12 @@ function Deploy-B42SQL {
 
     process {
         $templates = @("SQL")
-        $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates $templates
+        $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates $templates -TemplateParameters $SQLParameters
         $sqlName = $deploymentResult.Parameters.sqlName.Value
         if ([string]::IsNullOrEmpty($sqlName)) {throw "Failed to obtain SQL name"}
 
         if (![string]::IsNullOrEmpty($DisplayName)) {
-            Set-AzureRmSqlServerActiveDirectoryAdministrator -ResourceGroupName $ResourceGroupName -ServerName $sqlName -DisplayName "$DisplayName"
+            Set-AzureRmSqlServerActiveDirectoryAdministrator -ResourceGroupName $ResourceGroupName -ServerName $sqlName -DisplayName "$AADDisplayName"
         }
 
         foreach ($db in $DBs) {
