@@ -55,13 +55,8 @@ function Deploy-B42AppService {
 
             if ($null -ne $SQLParameters) {
                 # Do the database here.
-                if (!$SQLParameters.Contains("sqlAdminUser")) {
-                    $SQLParameters.Add("sqlAdminUser", "azsa")
-                }
-                if (!$SQLParameters.Contains("sqlAdminPass")) {
-                    $SQLParameters.Add("sqlAdminPass", (New-B42Password))
-                }
-                $sqlDeploymentResult = New-B42SQL -ResourceGroupName $ResourceGroupName -Location "$Location" -SQLParameters $SQLParameters -DBs @{databaseName = $webApp}
+                $thisSQLParameters = Get-B42TemplateParameters -Templates @("SQL") -TemplateParameters $SQLParameters
+                $sqlDeploymentResult = Deploy-B42SQL -ResourceGroupName $ResourceGroupName -Location "$Location" -SQLParameters $thisSQLParameters -DBs @([ordered]@{dbName = $webApp})
                 $accumulatedDeployments += $sqlDeploymentResult
 
                 # Create a user for the webApp to use for connection.
@@ -81,7 +76,7 @@ function Deploy-B42AppService {
                 )
 
                 foreach ($step in $steps) {
-                    New-SQLCommand -SqlServerName $sqlDeploymentResult.Para.sqlName -SqlDatabaseName $step.database -SqlUserName $SQLParameters.sqlAdminUser -SqlUserPassword $SQLParameters.sqlAdminPassword -SqlCommand $step.sqlCommand
+                    New-SQLCommand -SqlServerName $thisSQLParameters.sqlName -SqlDatabaseName $step.database -SqlUserName $thisSQLParameters.sqlAdminName -SqlUserPassword $thisSQLParameters.sqlAdminPassword -SqlCommand $step.sqlCommand
                 }
             }
         }

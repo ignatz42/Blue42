@@ -20,7 +20,7 @@ Describe "Deployments" {
 
     It "deploys the VM" {
         # TODO Should this return a Report card maybe?
-        Deploy-B42VM -ResourceGroupName "mockdeployment-rg"
+        Deploy-B42VM -ResourceGroupName "mockdeployment-rg" -IncludePublicInterface
         Assert-MockCalled -ModuleName $ModuleName -CommandName Get-AzureRmResourceGroup -Scope It
         Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzureRmResourceGroup -Scope It
         Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzureRmResourceGroupDeployment -Scope It
@@ -45,9 +45,10 @@ Describe "Deployments" {
         # Verify functions called?
     }
 
+    Mock -ModuleName $ModuleName New-SQLCommand { return }
     It "deploys the App Service" {
         # TODO Should this return a Report card maybe?
-        Deploy-B42AppService -ResourceGroupName "mockdeployment-rg" -WebApps @{}
+        Deploy-B42AppService -ResourceGroupName "mockdeployment-rg" -WebApps @{} -SQLParameters @{}
         Assert-MockCalled -ModuleName $ModuleName -CommandName Get-AzureRmResourceGroup -Scope It
         Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzureRmResourceGroup -Scope It
         Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzureRmResourceGroupDeployment -Scope It
