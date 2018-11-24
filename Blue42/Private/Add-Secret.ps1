@@ -22,7 +22,7 @@ function Add-Secret {
         [object] $SecretValue
     )
 
-    begin { }
+    begin {}
 
     process {
         if ($SecretValue.GetType().Name -ne "SecureString") {
@@ -31,5 +31,5 @@ function Add-Secret {
         Set-AzureKeyVaultSecret -VaultName $KeyVaultName -Name $SecretName -SecretValue $SecretValue
     }
 
-    end { }
+    end {}
 }

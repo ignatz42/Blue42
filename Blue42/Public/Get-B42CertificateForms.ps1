@@ -55,5 +55,5 @@ function Get-B42CertificateForms {
         }
     }
 
-    end { }
+    end {}
 }

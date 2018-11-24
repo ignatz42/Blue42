@@ -22,8 +22,7 @@ function Get-B42KeyVaultAccessPolicy {
         [string] $TenantID
     )
 
-    begin {
-    }
+    begin {}
 
     process {
         @{
@@ -37,6 +36,5 @@ function Get-B42KeyVaultAccessPolicy {
         }
     }
 
-    end {
-    }
+    end {}
 }

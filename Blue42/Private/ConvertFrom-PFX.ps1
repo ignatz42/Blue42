@@ -66,6 +66,5 @@ function ConvertFrom-PFX {
         [System.Convert]::ToBase64String($returnBytes)
     }
 
-    end {
-    }
+    end {}
 }

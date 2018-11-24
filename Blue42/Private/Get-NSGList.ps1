@@ -14,7 +14,7 @@ function Get-NSGList {
         [switch] $IsLinux
     )
 
-    begin { }
+    begin {}
 
     process {
         $nsg = @()
@@ -48,5 +48,5 @@ function Get-NSGList {
         ,$nsg
     }
 
-    end { }
+    end {}
 }

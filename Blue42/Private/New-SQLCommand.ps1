@@ -32,8 +32,7 @@ function New-SQLCommand {
         [string] $SqlCommand
     )
 
-    begin {
-    }
+    begin {}
 
     process {
         $connectionString = "Server=tcp:$SqlServerName.database.windows.net,1433;Initial Catalog=$SqlDatabaseName;User ID=$SqlUserName;Password=$SqlUserPassword;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
@@ -53,6 +52,5 @@ function New-SQLCommand {
         }
     }
 
-    end {
-    }
+    end {}
 }

@@ -15,7 +15,7 @@ function ConvertFrom-B42Json {
         $InputObject = $null
     )
 
-    begin { }
+    begin {}
 
     process {
         $resultObject = $null
@@ -37,5 +37,5 @@ function ConvertFrom-B42Json {
         $resultObject
     }
 
-    end { }
+    end {}
 }

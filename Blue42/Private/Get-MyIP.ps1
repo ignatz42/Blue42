@@ -18,8 +18,7 @@ function Get-MyIP {
         [switch] $SkipOpenDNS
     )
 
-    begin {
-    }
+    begin {}
 
     process {
         if ($UseDNSName) {
@@ -33,6 +32,5 @@ function Get-MyIP {
         }
     }
 
-    end {
-    }
+    end {}
 }
