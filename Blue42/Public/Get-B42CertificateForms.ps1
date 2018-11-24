@@ -26,7 +26,7 @@ function Get-B42CertificateForms {
 
     begin {
         if($PSEdition -eq "Core") {
-            Import-WinModule "PKI" -ComputerName "$Env:USERDOMAIN" -NoClobber #-Force -Verbose
+            Import-WinModule "PKI" -ComputerName "$Env:USERDOMAIN" -NoClobber -Force
         }
      }
 
@@ -40,7 +40,7 @@ function Get-B42CertificateForms {
         if (!(Test-Path -Path $CertificatePath -PathType Leaf)) {
             # TODO Let's Encrypt
             [System.Security.Cryptography.X509Certificates.X509Certificate2] $certificate = New-SelfSignedCertificate -CertStoreLocation "Cert:\CurrentUser\My" -DnsName $DomainNames
-            Export-PfxCertificate -Cert "Cert:\CurrentUser\My\$($certificate.Thumbprint)" -FilePath $CertificatePath -Password $CertificatePassword
+            $null = Export-PfxCertificate -Cert "Cert:\CurrentUser\My\$($certificate.Thumbprint)" -FilePath $CertificatePath -Password $CertificatePassword -Force
         } else {
             $certificate = Import-PfxCertificate -CertStoreLocation "Cert:\LocalMachine\My" -FilePath $CertificatePath -Password $CertificatePassword
         }
