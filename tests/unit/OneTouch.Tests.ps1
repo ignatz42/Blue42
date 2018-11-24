@@ -20,7 +20,7 @@ Describe "Deployments" {
 
     It "deploys the VM" {
         # TODO Should this return a Report card maybe?
-        Deploy-B42VM -ResourceGroupName "mockdeployment-rg" -ScriptExtensions @{}
+        Deploy-B42VM -ResourceGroupName "mockdeployment-rg"
         Assert-MockCalled -ModuleName $ModuleName -CommandName Get-AzureRmResourceGroup -Scope It
         Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzureRmResourceGroup -Scope It
         Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzureRmResourceGroupDeployment -Scope It
@@ -29,7 +29,7 @@ Describe "Deployments" {
 
     It "deploys the VMSS" {
         # TODO Should this return a Report card maybe?
-        Deploy-B42VMSS -ResourceGroupName "mockdeployment-rg" -ScriptExtensions @{}
+        Deploy-B42VMSS -ResourceGroupName "mockdeployment-rg" -ImageOsDiskBlobUri "https://storage.location.test/container/image.uri"
         Assert-MockCalled -ModuleName $ModuleName -CommandName Get-AzureRmResourceGroup -Scope It
         Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzureRmResourceGroup -Scope It
         Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzureRmResourceGroupDeployment -Scope It

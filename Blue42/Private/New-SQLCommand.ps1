@@ -6,6 +6,8 @@ function New-SQLCommand {
     The New-SQLCommand function helper works in the CI pipeline for executing stable SQL commands.
     .EXAMPLE
     New-SQLCommand -SqlServerName SqlServerName -SqlDatabaseName DatabaseName -SqlUserName UserName -SqlUserPassword UserPass
+    .NOTES
+    This quick and dirty commaned executor has no frills and is not safe.
     #>
     [CmdletBinding()]
     param (

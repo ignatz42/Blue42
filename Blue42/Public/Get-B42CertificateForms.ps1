@@ -26,7 +26,7 @@ function Get-B42CertificateForms {
 
     begin {
         if($PSEdition -eq "Core") {
-            Import-WinModule "PKI" -ComputerName "$Env:USERDOMAIN" -NoClobber -Force
+            Import-WinModule "PKI" -ComputerName "$Env:USERDOMAIN" -NoClobber:$true -Force:$true -Verbose:$false
         }
      }
 

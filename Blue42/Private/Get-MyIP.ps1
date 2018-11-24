@@ -4,7 +4,7 @@ function Get-MyIP {
     Find current external IP Address
     .DESCRIPTION
     The Get-MyIP function gets the current external IP as a string
-    .EXAMPLE
+    .NOTES
     Get-MyIP
     #>
     [CmdletBinding()]
