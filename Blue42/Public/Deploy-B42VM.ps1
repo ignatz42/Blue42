@@ -54,14 +54,16 @@ function Deploy-B42VM {
             $TenantID = $currentContext.Tenant.Id
             $ObjectID = (Get-AzureRmADUser -StartsWith $currentContext.Account.Id).Id
             $kvParams = @{
-                keyVaultTenantID = $TenantID
-                keyVaultAccessPolicies = @((Get-B42KeyVaultAccessPolicy -ObjectID $ObjectID -TenantID $TenantID))
+                keyVaultTenantID                     = $TenantID
+                keyVaultAccessPolicies               = @((Get-B42KeyVaultAccessPolicy -ObjectID $ObjectID -TenantID $TenantID))
+                keyVaultEnabledForDeployment         = $true
+                keyVaultEnabledForTemplateDeployment = $true
             }
             $keyVaultResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates @("KeyVault") -TemplateParameters $kvParams
             $accumulatedDeployments += $keyVaultResult
             # Carry along these values to the VMDeployment.
             $VMParameters.Add("keyVaultResourceGroupName", $ResourceGroupName)
-            $VMParameters.Add("keyVaultName", $keyVaultResult.Parameters.keyVaultName)
+            $VMParameters.Add("keyVaultName", $keyVaultResult.Parameters.keyVaultName.Value)
 
             # TODO Linux.
             $certPath = ("{0}\Blue42VM.pfx" -f (Convert-Path -Path ".\"))
@@ -69,7 +71,7 @@ function Deploy-B42VM {
             Remove-Item $certPath
 
             $null = Add-Secret -KeyVaultName $keyVaultResult.Parameters.keyVaultName.Value -SecretName "CertPassword" -SecretValue $certForms.Password
-            $certSecret = Add-Secret -KeyVaultName $keyVaultResult.Parameters.keyVaultName.Value -SecretName "Cert" -SecretValue $certForms.JsonArray.ToString()
+            $certSecret = Add-Secret -KeyVaultName $keyVaultResult.Parameters.keyVaultName.Value -SecretName "Cert" -SecretValue $certForms.JsonArray
             $VMParameters.Add("vmCertificateSecretUrl", $certSecret.Id)
 
             # Add the admin user and password.
@@ -87,8 +89,9 @@ function Deploy-B42VM {
         if ($IncludePublicInterface) {
             # Ok.  This should probably be more simple. Not sure that the $pipnsgResult order is guaranteed. The alternative
             # may be simply to Test-B42Deployment to combine the parameter sets?
-            $list = Get-NSGList
             $pipnsgParameters = Get-B42TemplateParameters -Templates @("PublicIP", "NSG") -TemplateParameters $nicParams
+            $list = Get-NSGList -IsLinux:$IsLinux
+            $pipnsgParameters.nsgSecurityRules = $list
             $accumulatedDeployments += New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates @("PublicIP", "NSG") -TemplateParameters $pipnsgParameters
             $nicParams.publicIPName = $pipnsgParameters.publicIPName
             $nicParams.nsgName = $pipnsgParameters.nsgName

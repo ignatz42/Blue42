@@ -6,7 +6,7 @@
       "type": "string",
       "defaultValue": "pubip[UID]",
       "metadata": {
-        "description": "Name of Public IP"
+        "description": "The name of the Public IP"
       }
     },
     "publicIPLocation": {
@@ -55,6 +55,10 @@
     "publicIpAddressVersion": {
       "type": "string",
       "defaultValue": "IPv4",
+      "allowedValues": [
+        "IPv4",
+        "IPv6"
+      ],
       "metadata": {
         "description": "The Public IP Address version."
       }
@@ -66,8 +70,8 @@
   "resources": [
     {
       "apiVersion": "2018-08-01",
-      "type": "Microsoft.Network/publicIPAddresses",
       "name": "[parameters('publicIPName')]",
+      "type": "Microsoft.Network/publicIPAddresses",
       "location": "[variables('publicIPLocation')]",
       "sku": {
         "name": "[parameters('publicIPSku')]"

@@ -28,16 +28,18 @@ function ConvertFrom-PFX {
     )
 
     begin {
+        Write-Verbose ("B42 - Converting certifcate to {0} format." -f $ReturnType)
     }
 
     process {
         # Decode the password for as little time as possible.
         $credentials = New-Object System.Net.NetworkCredential("UnusedUser", $CertificatePassword, "UnusedDomain")
+        $clearPassword = $credentials.Password.ToString()
         $returnBytes = $null
         if ($ReturnType -eq "PKSC12") {
             # PKSC12
             $collection = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2Collection
-            $collection.Import($CertificatePath, $credentials.Password, [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::Exportable)
+            $collection.Import($CertificatePath, $clearPassword, [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::Exportable)
             $pkcs12ContentType = [System.Security.Cryptography.X509Certificates.X509ContentType]::Pkcs12
 
             $returnBytes = $collection.Export($pkcs12ContentType)
@@ -55,7 +57,7 @@ function ConvertFrom-PFX {
             $jsonObject = ConvertTo-Json -InputObject @{
                 data     = "$fileContentEncoded";
                 dataType = "pfx";
-                password = "$credentials.Password";
+                password = "$clearPassword";
             }
 
             $returnBytes = [System.Text.Encoding]::UTF8.GetBytes($jsonObject)

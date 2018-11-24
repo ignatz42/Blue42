@@ -107,8 +107,8 @@ Describe "the basic module" {
         It "generates a KeyVault Access Policy" {
             # These GUIDs are made-up.  In a real environment, use something like this:
             #   $currentContext = Get-AzureRmContext
-            #   $ObjectID = (Get-AzureRmADUser -UserPrincipalName $currentContext.Account.Id.ToString()).Id.ToString()
             #   $TenantID = $currentContext.Tenant.Id
+            #   $ObjectID = (Get-AzureRmADUser -StartsWith $currentContext.Account.Id).Id
             $objectId = "2dd39430-f77b-4f9e-83dd-61c26e222df1"
             $tenantId = "52154619-1815-4178-a7e7-44a1ac3a5f98"
             $accessPolicy = Get-B42KeyVaultAccessPolicy -ObjectID $objectId -TenantID $tenantId

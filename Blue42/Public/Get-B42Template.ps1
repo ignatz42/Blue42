@@ -45,7 +45,7 @@ function Get-B42Template {
         }
 
         foreach ($template in $Templates) {
-            $thisTemplate = Get-Template -TemplatePath ("{0}\{1}.json" -f $TemplatePath, $template) -SkipTokenReplacement $SkipTokenReplacement
+            $thisTemplate = Get-Template -TemplatePath ("{0}\{1}.json" -f $TemplatePath, $template) -SkipTokenReplacement:$SkipTokenReplacement
             # Todo Are these values always the same?
             $combinedTemplate.'$schema' = $thisTemplate.'$schema'
             $combinedTemplate.contentVersion = $thisTemplate.contentVersion

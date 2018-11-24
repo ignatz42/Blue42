@@ -40,7 +40,7 @@ function Get-B42CertificateForms {
         if (!(Test-Path -Path $CertificatePath -PathType Leaf)) {
             # TODO Let's Encrypt
             [System.Security.Cryptography.X509Certificates.X509Certificate2] $certificate = New-SelfSignedCertificate -CertStoreLocation "Cert:\CurrentUser\My" -DnsName $DomainNames
-            $null = Export-PfxCertificate -Cert "Cert:\CurrentUser\My\$($certificate.Thumbprint)" -FilePath $CertificatePath -Password $CertificatePassword -Force
+            $null = Export-PfxCertificate -Cert "Cert:\CurrentUser\My\$($certificate.Thumbprint)" -FilePath $CertificatePath -Password $CertificatePassword
         } else {
             $certificate = Import-PfxCertificate -CertStoreLocation "Cert:\LocalMachine\My" -FilePath $CertificatePath -Password $CertificatePassword
         }

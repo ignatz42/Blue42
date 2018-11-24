@@ -34,18 +34,27 @@ function Get-B42TemplateParameters {
     )
 
     begin {
-        Write-Verbose "Starting Get-B42TemplateParameters"
+        Write-Verbose ("B42 - Getting template parameters with {0} overrides" -f $TemplateParameters.Count.ToString())
+        if ([string]::IsNullOrEmpty($TemplatePath)) {
+            $globals = Get-B42Globals
+            $TemplatePath = $globals.TemplatePath
+        }
     }
 
     process {
-        $thisTemplate = Get-B42Template -Templates $Templates -TemplatePath $TemplatePath -SkipTokenReplacement:$SkipTokenReplacement
         $outputTemplateParameters = [ordered]@{}
-        foreach ($parameterKey in $thisTemplate.parameters.Keys) {
-            $keyValue = $thisTemplate.parameters.$parameterKey.defaultValue
-            if ($TemplateParameters.Contains($parameterKey)) {
-                $keyValue = $TemplateParameters.$parameterKey
+        foreach ($template in $Templates) {
+            $thisTemplate = Get-Template -TemplatePath ("{0}\{1}.json" -f $TemplatePath, $template) -SkipTokenReplacement:$SkipTokenReplacement
+            foreach ($parameterKey in $thisTemplate.parameters.Keys) {
+                if ($outputTemplateParameters.Contains($parameterKey)) {continue}
+                $keyValue = $thisTemplate.parameters.$parameterKey.defaultValue
+                # User input overrides the auto generated values.
+                if ($TemplateParameters.Contains($parameterKey) -and ![string]::IsNullOrEmpty($TemplateParameters.$parameterKey)) {
+                    $keyValue = $TemplateParameters.$parameterKey
+                }
+                Write-Verbose ("B42 - Adding key {0} value {1} " -f $parameterKey, $keyValue)
+                $outputTemplateParameters.Add($parameterKey, $keyValue)
             }
-            $outputTemplateParameters.Add($parameterKey, $keyValue)
         }
 
         if ($AsJson) {
@@ -64,6 +73,6 @@ function Get-B42TemplateParameters {
     }
 
     end {
-        Write-Verbose "Ending Get-B42TemplateParameters"
+        Write-Verbose ("B42 - Finished getting template parameters")
     }
 }
