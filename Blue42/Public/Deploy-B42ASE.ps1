@@ -25,10 +25,15 @@ function Deploy-B42ASE {
     }
 
     process {
+        $accumulatedDeployments = @()
         $templates = @("ASE")
         $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Templates $templates -Location "$Location"
+        $accumulatedDeployments += $deploymentResult
         $aseName = $deploymentResult.Parameters.aseName.Value
         if ([string]::IsNullOrEmpty($aseName)) {throw "Failed to obtain App Service Environment name"}
+
+        # TODO: Return a report card here instead.
+        $accumulatedDeployments
     }
 
     end {

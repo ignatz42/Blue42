@@ -37,8 +37,10 @@ function Deploy-B42SQL {
     }
 
     process {
+        $accumulatedDeployments = @()
         $templates = @("SQL")
         $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates $templates -TemplateParameters $SQLParameters
+        $accumulatedDeployments += $deploymentResult
         $sqlName = $deploymentResult.Parameters.sqlName.Value
         if ([string]::IsNullOrEmpty($sqlName)) {throw "Failed to obtain SQL name"}
 
@@ -51,7 +53,11 @@ function Deploy-B42SQL {
                 $db.Add("sqlName", $sqlName)
             }
             $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates @("DB") -TemplateParameters $db
+            $accumulatedDeployments += $deploymentResult
         }
+
+        # TODO: Return a report card here instead.
+        $accumulatedDeployments
     }
 
     end {

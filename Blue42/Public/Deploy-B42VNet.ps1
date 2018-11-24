@@ -41,12 +41,14 @@ function Deploy-B42VNet {
     }
 
     process {
+        $accumulatedDeployments = @()
         $templates = @("VNet")
         if ($IncludeDDos) {
             $templates = @("DDosPlan", "VNet")
         }
-        $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates $templates
-        $vnetName = $deploymentResult.Parameters.vnetName.Value
+        $vmDeploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates $templates
+        $accumulatedDeployments += $vmDeploymentResult
+        $vnetName = $vmDeploymentResult.Parameters.vnetName.Value
         if ([string]::IsNullOrEmpty($vnetName)) {throw "Failed to obtain VNet name"}
 
         if (![string]::IsNullOrEmpty($PrivateDNSZone)) {
@@ -59,8 +61,13 @@ function Deploy-B42VNet {
             if (!$subnet.Contains("vnetName")) {
                 $subnet.Add("vnetName", $vnetName)
             }
-            $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates @("Subnet") -TemplateParameters $subnet
+            $subNetDeploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates @("Subnet") -TemplateParameters $subnet
+            $accumulatedDeployments += $subNetDeploymentResult
         }
+
+        # TODO: Return a report card here instead.
+        #Test-B42Deployment
+        $accumulatedDeployments
     }
 
     end {

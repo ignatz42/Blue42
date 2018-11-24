@@ -39,8 +39,10 @@ function Deploy-B42AppService {
     }
 
     process {
+        $accumulatedDeployments = @()
         $templates = @("AppServicePlan")
         $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates $templates
+        $accumulatedDeployments += $deploymentResult
         $aspName = $deploymentResult.Parameters.aspName.Value
         if ([string]::IsNullOrEmpty($aspName)) {throw "Failed to obtain App Service name"}
 
@@ -49,6 +51,7 @@ function Deploy-B42AppService {
                 $webApp.Add("aspName", $aspName)
             }
             $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates @("webApp") -TemplateParameters $webApp
+            $accumulatedDeployments += $deploymentResult
 
             if ($null -ne $SQLParameters) {
                 # Do the database here.
@@ -59,6 +62,7 @@ function Deploy-B42AppService {
                     $SQLParameters.Add("sqlAdminPass", (New-B42Password))
                 }
                 $sqlDeploymentResult = New-B42SQL -ResourceGroupName $ResourceGroupName -Location "$Location" -SQLParameters $SQLParameters -DBs @{databaseName = $webApp}
+                $accumulatedDeployments += $sqlDeploymentResult
 
                 # Create a user for the webApp to use for connection.
                 $steps = @(
@@ -81,6 +85,9 @@ function Deploy-B42AppService {
                 }
             }
         }
+
+        # TODO: Return a report card here instead.
+        $accumulatedDeployments
     }
 
     end {

@@ -37,11 +37,12 @@ function Deploy-B42VMSS {
     }
 
     process {
+        $accumulatedDeployments = @()
         # The parameters in VirtualNetworkParameters are required. If not provided, create some defaults.
         if (!($VMSSParameters.Contains("vnetResourceGroupName") -and $VMSSParameters.Contains("vnetName") -and $VMSSParameters.Contains("subnetName"))) {
             $vnetParams = Get-B42TemplateParameters -Templates @("VNet")
             $subnetParams = Get-B42TemplateParameters -Templates @("Subnet")
-            Deploy-B42VNet -ResourceGroupName $ResourceGroupName -Location $Location -VNetParameters $vnetParams -Subnets @($subnetParams)
+            $accumulatedDeployments += Deploy-B42VNet -ResourceGroupName $ResourceGroupName -Location $Location -VNetParameters $vnetParams -Subnets @($subnetParams)
             # Carry along these values to the VMDeployment.
             $VMSSParameters.Add("vnetResourceGroupName", $ResourceGroupName)
             $VMSSParameters.Add("vnetName", $vnetParams.vnetName)
@@ -50,12 +51,16 @@ function Deploy-B42VMSS {
 
         if (!($VMSSParameters.Contains("keyVaultResourceGroupName") -and $VMSSParameters.Contains("keyVaultName"))) {
             $keyVaultResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates @("KeyVault")
+            $accumulatedDeployments += $keyVaultResult
             # Carry along these values to the VMDeployment.
             $VMSSParameters.Add("keyVaultResourceGroupName", $ResourceGroupName)
             $VMSSParameters.Add("keyVaultName", $keyVaultResult.Parameters.keyVaultName)
 
             # TODO Linux.
-            $certForms = Get-B42CertificateForms
+            $certPath = ("{0}\Blue42VM.pfx" -f (Convert-Path -Path ".\"))
+            $certForms = Get-B42CertificateForms -CertificatePath $certPath -DomainNames @("testing.local")
+            Remove-Item $certPath
+
             $null = Add-Secret -KeyVaultName $keyVaultResult.Parameters.keyVaultName.Value -SecretName "CertPassword" -SecretValue $certForms.Password
             $certSecret = Add-Secret -KeyVaultName $keyVaultResult.Parameters.keyVaultName.Value -SecretName "Cert" -SecretValue $certForms.JsonArray
             $VMSSParameters.Add("vmCertificateSecretUrl", $certSecret.Id)
@@ -70,17 +75,21 @@ function Deploy-B42VMSS {
             Add-Secret -KeyVaultName $keyVaultResult.Parameters.keyVaultName.Value -SecretName "AdminPassword" -SecretValue $aPass
         }
 
-        $imageDeploymentResults = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location $Location -Templates @("Image") -TemplateParameters [ordered]@{ imageOsDiskBlobUri = $ImageOsDiskBlobUri}
+        $imageDeploymentResults = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location $Location -Templates @("Image") -TemplateParameters @{ imageOsDiskBlobUri = $ImageOsDiskBlobUri}
+        $accumulatedDeployments += $imageDeploymentResults
         $VMSSParameters.Add("imageName", $imageDeploymentResults.Parameters.imageName)
         $VMSSParameters.Add("imageResourceGroupName", $ResourceGroupName)
 
-        $publicIPResults = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location $Location -Templates @("PublicIP") -TemplateParameters [ordered]@{ imageOsDiskBlobUri = $ImageOsDiskBlobUri}
+        $publicIPResults = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location $Location -Templates @("PublicIP") -TemplateParameters @{ imageOsDiskBlobUri = $ImageOsDiskBlobUri}
+        $accumulatedDeployments += $publicIPResults
         $loadBalancerResults = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location $Location -Templates @("LoadBalancer") -TemplateParameters $publicIPResults.Parameters
+        $accumulatedDeployments += $loadBalancerResults
         $VMSSParameters.Add("loadBalancerName", $imageDeploymentResults.Parameters.imageName)
         $VMSSParameters.Add("loadBalancerResourceGroupName", $ResourceGroupName)
 
         $templates = @("WinVMSS")
         $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates $templates -TemplateParameters $VMSSParameters
+        $accumulatedDeployments += $deploymentResult
         $vmssName = $deploymentResult.Parameters.vmssName.Value
         if ([string]::IsNullOrEmpty($vmssName)) {throw "Failed to obtain VMSS name"}
 
@@ -91,6 +100,9 @@ function Deploy-B42VMSS {
                 Set-AzureRmKeyVaultAccessPolicy -VaultName $VMSSParameters.keyVaultName -PermissionsToSecrets get, list -ObjectId $vmInfoPS.Identity.PrincipalId
             }
         }
+
+        # TODO: Return a report card here instead.
+        $accumulatedDeployments
     }
 
     end {
