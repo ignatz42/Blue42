@@ -42,7 +42,7 @@ function New-Deployment {
     )
 
     begin {
-        Write-Verbose "Starting New-Deployment"
+        Write-Verbose "B42 - Starting new deployment: $TemplatePath"
     }
 
     process {
@@ -62,7 +62,5 @@ function New-Deployment {
         New-AzureRmResourceGroupDeployment @deploymentParameters -Confirm:$false -Force
     }
 
-    end {
-        Write-Verbose "Ending New-Deployment"
-    }
+    end {}
 }

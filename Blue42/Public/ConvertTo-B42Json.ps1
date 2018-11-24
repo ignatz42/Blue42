@@ -19,15 +19,11 @@ function ConvertTo-B42Json {
         [System.Collections.Specialized.OrderedDictionary] $InputObject
     )
 
-    begin {
-        Write-Verbose "Starting ConvertTo-B42Json"
-    }
+    begin {}
 
     process {
         $InputObject | ConvertTo-Json -Depth 50 | ForEach-Object -Process {[System.Text.RegularExpressions.Regex]::Unescape($_)}
     }
 
-    end {
-        Write-Verbose "Ending ConvertTo-B42Json"
-    }
+    end {}
 }

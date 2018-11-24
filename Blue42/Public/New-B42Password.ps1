@@ -18,6 +18,7 @@ function New-B42Password {
     process {
         $newPassword = ""
         do {
+            Write-Verbose "B42 - Generating new password."
             $specialChars = "!@#$%^&*-+=`|\(){}[]:;`"'<>,.?/"
             foreach ($part in ([guid]::NewGuid()).Guid.Split('-')) {
                 $rand = Get-Random -Minimum 0 -Maximum ($specialChars.Length - 1)

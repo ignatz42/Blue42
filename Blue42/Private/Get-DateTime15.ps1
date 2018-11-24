@@ -11,15 +11,11 @@ function Get-DateTime15 {
     [CmdletBinding()]
     param ()
 
-    begin {
-        Write-Verbose "Starting Get-DateTime15"
-    }
+    begin {}
 
     process {
         ([string](Get-Date -Format yyyyMMddTHHmmss)).ToLower().ToString()
     }
 
-    end {
-        Write-Verbose "Ending Get-DateTime15"
-    }
+    end {}
 }
