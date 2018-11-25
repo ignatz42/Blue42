@@ -102,7 +102,6 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## OUTPUTS
 
 ### B42DeploymentReport
-
 ## NOTES
 The custom class B42DeploymentReport has additonal details.
 

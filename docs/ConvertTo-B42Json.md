@@ -57,7 +57,6 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## OUTPUTS
 
 ### System.String
-
 ## NOTES
 This function removes extra unicode formatting leftove from ConvertTo-Json
 
