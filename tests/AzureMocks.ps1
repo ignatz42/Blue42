@@ -89,3 +89,7 @@ Mock -ModuleName $ModuleName Set-AzureRmSqlServerActiveDirectoryAdministrator {
         ObjectId          = "AN ACTUAL GUID WOULD BE RETURNED"
     }
 }
+
+Mock -ModuleName $ModuleName New-AzureRmSqlServerFirewallRule {return $null}
+
+Mock -ModuleName $ModuleName Remove-AzureRmSqlServerFirewallRule {return $null}
