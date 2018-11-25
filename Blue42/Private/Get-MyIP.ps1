@@ -5,7 +5,7 @@ function Get-MyIP {
     .DESCRIPTION
     The Get-MyIP function gets the current external IP as a string
     .NOTES
-    Get-MyIP
+    Useful for firewall exceptions during confugration.
     #>
     [CmdletBinding()]
     param (
