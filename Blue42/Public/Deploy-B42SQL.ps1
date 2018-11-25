@@ -39,10 +39,27 @@ function Deploy-B42SQL {
     process {
         $accumulatedDeployments = @()
         $templates = @("SQL")
-        $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates $templates -TemplateParameters $SQLParameters
+        $thisSQLParameters = Get-B42TemplateParameters -Templates $templates -TemplateParameters $SQLParameters
+        $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates $templates -TemplateParameters $thisSQLParameters
         $accumulatedDeployments += $deploymentResult
         $sqlName = $deploymentResult.Parameters.sqlName.Value
         if ([string]::IsNullOrEmpty($sqlName)) {throw "Failed to obtain SQL name"}
+
+        # Add a KeyVault.
+        $currentContext = Get-AzureRmContext
+        $TenantID = $currentContext.Tenant.Id
+        $ObjectID = (Get-AzureRmADUser -StartsWith $currentContext.Account.Id).Id
+        $kvParams = @{
+            keyVaultName           = $sqlName
+            keyVaultTenantID       = $TenantID
+            keyVaultAccessPolicies = @((Get-B42KeyVaultAccessPolicy -ObjectID $ObjectID -TenantID $TenantID))
+        }
+        $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates @("KeyVault") -TemplateParameters $kvParams
+        $accumulatedDeployments += $deploymentResult
+        $keyVaultName = $deploymentResult.Parameters.keyVaultName.Value
+
+        $null = Add-Secret -SecretName "sqlAdminUser" -SecretValue $thisSQLParameters.sqlAdminName -KeyVaultName $keyVaultName
+        $null = Add-Secret -SecretName "sqlAdminPass" -SecretValue $thisSQLParameters.sqlAdminPassword -KeyVaultName $keyVaultName
 
         if (![string]::IsNullOrEmpty($DisplayName)) {
             Set-AzureRmSqlServerActiveDirectoryAdministrator -ResourceGroupName $ResourceGroupName -ServerName $sqlName -DisplayName "$AADDisplayName"

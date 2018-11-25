@@ -23,6 +23,11 @@ Describe -Tag 'RequiresAzureContext' "OneTouch Azure tests." {
         $results.Count | Should Be (9)
     }
 
+    It "deploys an webapp/db pair" {
+        $results = Deploy-B42AppService -ResourceGroupName $Script:testResourceGroupName -WebApps @{} -SQLParameters @{}
+        $results.Count | Should Be (6)
+    }
+
     AfterEach {
         if ($Script:hasContext) {
             if (!($null -eq (Get-AzureRmResourceGroup -Name $Script:testResourceGroupName))) {

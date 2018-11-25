@@ -29,27 +29,6 @@
       "metadata": {
         "description": "The SQL Server adminstrator password."
       }
-    },
-    "vnetName": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Virtual Network Name."
-      }
-    },
-    "vnetResourceGroupName": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Virtual Network Resource Group."
-      }
-    },
-    "sqlAllowedSubnets": {
-      "type": "array",
-      "defaultValue": [],
-      "metadata": {
-        "description": "A list of subnet names that will be translated into allowed access rules."
-      }
     }
   },
   "variables": {
@@ -68,22 +47,6 @@
         "administratorLoginPassword": "[parameters('sqlAdminPassword')]",
         "version": "12.0"
       }
-    },
-    {
-      "type": "Microsoft.Sql/servers/virtualNetworkRules",
-      "name": "[concat(parameters('sqlName'), '/newVnetRule', copyIndex('virtualNetworkRules'))]",
-      "apiVersion": "2015-05-01-preview",
-      "properties": {
-        "virtualNetworkSubnetId": "[concat(resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/', parameters('vnetName')), '/', 'subnets', '/', parameters('sqlAllowedSubnets')[copyIndex('virtualNetworkRules')])]",
-        "ignoreMissingVnetServiceEndpoint": true
-      },
-      "copy": {
-        "name": "virtualNetworkRules",
-        "count": "[length(parameters('sqlAllowedSubnets'))]"
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Sql/servers/', parameters('sqlName'))]"
-      ]
     }
   ],
   "outputs": {}

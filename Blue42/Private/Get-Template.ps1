@@ -19,7 +19,7 @@ function Get-Template {
     )
 
     begin {
-        Write-Verbose "B42 Getting Template: $TemplatePath"
+        Write-Verbose "B42 - Getting Template: $TemplatePath"
         $globals = Get-B42Globals
     }
 

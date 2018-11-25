@@ -50,34 +50,58 @@ function Deploy-B42AppService {
             if (!$webApp.Contains("aspName")) {
                 $webApp.Add("aspName", $aspName)
             }
+            if (!$webApp.Contains("aspResourceGroupName")) {
+                $webApp.Add("aspResourceGroupName", $ResourceGroupName)
+            }
             $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates @("webApp") -TemplateParameters $webApp
             $accumulatedDeployments += $deploymentResult
+            $webAppName = $deploymentResult.Parameters.webAppName.Value
+
+            $currentContext = Get-AzureRmContext
+            $TenantID = $currentContext.Tenant.Id
+            $ObjectID = (Get-AzureRmADUser -StartsWith $currentContext.Account.Id).Id
+            $kvParams = @{
+                keyVaultName           = $webAppName
+                keyVaultTenantID       = $TenantID
+                keyVaultAccessPolicies = @((Get-B42KeyVaultAccessPolicy -ObjectID $ObjectID -TenantID $TenantID))
+            }
+            $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates @("KeyVault") -TemplateParameters $kvParams
+            $accumulatedDeployments += $deploymentResult
+            $keyVaultName = $deploymentResult.Parameters.keyVaultName.Value
 
             if ($null -ne $SQLParameters) {
                 # Do the database here.
                 $thisSQLParameters = Get-B42TemplateParameters -Templates @("SQL") -TemplateParameters $SQLParameters
-                $sqlDeploymentResult = Deploy-B42SQL -ResourceGroupName $ResourceGroupName -Location "$Location" -SQLParameters $thisSQLParameters -DBs @([ordered]@{dbName = $webApp})
+                $sqlDeploymentResult = Deploy-B42SQL -ResourceGroupName $ResourceGroupName -Location "$Location" -SQLParameters $thisSQLParameters -DBs @([ordered]@{ dbName = $webAppName })
                 $accumulatedDeployments += $sqlDeploymentResult
 
-                # Create a user for the webApp to use for connection.
+                $sqlAppUser = $webAppName
+                $sqlAppPass = New-B42Password
+                $null = Add-Secret -SecretName "sqlAppUser" -SecretValue $sqlAppUser -KeyVaultName $keyVaultName
+                $null = Add-Secret -SecretName "sqlAppPass" -SecretValue $sqlAppPass -KeyVaultName $keyVaultName
+
+                # Create a user for the webAppName to use for connection.
                 $steps = @(
                     @{
                         database   = "master"
-                        sqlCommand = ("CREATE LOGIN [{0}] WITH PASSWORD = N'{1}'" -f $sqlAppUser, $sqlAppPwd)
+                        sqlCommand = ("CREATE LOGIN [{0}] WITH PASSWORD = N'{1}'" -f $sqlAppUser, $sqlAppPass)
                     }, # Creating Login
                     @{
-                        database   = "$webApp"
+                        database   = "$webAppName"
                         sqlCommand = ("CREATE USER [{0}] FOR LOGIN [{0}]" -f $sqlAppUser)
                     }, # Creating User
                     @{
-                        database   = "$webApp"
+                        database   = "$webAppName"
                         sqlCommand = ("ALTER ROLE [db_owner] ADD MEMBER [{0}]" -f $sqlAppUser)
                     } # Making User dbo
                 )
 
+                $ip = Get-MyIP
+                $null = New-AzureRmSqlServerFirewallRule -FirewallRuleName "OriginalConfiguration" -StartIpAddress $ip -EndIpAddress $ip -ResourceGroupName $ResourceGroupName -ServerName $thisSQLParameters.sqlName
                 foreach ($step in $steps) {
                     New-SQLCommand -SqlServerName $thisSQLParameters.sqlName -SqlDatabaseName $step.database -SqlUserName $thisSQLParameters.sqlAdminName -SqlUserPassword $thisSQLParameters.sqlAdminPassword -SqlCommand $step.sqlCommand
                 }
+                $null = Remove-AzureRmSqlServerFirewallRule -FirewallRuleName "OriginalConfiguration" -ResourceGroupName $ResourceGroupName -ServerName $thisSQLParameters.sqlName
             }
         }
 
