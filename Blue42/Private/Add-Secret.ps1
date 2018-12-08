@@ -28,7 +28,7 @@ function Add-Secret {
         if ($SecretValue.GetType().Name -ne "SecureString") {
             $SecretValue = (ConvertTo-SecureString -AsPlainText -Force -String $SecretValue)
         }
-        Set-AzureKeyVaultSecret -VaultName $KeyVaultName -Name $SecretName -SecretValue $SecretValue
+        Set-AzKeyVaultSecret -VaultName $KeyVaultName -Name $SecretName -SecretValue $SecretValue
     }
 
     end {}

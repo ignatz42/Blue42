@@ -10,6 +10,7 @@ function ConvertFrom-PFX {
         JSON    - A JSON object container for the PFX and its' password. For use with Azure VMs
         INTEGER - A representation of only the certificate. For use with ASE and Web Apps
     #>
+    [OutputType('System.String')]
     [CmdletBinding()]
     param (
         # The path to the certificate.

@@ -1,8 +1,9 @@
-Mock -ModuleName $ModuleName Get-AzureRmResourceGroup { return $null }
+#Az.Resources
+Mock -ModuleName $ModuleName Get-AzResourceGroup { return $null }
 
-Mock -ModuleName $ModuleName New-AzureRmResourceGroup { return $null }
+Mock -ModuleName $ModuleName New-AzResourceGroup { return $null }
 
-Mock -ModuleName $ModuleName New-AzureRmResourceGroupDeployment {
+Mock -ModuleName $ModuleName New-AzResourceGroupDeployment {
     $mockDeploymentParameters = @{}
     foreach ($key in $TemplateParameterObject.Keys) {
         $deploymentVariableMock = @{
@@ -29,7 +30,7 @@ Mock -ModuleName $ModuleName New-AzureRmResourceGroupDeployment {
     return $mockDeploymentResult
 }
 
-Mock -ModuleName $ModuleName Get-AzureRmResourceGroupDeployment {
+Mock -ModuleName $ModuleName Get-AzResourceGroupDeployment {
     if (![string]::IsNullOrEmpty($ResourceGroupName)) {
         $currentValues = [hashtable]@{
             Blue42Password = "PasswordPasswordPassword"
@@ -38,21 +39,7 @@ Mock -ModuleName $ModuleName Get-AzureRmResourceGroupDeployment {
     }
 }
 
-Mock -ModuleName $ModuleName Get-AzureRmContext {
-    @{
-        Name             = "Mock Subscription - f1039fc7-6cc7-4191-86b6-aeb4b7df0fa9"
-        Account          = @{
-            Id = "user@domain.com"
-        }
-        SubscriptionName = "Azure Subscription"
-        Tenant           = @{
-            Id = "36332425-a4bc-4efc-b4ea-33b22c5e5c6f"
-        }
-        Environment      = "AzureCloud"
-    }
-}
-
-Mock -ModuleName $ModuleName Get-AzureRmADUser {
+Mock -ModuleName $ModuleName Get-AzADUser {
     @{
         UserPrincipalName = "user@domain.com"
         DisplayName       = "Us Er"
@@ -61,15 +48,33 @@ Mock -ModuleName $ModuleName Get-AzureRmADUser {
     }
 }
 
-Mock -ModuleName $ModuleName Get-AzureRmVirtualNetwork {
+# Az.Profile
+Mock -ModuleName $ModuleName Get-AzContext {
+    @{
+        Name             = "Mock Subscription - f1039fc7-6cc7-4191-86b6-aeb4b7df0fa9"
+        Account          = @{
+            Id = "user@domain.com"
+        }
+        Environment      = "AzureCloud"
+        SubscriptionName = "Azure Subscription"
+        Tenant           = @{
+            Id = "36332425-a4bc-4efc-b4ea-33b22c5e5c6f"
+        }
+    }
+}
+
+# Az.Network
+Mock -ModuleName $ModuleName Get-AzVirtualNetwork {
     @{Id = "3ff12cf5-4a81-4f3c-a5f0-bb5ee8a58ede"}
 }
 
-Mock -ModuleName $ModuleName New-AzureRmDnsZone { return $null }
+# Az.Dns
+Mock -ModuleName $ModuleName New-AzDnsZone { return $null }
 
-Mock -ModuleName $ModuleName Set-AzureRmDnsZone { return $null }
+Mock -ModuleName $ModuleName Set-AzDnsZone { return $null }
 
-Mock -ModuleName $ModuleName Set-AzureKeyVaultSecret {
+# Az.Keyvault
+Mock -ModuleName $ModuleName Set-AzKeyVaultSecret {
     $credentials = New-Object System.Net.NetworkCredential("TestUsername", $SecretValue, "TestDomain")
     @{
         VaultName       = $VaultName
@@ -81,7 +86,8 @@ Mock -ModuleName $ModuleName Set-AzureKeyVaultSecret {
     }
 }
 
-Mock -ModuleName $ModuleName Set-AzureRmSqlServerActiveDirectoryAdministrator {
+# Az.Sql
+Mock -ModuleName $ModuleName Set-AzSqlServerActiveDirectoryAdministrator {
     @{
         ResourceGroupName = "$ResourceGroupName"
         ServerName        = "$ServerName"
@@ -90,6 +96,6 @@ Mock -ModuleName $ModuleName Set-AzureRmSqlServerActiveDirectoryAdministrator {
     }
 }
 
-Mock -ModuleName $ModuleName New-AzureRmSqlServerFirewallRule {return $null}
+Mock -ModuleName $ModuleName New-AzSqlServerFirewallRule {return $null}
 
-Mock -ModuleName $ModuleName Remove-AzureRmSqlServerFirewallRule {return $null}
+Mock -ModuleName $ModuleName Remove-AzSqlServerFirewallRule {return $null}

@@ -7,7 +7,7 @@ function Deploy-B42VNet {
         .EXAMPLE
         Deploy-B42VNet
         .NOTES
-        You need to run this function after establishing an AzureRm context using Login-AzureRmAccount
+        Run this function after establishing an Az context using Connect-AzAccount
     #>
     [CmdletBinding()]
     param (
@@ -52,9 +52,9 @@ function Deploy-B42VNet {
         if ([string]::IsNullOrEmpty($vnetName)) {throw "Failed to obtain VNet name"}
 
         if (![string]::IsNullOrEmpty($PrivateDNSZone)) {
-            $thisVnet = Get-AzureRmVirtualNetwork -Name $vnetName -ResourceGroupName $ResourceGroupName
-            $null = New-AzureRmDnsZone -Name $PrivateDNSZone -ResourceGroupName $ResourceGroupName -ZoneType Private -ResolutionVirtualNetworkId @($thisVnet.Id)
-            $null = Set-AzureRmDnsZone -Name $PrivateDNSZone -ResourceGroupName $ResourceGroupName -ResolutionVirtualNetworkId @($thisVnet.Id)
+            $thisVnet = Get-AzVirtualNetwork -Name $vnetName -ResourceGroupName $ResourceGroupName
+            $null = New-AzDnsZone -Name $PrivateDNSZone -ResourceGroupName $ResourceGroupName -ZoneType Private -ResolutionVirtualNetworkId @($thisVnet.Id)
+            $null = Set-AzDnsZone -Name $PrivateDNSZone -ResourceGroupName $ResourceGroupName -ResolutionVirtualNetworkId @($thisVnet.Id)
         }
 
         foreach ($subnet in $Subnets) {

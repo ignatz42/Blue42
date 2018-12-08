@@ -38,7 +38,7 @@ function Test-B42Deployment {
 
     process {
         $finalReport = [B42DeploymentReport]::new()
-        $finalReport.Deployments = Get-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName
+        $finalReport.Deployments = Get-AzResourceGroupDeployment -ResourceGroupName $ResourceGroupName
         foreach ($deployment in $finalReport.Deployments) {
             # Count the successful deployments.
             $deploymentResult = ($deployment.ProvisioningState -eq "Succeeded")

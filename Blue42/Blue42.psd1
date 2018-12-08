@@ -56,9 +56,9 @@
 
     # Modules that must be imported into the global environment prior to importing this module
     RequiredModules = if($PSEdition -eq 'Core') {
-        @('AzureRM.Netcore', 'WindowsCompatibility')
+        @('Az.Resources', 'Az.Profile', 'Az.Network', 'Az.Dns', 'Az.Keyvault', 'Az.Sql', 'WindowsCompatibility')
     } else { # Desktop
-        @('AzureRM')
+        @('Az.Resources', 'Az.Profile', 'Az.Network', 'Az.Dns', 'Az.Keyvault', 'Az.Sql')
     }
 
     # Assemblies that must be loaded prior to importing this module
@@ -124,7 +124,7 @@
         PSData = @{
 
             # Tags applied to this module. These help with module discovery in online galleries.
-            Tags = @('PowerShell', 'Azure', 'ARM')
+            Tags = @('PowerShell', 'Azure', 'ARM', 'Az')
 
             # A URL to the license for this module.
             LicenseUri = 'https://github.com/ignatz42/Blue42/blob/master/LICENSE'

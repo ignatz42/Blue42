@@ -7,8 +7,8 @@ Describe -Tag 'RequiresAzureContext' "OneTouch Azure tests." {
     BeforeAll {
         $Script:testResourceGroupName = "deploymenttesting-rg"
         $Script:hasContext = $false
-        if ($null -eq (Get-AzureRmContext)) {
-            throw "Not Connected. Run Connect-AzureRmAccount to establish a context then try again."
+        if ($null -eq (Get-AzContext)) {
+            throw "Not Connected. Run Connect-AzAccount to establish a context then try again."
         } else {
             $Script:hasContext = $true
         }
@@ -30,8 +30,8 @@ Describe -Tag 'RequiresAzureContext' "OneTouch Azure tests." {
 
     AfterEach {
         if ($Script:hasContext) {
-            if (!($null -eq (Get-AzureRmResourceGroup -Name $Script:testResourceGroupName))) {
-                Remove-AzureRmResourceGroup -Name $Script:testResourceGroupName -Confirm:$false -Force
+            if (!($null -eq (Get-AzResourceGroup -Name $Script:testResourceGroupName))) {
+                Remove-AzResourceGroup -Name $Script:testResourceGroupName -Confirm:$false -Force
             }
         }
     }

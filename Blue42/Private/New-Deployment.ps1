@@ -3,10 +3,10 @@ function New-Deployment {
         .SYNOPSIS
         Retrieves service pack and operating system information from one or more remote computers.
         .DESCRIPTION
-        The New-Deployment function uses the AzureRM module to perform a New-AzureRmResourceGroupDeployment into a Resource Group.
+        The New-Deployment function uses the Az module to perform a New-AzResourceGroupDeployment into a Resource Group.
         If the Resource Group doesn't exist, the function will create it before performing the deployment.
         .NOTES
-        You need to run this function after establishing an AzureRm context using Login-AzureRmAccount.
+        Run this function after establishing an Az context using Connect-AzAccount
     #>
     [CmdletBinding()]
     param (
@@ -46,9 +46,9 @@ function New-Deployment {
     }
 
     process {
-        $rg = Get-AzureRmResourceGroup -Name $ResourceGroupName -ErrorAction 0
+        $rg = Get-AzResourceGroup -Name $ResourceGroupName -ErrorAction 0
         if ($null -eq $rg) {
-            $rg = New-AzureRmResourceGroup -Name $ResourceGroupName -Location $Location
+            $rg = New-AzResourceGroup -Name $ResourceGroupName -Location $Location
         }
 
         $deploymentParameters = @{
@@ -59,7 +59,7 @@ function New-Deployment {
             Mode                    = $Mode
             DeploymentDebugLogLevel = $DeploymentDebugLogLevel
         }
-        New-AzureRmResourceGroupDeployment @deploymentParameters -Confirm:$false -Force
+        New-AzResourceGroupDeployment @deploymentParameters -Confirm:$false -Force
     }
 
     end {}

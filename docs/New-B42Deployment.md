@@ -18,7 +18,7 @@ New-B42Deployment [-ResourceGroupName] <String> [[-Location] <String>] [-Templat
 ```
 
 ## DESCRIPTION
-The New-B42Deployment function uses the AzureRM module to perform a New-AzureRmResourceGroupDeployment using the supplied
+The New-B42Deployment function uses the Az module to perform a New-AzResourceGroupDeployment using the supplied
 template and a (partial) parameter set.
 If no parameter set is supplied, the templates default parameters will be used.
 
@@ -132,6 +132,6 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## OUTPUTS
 
 ## NOTES
-You need to run this function after establishing an AzureRm context using Login-AzureRmAccount
+Run this function after establishing an Az context using Connect-AzAccount
 
 ## RELATED LINKS

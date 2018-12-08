@@ -5,14 +5,14 @@ $SuppressImportModule = $false
 
 Describe -Tag 'RequiresAzureContext' "Actual Azure tests." {
     BeforeAll {
-        if ($null -eq (Get-AzureRmContext)) {
-            throw "Not Connected. Run Connect-AzureRmAccount to establish a context then try again."
+        if ($null -eq (Get-AzContext)) {
+            throw "Not Connected. Run Connect-AzAccount to establish a context then try again."
         }
 
         $globals = Get-B42Globals
         $testResourceGroupName = "deploymenttest-rg"
-        if ($null -eq (Get-AzureRmResourceGroup -Name $testResourceGroupName -ErrorAction 0)) {
-            New-AzureRmResourceGroup -Name $testResourceGroupName -Location $globals.Location -Confirm:$false -Force
+        if ($null -eq (Get-AzResourceGroup -Name $testResourceGroupName -ErrorAction 0)) {
+            New-AzResourceGroup -Name $testResourceGroupName -Location $globals.Location -Confirm:$false -Force
         }
     }
 
@@ -30,7 +30,7 @@ Describe -Tag 'RequiresAzureContext' "Actual Azure tests." {
             $parentKey = $subResources.$template
             $parameters.$parentKey = "Mock"
         }
-        $armError = Test-AzureRmResourceGroupDeployment -ResourceGroupName $testResourceGroupName -TemplateFile ("{0}\{1}.json" -f $globals.TemplatePath, $template) -TemplateParameterObject $parameters
+        $armError = Test-AzResourceGroupDeployment -ResourceGroupName $testResourceGroupName -TemplateFile ("{0}\{1}.json" -f $globals.TemplatePath, $template) -TemplateParameterObject $parameters
         $passed = ([string]::IsNullOrEmpty($armError.Code) -and [string]::IsNullOrEmpty($armError.Details) -and
             [string]::IsNullOrEmpty($armError.Message) -and [string]::IsNullOrEmpty($armError.Target))
 
@@ -47,8 +47,8 @@ Describe -Tag 'RequiresAzureContext' "Actual Azure tests." {
     }
 
     AfterAll {
-        if (!($null -eq (Get-AzureRmResourceGroup -Name $testResourceGroupName -ErrorAction 0))) {
-            Remove-AzureRmResourceGroup -Name $testResourceGroupName -Confirm:$false -Force
+        if (!($null -eq (Get-AzResourceGroup -Name $testResourceGroupName -ErrorAction 0))) {
+            Remove-AzResourceGroup -Name $testResourceGroupName -Confirm:$false -Force
         }
 
         Remove-Module $ModuleName

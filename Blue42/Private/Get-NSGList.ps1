@@ -7,6 +7,7 @@ function Get-NSGList {
         .NOTES
         Linux Port 22; Windows 5986;
     #>
+    [OutputType('System.Array')]
     [CmdletBinding()]
     param (
         # If true, the nsg will allow traffic on port 22 else on port 5986

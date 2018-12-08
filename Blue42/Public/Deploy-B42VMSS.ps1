@@ -7,7 +7,7 @@ function Deploy-B42VMSS {
         .EXAMPLE
         Deploy-B42VMSS
         .NOTES
-        You need to run this function after establishing an AzureRm context using Login-AzureRmAccount
+        Run this function after establishing an Az context using Connect-AzAccount
     #>
     [CmdletBinding()]
     param (
@@ -95,9 +95,9 @@ function Deploy-B42VMSS {
 
         if($deploymentResult.Parameters.vmIdentity.Value -eq "SystemAssigned"){
             # Find the Managed Service Identity PrincipalId and grant it permission to query the secrets.
-            $vmInfoPS = Get-AzureRMVM -ResourceGroupName $ResourceGroupName -Name $vmssName
+            $vmInfoPS = Get-AzVM -ResourceGroupName $ResourceGroupName -Name $vmssName
             if (![string]::IsNullOrEmpty($vmInfoPS.Identity.PrincipalId)) {
-                Set-AzureRmKeyVaultAccessPolicy -VaultName $VMSSParameters.keyVaultName -PermissionsToSecrets get, list -ObjectId $vmInfoPS.Identity.PrincipalId
+                Set-AzKeyVaultAccessPolicy -VaultName $VMSSParameters.keyVaultName -PermissionsToSecrets get, list -ObjectId $vmInfoPS.Identity.PrincipalId
             }
         }
 

@@ -7,7 +7,7 @@ function Deploy-B42ASE {
         .EXAMPLE
         Deploy-B42ASE
         .NOTES
-        You need to run this function after establishing an AzureRm context using Login-AzureRmAccount
+        Run this function after establishing an Az context using Connect-AzAccount
     #>
     [CmdletBinding()]
     param (

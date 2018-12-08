@@ -7,7 +7,7 @@ function Deploy-B42SQL {
         .EXAMPLE
         Deploy-B42SQL
         .NOTES
-        You need to run this function after establishing an AzureRm context using Login-AzureRmAccount
+        Run this function after establishing an Az context using Connect-AzAccount
     #>
     [CmdletBinding()]
     param (
@@ -46,9 +46,9 @@ function Deploy-B42SQL {
         if ([string]::IsNullOrEmpty($sqlName)) {throw "Failed to obtain SQL name"}
 
         # Add a KeyVault.
-        $currentContext = Get-AzureRmContext
+        $currentContext = Get-AzContext
         $TenantID = $currentContext.Tenant.Id
-        $ObjectID = (Get-AzureRmADUser -StartsWith $currentContext.Account.Id).Id
+        $ObjectID = (Get-AzADUser -StartsWith $currentContext.Account.Id).Id
         $kvParams = @{
             keyVaultName           = $sqlName
             keyVaultTenantID       = $TenantID
@@ -62,7 +62,7 @@ function Deploy-B42SQL {
         $null = Add-Secret -SecretName "sqlAdminPass" -SecretValue $thisSQLParameters.sqlAdminPassword -KeyVaultName $keyVaultName
 
         if (![string]::IsNullOrEmpty($DisplayName)) {
-            Set-AzureRmSqlServerActiveDirectoryAdministrator -ResourceGroupName $ResourceGroupName -ServerName $sqlName -DisplayName "$AADDisplayName"
+            Set-AzSqlServerActiveDirectoryAdministrator -ResourceGroupName $ResourceGroupName -ServerName $sqlName -DisplayName "$AADDisplayName"
         }
 
         foreach ($db in $DBs) {

@@ -12,7 +12,7 @@ Blue42 is a PowerShell script module that facilitates the process of writing and
 Blue42 requires the following modules to function as intended.
 
 + PowerShell Core 6.1
-+ AzureRm.Netcore
++ Az
 + WindowsCompatibility - Required for PKI support
 
 ( PowerShell Desktop 5.1/AzrueRM has limitations noted below. )
@@ -58,8 +58,8 @@ The module has the following functions
 
 #### Deployment Tools
 
-+ [New-B42Deployment](./docs/New-B42Deployment.md) - creates a new AzureRmReourceGroup deployment with supplied parameters
-+ [Test-B42Deployment](./docs/Test-B42Deployment.md) - verifies that a resource group's AzureRmResourceGroupDeployment variables matched expected values (Incompatible with PowerShell 5.1)
++ [New-B42Deployment](./docs/New-B42Deployment.md) - creates a new AzReourceGroup deployment with supplied parameters
++ [Test-B42Deployment](./docs/Test-B42Deployment.md) - verifies that a resource group's AzResourceGroupDeployment variables matched expected values (Incompatible with PowerShell 5.1)
 
 #### Deployment Helpers
 

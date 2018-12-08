@@ -7,7 +7,7 @@ function Deploy-B42VM {
         .EXAMPLE
         Deploy-B42VM
         .NOTES
-        You need to run this function after establishing an AzureRm context using Login-AzureRmAccount
+        Run this function after establishing an Az context using Connect-AzAccount
     #>
     [CmdletBinding()]
     param (
@@ -50,9 +50,9 @@ function Deploy-B42VM {
         }
 
         if (!($VMParameters.Contains("keyVaultResourceGroupName") -and $VMParameters.Contains("keyVaultName"))) {
-            $currentContext = Get-AzureRmContext
+            $currentContext = Get-AzContext
             $TenantID = $currentContext.Tenant.Id
-            $ObjectID = (Get-AzureRmADUser -StartsWith $currentContext.Account.Id).Id
+            $ObjectID = (Get-AzADUser -StartsWith $currentContext.Account.Id).Id
             $kvParams = @{
                 keyVaultTenantID                     = $TenantID
                 keyVaultAccessPolicies               = @((Get-B42KeyVaultAccessPolicy -ObjectID $ObjectID -TenantID $TenantID))
@@ -114,9 +114,9 @@ function Deploy-B42VM {
 
         if($deploymentResult.Parameters.vmIdentity.Value -eq "SystemAssigned"){
             # Find the Managed Service Identity PrincipalId and grant it permission to query the secrets.
-            $vmInfoPS = Get-AzureRmVM -ResourceGroupName $ResourceGroupName -Name $vmName
+            $vmInfoPS = Get-AzVM -ResourceGroupName $ResourceGroupName -Name $vmName
             if (![string]::IsNullOrEmpty($vmInfoPS.Identity.PrincipalId)) {
-                Set-AzureRmKeyVaultAccessPolicy -VaultName $VMParameters.keyVaultName -PermissionsToSecrets get, list -ObjectId $vmInfoPS.Identity.PrincipalId
+                Set-AzKeyVaultAccessPolicy -VaultName $VMParameters.keyVaultName -PermissionsToSecrets get, list -ObjectId $vmInfoPS.Identity.PrincipalId
             }
         }
 

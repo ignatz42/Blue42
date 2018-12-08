@@ -7,7 +7,7 @@ function Deploy-B42AppService {
         .EXAMPLE
         Deploy-B42AppService
         .NOTES
-        You need to run this function after establishing an AzureRm context using Login-AzureRmAccount
+        Run this function after establishing an Az context using Connect-AzAccount
     #>
     [CmdletBinding()]
     param (
@@ -57,9 +57,9 @@ function Deploy-B42AppService {
             $accumulatedDeployments += $deploymentResult
             $webAppName = $deploymentResult.Parameters.webAppName.Value
 
-            $currentContext = Get-AzureRmContext
+            $currentContext = Get-AzContext
             $TenantID = $currentContext.Tenant.Id
-            $ObjectID = (Get-AzureRmADUser -StartsWith $currentContext.Account.Id).Id
+            $ObjectID = (Get-AzADUser -StartsWith $currentContext.Account.Id).Id
             $kvParams = @{
                 keyVaultName           = $webAppName
                 keyVaultTenantID       = $TenantID
@@ -97,11 +97,11 @@ function Deploy-B42AppService {
                 )
 
                 $ip = Get-MyIP
-                $null = New-AzureRmSqlServerFirewallRule -FirewallRuleName "OriginalConfiguration" -StartIpAddress $ip -EndIpAddress $ip -ResourceGroupName $ResourceGroupName -ServerName $thisSQLParameters.sqlName
+                $null = New-AzSqlServerFirewallRule -FirewallRuleName "OriginalConfiguration" -StartIpAddress $ip -EndIpAddress $ip -ResourceGroupName $ResourceGroupName -ServerName $thisSQLParameters.sqlName
                 foreach ($step in $steps) {
                     New-SQLCommand -SqlServerName $thisSQLParameters.sqlName -SqlDatabaseName $step.database -SqlUserName $thisSQLParameters.sqlAdminName -SqlUserPassword $thisSQLParameters.sqlAdminPassword -SqlCommand $step.sqlCommand
                 }
-                $null = Remove-AzureRmSqlServerFirewallRule -FirewallRuleName "OriginalConfiguration" -ResourceGroupName $ResourceGroupName -ServerName $thisSQLParameters.sqlName
+                $null = Remove-AzSqlServerFirewallRule -FirewallRuleName "OriginalConfiguration" -ResourceGroupName $ResourceGroupName -ServerName $thisSQLParameters.sqlName
             }
         }
 

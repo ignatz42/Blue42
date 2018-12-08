@@ -116,6 +116,6 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## OUTPUTS
 
 ## NOTES
-You need to run this function after establishing an AzureRm context using Login-AzureRmAccount
+You need to run this function after establishing an Az context using Connect-AzAccount
 
 ## RELATED LINKS
