@@ -9,6 +9,7 @@ function Get-B42CertificateForms {
         .NOTES
         This should likely be replaces with an LetsEncrypt call?
     #>
+    [OutputType('System.Collections.Hashtable')]
     [CmdletBinding()]
     param (
         # Path to an existing PFX certificate

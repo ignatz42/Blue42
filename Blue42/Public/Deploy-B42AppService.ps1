@@ -78,7 +78,7 @@ function Deploy-B42AppService {
                 $sqlAppUser = $webAppName
                 $sqlAppPass = New-B42Password
                 $null = Add-Secret -SecretName "sqlAppUser" -SecretValue $sqlAppUser -KeyVaultName $keyVaultName
-                $null = Add-Secret -SecretName "sqlAppPass" -SecretValue $sqlAppPass -KeyVaultName $keyVaultName
+                $passSecret = Add-Secret -SecretName "sqlAppPass" -SecretValue $sqlAppPass -KeyVaultName $keyVaultName
 
                 # Create a user for the webAppName to use for connection.
                 $steps = @(
@@ -99,7 +99,7 @@ function Deploy-B42AppService {
                 $ip = Get-MyIP
                 $null = New-AzSqlServerFirewallRule -FirewallRuleName "OriginalConfiguration" -StartIpAddress $ip -EndIpAddress $ip -ResourceGroupName $ResourceGroupName -ServerName $thisSQLParameters.sqlName
                 foreach ($step in $steps) {
-                    New-SQLCommand -SqlServerName $thisSQLParameters.sqlName -SqlDatabaseName $step.database -SqlUserName $thisSQLParameters.sqlAdminName -SqlUserPassword $thisSQLParameters.sqlAdminPassword -SqlCommand $step.sqlCommand
+                    New-SQLCommand -SqlServerName $thisSQLParameters.sqlName -SqlDatabaseName $step.database -SqlUserName $thisSQLParameters.sqlAdminName -SqlUserPassword $passSecret.SecretValue -SqlCommand $step.sqlCommand
                 }
                 $null = Remove-AzSqlServerFirewallRule -FirewallRuleName "OriginalConfiguration" -ResourceGroupName $ResourceGroupName -ServerName $thisSQLParameters.sqlName
             }

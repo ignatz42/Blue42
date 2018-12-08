@@ -25,7 +25,7 @@ function New-SQLCommand {
 
         # The user password
         [Parameter(Mandatory = $true)]
-        [string] $SqlUserPassword,
+        [securestring] $SqlUserPassword,
 
         # Simple SQL Command
         [Parameter(Mandatory = $true)]
