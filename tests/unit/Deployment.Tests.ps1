@@ -21,38 +21,43 @@ Describe "Deployments" {
             NewCopySource  = "OnlyInTemplate2"
         }
         $deploymentResults = New-B42Deployment -ResourceGroupName "deploymenttest-rg" -Templates $Script:stackedTemplates -TemplateParameters $customValues -Complete
+        $finalReport = Test-B42Deployment -ResourceGroupName "deploymenttest-rg" -Templates $Script:stackedTemplates -TemplateParameters $customValues -Deployments $deploymentResults
 
-        $deploymentResults[0].Parameters.Count | Should Be (4)
-        $deploymentResults[0].Parameters.Contains("Blue42Password") | Should Be ($true)
-        $deploymentResults[0].Parameters.Contains("Blue42Location") | Should Be ($true)
-        $deploymentResults[0].Parameters.Contains("Blue42UID") | Should Be ($true)
-        $deploymentResults[0].Parameters.Contains("CopySource") | Should Be ($true)
+        $finalReport.SimpleReport() | Should Be ($true)
 
-        ($deploymentResults[0].Parameters["Blue42Password"].Value -eq "CustomPasswordValue") | Should Be ($true)
-        ($deploymentResults[0].Parameters["CopySource"].Value -eq "OnlyInTemplate1") | Should Be ($true)
+        $finalReport.Parameters.Count | Should Be (5)
 
-        $deploymentResults[1].Parameters.Count | Should Be (2)
-        $deploymentResults[1].Parameters.Contains("Blue42Password") | Should Be ($true)
-        $deploymentResults[1].Parameters.Contains("NewCopySource") | Should Be ($true)
+        $finalReport.Parameters.Contains("Blue42Password") | Should Be ($true)
+        $finalReport.Parameters.Contains("Blue42Location") | Should Be ($true)
+        $finalReport.Parameters.Contains("Blue42UID") | Should Be ($true)
+        $finalReport.Parameters.Contains("CopySource") | Should Be ($true)
+        $finalReport.Parameters.Contains("NewCopySource") | Should Be ($true)
 
-        ($deploymentResults[1].Parameters["Blue42Password"].Value -eq "CustomPasswordValue") | Should Be ($true)
-        ($deploymentResults[1].Parameters["NewCopySource"].Value -eq "OnlyInTemplate2") | Should Be ($true)
+        ($finalReport.Parameters.Blue42Password -eq "CustomPasswordValue") | Should Be ($true)
+        ($finalReport.Parameters.CopySource -eq "OnlyInTemplate1") | Should Be ($true)
+        ($finalReport.Parameters.NewCopySource -eq "OnlyInTemplate2") | Should Be ($true)
     }
 
-    It "performs a deployment test" {
+    It "passes a deployment test" {
+        # This is a magic value used by the Mock.
         $currentValues = [hashtable]@{
             Blue42Password = "PasswordPasswordPassword"
         }
         $finalReport = Test-B42Deployment -ResourceGroupName "$PSScriptRoot\input" -Templates $Script:stackedTemplates -TemplateParameters $currentValues
         $finalReport.SimpleReport() | Should Be ($true)
+        $finalReport.Parameters.Contains("Blue42Password") | Should Be ($true)
+        ($finalReport.Parameters.Blue42Password -eq "PasswordPasswordPassword") | Should Be ($true)
     }
 
     It "fails a deployment test" {
+        # This is a magic value not used by the Mock.
         $currentValues = [hashtable]@{
             Blue42Password = "Password"
         }
         $finalReport = Test-B42Deployment -ResourceGroupName "$PSScriptRoot\input" -Templates $Script:stackedTemplates -TemplateParameters $currentValues
         $finalReport.SimpleReport() | Should Be ($false)
+        $finalReport.Parameters.Contains("Blue42Password") | Should Be ($true)
+        ($finalReport.Parameters.Blue42Password -eq "Password") | Should Be ($true)
     }
 
     AfterAll {

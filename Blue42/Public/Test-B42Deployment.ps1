@@ -28,7 +28,11 @@ function Test-B42Deployment {
 
         # A list of override parameters. If empty, the default parameters supplied in the template will be used insted
         [Parameter(Mandatory=$false)]
-        [hashtable] $TemplateParameters = @{}
+        [hashtable] $TemplateParameters = @{},
+
+        # A list of deployments. If empty, the list will be fetched from the Resource Group.
+        [Parameter(Mandatory=$false)]
+        [System.Object[]] $Deployments = @()
     )
 
     begin {
@@ -37,8 +41,13 @@ function Test-B42Deployment {
     }
 
     process {
+        if ($Deployments.Count -eq 0) {
+            $Deployments = Get-AzResourceGroupDeployment -ResourceGroupName $ResourceGroupName
+        }
+
         $finalReport = [B42DeploymentReport]::new()
-        $finalReport.Deployments = Get-AzResourceGroupDeployment -ResourceGroupName $ResourceGroupName
+        $finalReport.Deployments = $Deployments
+        $finalReport.Parameters = $combinedParameters
         foreach ($deployment in $finalReport.Deployments) {
             # Count the successful deployments.
             $deploymentResult = ($deployment.ProvisioningState -eq "Succeeded")

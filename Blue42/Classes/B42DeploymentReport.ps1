@@ -1,5 +1,6 @@
 class B42DeploymentReport {
-    [System.Object[]]$Deployments = @()
+    [System.Collections.Specialized.OrderedDictionary] $Parameters = @{}
+    [System.Object[]] $Deployments = @()
     [int] $SuccessfulDeploymentCount = 0
     [int] $MismatchedParameters = 0
 
