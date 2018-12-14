@@ -5,27 +5,26 @@ online version:
 schema: 2.0.0
 ---
 
-# Deploy-B42AppService
+# Deploy-B42KeyVault
 
 ## SYNOPSIS
-Deploys an App Service, either a Plan or an Environment optionally
+Deploys a KeyVault.
 
 ## SYNTAX
 
 ```
-Deploy-B42AppService [-ResourceGroupName] <String> [[-Location] <String>]
- [[-AppServicePlanParameters] <OrderedDictionary>] [<CommonParameters>]
+Deploy-B42KeyVault [-ResourceGroupName] <String> [[-Location] <String>]
+ [[-KeyVaultParameters] <OrderedDictionary>] [-IncludeCurrentUserAccess] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-The Deploy-B42AppService function serves as a one touch deploy point for an Azure App Service.
-Both plan and environment supported.
+The Deploy-B42KeyVault function serves as a one touch deploy point for an Azure Application Service Environment
 
 ## EXAMPLES
 
 ### EXAMPLE 1
 ```
-Deploy-B42AppService
+Deploy-B42KeyVault
 ```
 
 ## PARAMETERS
@@ -60,8 +59,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -AppServicePlanParameters
-Parameters used for App Service creation
+### -KeyVaultParameters
+Parameters used for KeyVault creation
 
 ```yaml
 Type: OrderedDictionary
@@ -75,6 +74,21 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -IncludeCurrentUserAccess
+{{Fill IncludeCurrentUserAccess Description}}
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### CommonParameters
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable.
 For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
@@ -84,6 +98,6 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## OUTPUTS
 
 ## NOTES
-Run this function after establishing an Az context using Connect-AzAccount
+Run this function after establishing an Az context using Connect-AzAccount.
 
 ## RELATED LINKS

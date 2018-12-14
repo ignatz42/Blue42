@@ -14,7 +14,7 @@ Deploys a VNet.
 
 ```
 Deploy-B42VNet [-ResourceGroupName] <String> [[-Location] <String>] [[-VNetParameters] <OrderedDictionary>]
- [[-Subnets] <OrderedDictionary[]>] [-IncludeDDos] [[-PrivateDNSZone] <String>] [<CommonParameters>]
+ [-IncludeDDos] [[-PrivateDNSZone] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -74,21 +74,6 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Subnets
-An array of subnet parameters blocks; one per desired subnet.
-
-```yaml
-Type: OrderedDictionary[]
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 4
-Default value: @()
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -IncludeDDos
 Include a Distributed Denial of Service plan
 
@@ -113,7 +98,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 5
+Position: 4
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False

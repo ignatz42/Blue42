@@ -8,16 +8,17 @@ schema: 2.0.0
 # Deploy-B42WebApp
 
 ## SYNOPSIS
-Deploys a Web App.
+Deploys an Web App with additional common support option and optional SQL database.
 
 ## SYNTAX
 
 ```
-Deploy-B42WebApp [-ResourceGroupName] <String> [[-Location] <String>] [<CommonParameters>]
+Deploy-B42WebApp [-ResourceGroupName] <String> [[-Location] <String>] [[-WebAppParameters] <OrderedDictionary>]
+ [[-SQLParameters] <OrderedDictionary>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-The Deploy-B42WebApp function serves as a one touch deploy point for an Azure Web Application
+The Deploy-B42WebApp function serves as a one touch deploy point for an Azure Web App.
 
 ## EXAMPLES
 
@@ -58,6 +59,38 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -WebAppParameters
+Parameters used for App Service creation
+
+```yaml
+Type: OrderedDictionary
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 3
+Default value: [ordered]@{}
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -SQLParameters
+If $null, no database will be created.
+If an empty \[ordered\] list is supplied, a new SQL Local instance and database will be created.
+If the \[ordered\] list contains, sqlServerName, sqlAdminUser, sqlAdminPass a new database will be deployed to the specified local instance.
+
+```yaml
+Type: OrderedDictionary
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 4
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### CommonParameters
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable.
 For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
@@ -67,6 +100,6 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## OUTPUTS
 
 ## NOTES
-You need to run this function after establishing an AzureRm context using Login-AzureRmAccount
+Run this function after establishing an Az context using Connect-AzAccount
 
 ## RELATED LINKS

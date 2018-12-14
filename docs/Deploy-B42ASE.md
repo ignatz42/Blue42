@@ -13,7 +13,8 @@ Deploys an ASE.
 ## SYNTAX
 
 ```
-Deploy-B42ASE [-ResourceGroupName] <String> [[-Location] <String>] [<CommonParameters>]
+Deploy-B42ASE [-ResourceGroupName] <String> [[-Location] <String>]
+ [[-AppServiceEnvironmentParameters] <OrderedDictionary>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -54,6 +55,21 @@ Aliases:
 Required: False
 Position: 2
 Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -AppServiceEnvironmentParameters
+Parameters used for App Service Environemtn creation
+
+```yaml
+Type: OrderedDictionary
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 3
+Default value: [ordered]@{}
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

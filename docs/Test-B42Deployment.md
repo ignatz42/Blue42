@@ -14,7 +14,7 @@ Test the Resource Group Deployments
 
 ```
 Test-B42Deployment [-ResourceGroupName] <String> [-Templates] <Array> [[-TemplatePath] <String>]
- [[-TemplateParameters] <Hashtable>] [<CommonParameters>]
+ [[-TemplateParameters] <Hashtable>] [[-Deployments] <Object[]>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -89,6 +89,22 @@ Aliases:
 Required: False
 Position: 4
 Default value: @{}
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Deployments
+A list of deployments.
+If empty, the list will be fetched from the Resource Group.
+
+```yaml
+Type: Object[]
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 5
+Default value: @()
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

@@ -14,7 +14,7 @@ Deploys a SQL instance.
 
 ```
 Deploy-B42SQL [-ResourceGroupName] <String> [[-Location] <String>] [[-SQLParameters] <OrderedDictionary>]
- [[-DBs] <OrderedDictionary[]>] [[-AADDisplayName] <String>] [<CommonParameters>]
+ [[-AADDisplayName] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -74,21 +74,6 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -DBs
-An array of database parameters blocks; one per desired database.
-
-```yaml
-Type: OrderedDictionary[]
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 4
-Default value: @()
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -AADDisplayName
 Display Name of the Azure Active Directory User or Group that will become the SQL Server Administrator
 
@@ -98,7 +83,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 5
+Position: 4
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False

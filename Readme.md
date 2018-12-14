@@ -69,6 +69,9 @@ The module has the following functions
 + [Deploy-B42SQL](./docs/Deploy-B42SQL.md) - deploys a SQL server and 0 or more databases
 + [Deploy-B42AppService](./docs/Deploy-B42AppService.md) - deploys an application service plan and 0 or more web apps
 + [Deploy-B42ASE](./docs/Deploy-B42ASE.md) - deploys an application service environment
++ [Deploy-B42KeyVault](./docs/Deploy-B42KeyVault.md) - deploys a key vault
++ [Deploy-B42WebApp](./docs/Deploy-B42WebApp.md) - deploys a web app
+
 
 ### Templates
 
