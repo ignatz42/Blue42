@@ -37,72 +37,74 @@ function Deploy-B42VMSS {
     }
 
     process {
-        $accumulatedDeployments = @()
         # The parameters in VirtualNetworkParameters are required. If not provided, create some defaults.
         if (!($VMSSParameters.Contains("vnetResourceGroupName") -and $VMSSParameters.Contains("vnetName") -and $VMSSParameters.Contains("subnetName"))) {
-            $vnetParams = Get-B42TemplateParameters -Templates @("VNet")
-            $subnetParams = Get-B42TemplateParameters -Templates @("Subnet")
-            $accumulatedDeployments += Deploy-B42VNet -ResourceGroupName $ResourceGroupName -Location $Location -VNetParameters $vnetParams -Subnets @($subnetParams)
+            $vnetReportCard = Deploy-B42VNet -ResourceGroupName $ResourceGroupName -Location "$Location" -VNetParameters $VMSSParameters
             # Carry along these values to the VMDeployment.
             $VMSSParameters.Add("vnetResourceGroupName", $ResourceGroupName)
-            $VMSSParameters.Add("vnetName", $vnetParams.vnetName)
-            $VMSSParameters.Add("subnetName", $subnetParams.subnetName)
+            $VMSSParameters.Add("vnetName", $vnetReportCard.Parameters.vnetName)
+            $VMSSParameters.Add("subnetName", $vnetReportCard.Parameters.subnetName)
         }
 
+        # A KeyVault is required, if one wasn't supplied create it then add the admin user and password.
         if (!($VMSSParameters.Contains("keyVaultResourceGroupName") -and $VMSSParameters.Contains("keyVaultName"))) {
-            $keyVaultResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates @("KeyVault")
-            $accumulatedDeployments += $keyVaultResult
-            # Carry along these values to the VMDeployment.
+            $keyVaultReportCard = Deploy-B42KeyVault -ResourceGroupName $ResourceGroupName -Location "$Location" -IncludeCurrentUserAccess -KeyVaultParameters ([ordered]@{keyVaultEnabledForDeployment = $true; keyVaultEnabledForTemplateDeployment = $true})
+            # These values are required
             $VMSSParameters.Add("keyVaultResourceGroupName", $ResourceGroupName)
-            $VMSSParameters.Add("keyVaultName", $keyVaultResult.Parameters.keyVaultName)
+            $VMSSParameters.Add("keyVaultName", $keyVaultReportCard.Parameters.keyVaultName)
+        }
+        # Should the VMSS just reference the password in the keyVault?
+        $userSecret = Add-Secret -KeyVaultName $VMSSParameters.keyVaultName -SecretName "AdminUsername" -SecretValue "azdam"
+        $passSecret = Add-Secret -KeyVaultName $VMSSParameters.keyVaultName -SecretName "AdminPassword" -SecretValue (New-B42Password)
+        $VMSSParameters.Add("vmssAdminUsername", $userSecret.SecretValueText)
+        $VMSSParameters.Add("vmssAdminPassword", $passSecret.SecretValueText)
 
-            # TODO Linux.
-            $certPath = ("{0}\Blue42VM.pfx" -f (Convert-Path -Path ".\"))
-            $certForms = Get-B42CertificateForms -CertificatePath $certPath -DomainNames @("testing.local")
-            Remove-Item $certPath
-
-            $null = Add-Secret -KeyVaultName $keyVaultResult.Parameters.keyVaultName.Value -SecretName "CertPassword" -SecretValue $certForms.Password
-            $certSecret = Add-Secret -KeyVaultName $keyVaultResult.Parameters.keyVaultName.Value -SecretName "Cert" -SecretValue $certForms.JsonArray
-            $VMSSParameters.Add("vmCertificateSecretUrl", $certSecret.Id)
-
-            # Add the admin user and password.
-            # Should the VMSS just reference the password in the keyVault?
-            $aUser = "azdam"
-            $aPass = (New-B42Password)
-            $VMSSParameters.Add("vmAdminUsername", $aUser)
-            $VMSSParameters.Add("vmAdminPassword", $aPass)
-            Add-Secret -KeyVaultName $keyVaultResult.Parameters.keyVaultName.Value -SecretName "AdminUsername" -SecretValue $aUser
-            Add-Secret -KeyVaultName $keyVaultResult.Parameters.keyVaultName.Value -SecretName "AdminPassword" -SecretValue $aPass
+        if (!($VMSSParameters.Contains("imageOsDiskBlobUri"))) {
+            # Maybe just check to see if this here? idk.
+            $VMSSParameters.Add("imageOsDiskBlobUri", $ImageOsDiskBlobUri)
         }
 
-        $imageDeploymentResults = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location $Location -Templates @("Image") -TemplateParameters @{ imageOsDiskBlobUri = $ImageOsDiskBlobUri}
-        $accumulatedDeployments += $imageDeploymentResults
-        $VMSSParameters.Add("imageName", $imageDeploymentResults.Parameters.imageName)
+        $prereqTemplates = @("Image", "PublicIP", "LoadBalancer")
+        $prereqDeployments = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location $Location -Templates $prereqTemplates -TemplateParameters $VMSSParameters
+        $prereqReportCard = Test-B42Deployment -ResourceGroupName $ResourceGroupName -Templates $prereqTemplates -Deployments $prereqDeployments -TemplateParameters $VMSSParameters
+        $VMSSParameters.Add("imageName", $prereqReportCard.Parameters.imageName)
         $VMSSParameters.Add("imageResourceGroupName", $ResourceGroupName)
-
-        $publicIPResults = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location $Location -Templates @("PublicIP") -TemplateParameters @{ imageOsDiskBlobUri = $ImageOsDiskBlobUri}
-        $accumulatedDeployments += $publicIPResults
-        $loadBalancerResults = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location $Location -Templates @("LoadBalancer") -TemplateParameters $publicIPResults.Parameters
-        $accumulatedDeployments += $loadBalancerResults
-        $VMSSParameters.Add("loadBalancerName", $imageDeploymentResults.Parameters.imageName)
+        $VMSSParameters.Add("loadBalancerName", $prereqReportCard.Parameters.imageName)
         $VMSSParameters.Add("loadBalancerResourceGroupName", $ResourceGroupName)
 
-        $templates = @("WinVMSS")
-        $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates $templates -TemplateParameters $VMSSParameters
-        $accumulatedDeployments += $deploymentResult
-        $vmssName = $deploymentResult.Parameters.vmssName.Value
-        if ([string]::IsNullOrEmpty($vmssName)) {throw "Failed to obtain VMSS name"}
+        $requiredTemplates = @()
+        if ($IsLinux) {
+            # TODO SSH bits
+        } else {
+            $requiredTemplates += @("WinVMSS")
 
-        if($deploymentResult.Parameters.vmIdentity.Value -eq "SystemAssigned"){
+            # Create a self-signed cert for use with WinRM over HTTPS
+            $certPath = ("{0}\Blue42VM.pfx" -f (Convert-Path -Path ".\"))
+            $certForms = Get-B42CertificateForms -CertificatePath $certPath -DomainNames @("testing.local")
+            # TODO Why is this still here?  Should the helper delete it?
+            $null = Remove-Item $certPath
+
+            $null = Add-Secret -KeyVaultName $VMSSParameters.keyVaultName -SecretName "CertPassword" -SecretValue $certForms.Password
+            $certSecret = Add-Secret -KeyVaultName $VMSSParameters.keyVaultName -SecretName "Cert" -SecretValue $certForms.JsonArray
+            $VMSSParameters.Add("vmssCertificateSecretUrl", $certSecret.Id)
+        }
+
+        $requiredDeployments = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates $requiredTemplates -TemplateParameters $VMSSParameters
+        $requiredReportCard = Test-B42Deployment -ResourceGroupName $ResourceGroupName -Templates $requiredTemplates -TemplateParameters $VMSSParameters -Deployments $requiredDeployments
+
+        if ($requiredReportCard.SimpleReport() -ne $true) {
+            throw "Failed to deploy the VMSS"
+        }
+
+        if($requiredReportCard.Parameters.vmIdentity.Value -eq "SystemAssigned"){
             # Find the Managed Service Identity PrincipalId and grant it permission to query the secrets.
-            $vmInfoPS = Get-AzVM -ResourceGroupName $ResourceGroupName -Name $vmssName
+            $vmssInfoPS = Get-AzVmss -ResourceGroupName $ResourceGroupName -Name $requiredReportCard.Parameters.vmssName
             if (![string]::IsNullOrEmpty($vmInfoPS.Identity.PrincipalId)) {
-                Set-AzKeyVaultAccessPolicy -VaultName $VMSSParameters.keyVaultName -PermissionsToSecrets get, list -ObjectId $vmInfoPS.Identity.PrincipalId
+                Set-AzKeyVaultAccessPolicy -VaultName $VMSSParameters.keyVaultName -PermissionsToSecrets get, list -ObjectId $vmssInfoPS.Identity.PrincipalId
             }
         }
 
-        # TODO: Return a report card here instead.
-        $accumulatedDeployments
+        $requiredReportCard
     }
 
     end {

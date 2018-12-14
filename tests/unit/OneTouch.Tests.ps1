@@ -6,58 +6,81 @@ $SuppressImportModule = $false
 Describe "Deployments" {
     . "$PSScriptRoot\..\AzureMocks.ps1"
 
-    It "deploys the Vnet" {
-        # TODO Should this return a Report card maybe?
-        Deploy-B42VNet -ResourceGroupName "mockdeployment-rg" -IncludeDDos -Subnets @{} -PrivateDNSZone "testing.local"
+    It "deploys a Vnet" {
+        $reportCard = Deploy-B42VNet -ResourceGroupName "mockdeployment-rg" -IncludeDDos -PrivateDNSZone "testing.local"
+        $reportCard.SimpleReport() | Should Be ($true)
+        $reportCard.Parameters.Contains("vnetName") | Should Be ($true)
+        $reportCard.Parameters.Contains("subnetName") | Should Be ($true)
+        [string]::IsNullOrEmpty($reportCard.Parameters.vnetName) | Should Be ($false)
+        [string]::IsNullOrEmpty($reportCard.Parameters.subnetName) | Should Be ($false)
         Assert-MockCalled -ModuleName $ModuleName -CommandName Get-AzResourceGroup -Scope It
         Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzResourceGroup -Scope It
         Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzResourceGroupDeployment -Scope It
-        # Assert-MockCalled -ModuleName $ModuleName -CommandName Get-AzResourceGroupDeployment -Scope It
         Assert-MockCalled -ModuleName $ModuleName -CommandName Get-AzVirtualNetwork -Scope It
         Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzDnsZone -Scope It
         Assert-MockCalled -ModuleName $ModuleName -CommandName Set-AzDnsZone -Scope It
     }
 
-    It "deploys the VM" {
-        # TODO Should this return a Report card maybe?
-        Deploy-B42VM -ResourceGroupName "mockdeployment-rg" -IncludePublicInterface
+    It "deploys a VM" {
+        $reportCard = Deploy-B42VM -ResourceGroupName "mockdeployment-rg" -IncludePublicInterface
+        $reportCard.SimpleReport() | Should Be ($true)
+        $reportCard.Parameters.Contains("vmName") | Should Be ($true)
+        [string]::IsNullOrEmpty($reportCard.Parameters.vmName) | Should Be ($false)
         Assert-MockCalled -ModuleName $ModuleName -CommandName Get-AzResourceGroup -Scope It
         Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzResourceGroup -Scope It
         Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzResourceGroupDeployment -Scope It
-        # Verify functions called?
     }
 
-    It "deploys the VMSS" {
-        # TODO Should this return a Report card maybe?
-        Deploy-B42VMSS -ResourceGroupName "mockdeployment-rg" -ImageOsDiskBlobUri "https://storage.location.test/container/image.uri"
+    It "deploys a VMSS" {
+        $reportCard = Deploy-B42VMSS -ResourceGroupName "mockdeployment-rg" -ImageOsDiskBlobUri "https://storage.location.test/container/image.uri"
+        $reportCard.SimpleReport() | Should Be ($true)
+        $reportCard.Parameters.Contains("vmssName") | Should Be ($true)
         Assert-MockCalled -ModuleName $ModuleName -CommandName Get-AzResourceGroup -Scope It
         Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzResourceGroup -Scope It
         Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzResourceGroupDeployment -Scope It
-        # Verify functions called?
     }
 
-    It "deploys the ASE" {
-        # TODO Should this return a Report card maybe?
-        Deploy-B42ASE -ResourceGroupName "mockdeployment-rg"
+    It "deploys an ASE" {
+        $reportCard = Deploy-B42ASE -ResourceGroupName "mockdeployment-rg"
+        $reportCard.SimpleReport() | Should Be ($true)
+        $reportCard.Parameters.Contains("aseName") | Should Be ($true)
         Assert-MockCalled -ModuleName $ModuleName -CommandName Get-AzResourceGroup -Scope It
         Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzResourceGroup -Scope It
         Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzResourceGroupDeployment -Scope It
-        # Verify functions called?
+    }
+
+    It "deploys an App Service" {
+        $reportCard = Deploy-B42AppService -ResourceGroupName "mockdeployment-rg"
+        $reportCard.SimpleReport() | Should Be ($true)
+        $reportCard.Parameters.Contains("aspName") | Should Be ($true)
+        Assert-MockCalled -ModuleName $ModuleName -CommandName Get-AzResourceGroup -Scope It
+        Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzResourceGroup -Scope It
+        Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzResourceGroupDeployment -Scope It
     }
 
     Mock -ModuleName $ModuleName New-SQLCommand { return }
-    It "deploys the App Service" {
-        # TODO Should this return a Report card maybe?
-        Deploy-B42AppService -ResourceGroupName "mockdeployment-rg" -WebApps @{} -SQLParameters @{}
+    It "deploys a Web App" {
+        $reportCard = Deploy-B42WebApp -ResourceGroupName "mockdeployment-rg"
+        $reportCard.SimpleReport() | Should Be ($true)
+        $reportCard.Parameters.Contains("webAppName") | Should Be ($true)
         Assert-MockCalled -ModuleName $ModuleName -CommandName Get-AzResourceGroup -Scope It
         Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzResourceGroup -Scope It
         Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzResourceGroupDeployment -Scope It
-        # Verify functions called?
     }
 
-    It "deploys the SQL" {
-        # TODO Should this return a Report card maybe?
-        Deploy-B42SQL -ResourceGroupName "mockdeployment-rg"  -DBs @{}
+    It "deploys a SQL local instance" {
+        $reportCard = Deploy-B42SQL -ResourceGroupName "mockdeployment-rg" -AADDisplayName "testspn"
+        $reportCard.SimpleReport() | Should Be ($true)
+        $reportCard.Parameters.Contains("sqlName") | Should Be ($true)
+        Assert-MockCalled -ModuleName $ModuleName -CommandName Get-AzResourceGroup -Scope It
+        Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzResourceGroup -Scope It
+        Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzResourceGroupDeployment -Scope It
+    }
+
+    It "deploys a KeyVault" {
+        $reportCard = Deploy-B42KeyVault -ResourceGroupName "mockdeployment-rg" -IncludeCurrentUserAccess
+        $reportCard.SimpleReport() | Should Be ($true)
+        $reportCard.Parameters.Contains("keyVaultName") | Should Be ($true)
         Assert-MockCalled -ModuleName $ModuleName -CommandName Get-AzResourceGroup -Scope It
         Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzResourceGroup -Scope It
         Assert-MockCalled -ModuleName $ModuleName -CommandName New-AzResourceGroupDeployment -Scope It

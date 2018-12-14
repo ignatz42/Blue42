@@ -17,7 +17,11 @@ function Deploy-B42ASE {
 
         # The destination Azure region
         [Parameter(Mandatory=$false)]
-        [string] $Location
+        [string] $Location,
+
+        # Parameters used for App Service Environemtn creation
+        [Parameter(Mandatory = $false)]
+        [System.Collections.Specialized.OrderedDictionary] $AppServiceEnvironmentParameters = [ordered]@{}
     )
 
     begin {
@@ -25,15 +29,30 @@ function Deploy-B42ASE {
     }
 
     process {
-        $accumulatedDeployments = @()
-        $templates = @("ASE")
-        $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Templates $templates -Location "$Location"
-        $accumulatedDeployments += $deploymentResult
-        $aseName = $deploymentResult.Parameters.aseName.Value
-        if ([string]::IsNullOrEmpty($aseName)) {throw "Failed to obtain App Service Environment name"}
+        # The parameters in VirtualNetworkParameters are required. If not provided, create some defaults.
+        if (!($AppServiceEnvironmentParameters.Contains("vnetResourceGroupName") -and $AppServiceEnvironmentParameters.Contains("vnetName") -and $AppServiceEnvironmentParameters.Contains("subnetName"))) {
+            $vnetReportCard = Deploy-B42VNet -ResourceGroupName $ResourceGroupName -Location "$Location"
+            # Carry along these values to the VMDeployment.
+            $AppServiceEnvironmentParameters.Add("vnetResourceGroupName", $ResourceGroupName)
+            $AppServiceEnvironmentParameters.Add("vnetName", $vnetReportCard.Parameters.vnetName)
+            $AppServiceEnvironmentParameters.Add("subnetName", $vnetReportCard.Parameters.subnetName)
+        }
 
-        # TODO: Return a report card here instead.
-        $accumulatedDeployments
+        $templates = @("ASE")
+        Write-Verbose "The next statment may take upwards of an hour to complete."
+        $aseDeployments = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates $templates -TemplateParameters $AppServiceEnvironmentParameters
+        $aseReportCard = Test-B42Deployment -ResourceGroupName $ResourceGroupName -Templates $templates -TemplateParameters $AppServiceEnvironmentParameters -Deployments $aseDeployments
+
+        if ($aseReportCard.SimpleReport() -ne $true) {
+            throw "Failed to deploy the ASE phase 1"
+        }
+        $AppServiceEnvironmentParameters.Add("aseName", $aseReportCard.Parameters.aseName)
+
+        # Publish the cert.
+
+        # Incremental deployment to configure the cert.
+
+        $aseReportCard
     }
 
     end {

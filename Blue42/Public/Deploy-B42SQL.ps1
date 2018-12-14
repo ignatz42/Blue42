@@ -23,10 +23,6 @@ function Deploy-B42SQL {
         [Parameter(Mandatory = $false)]
         [System.Collections.Specialized.OrderedDictionary] $SQLParameters = [ordered]@{},
 
-        # An array of database parameters blocks; one per desired database.
-        [Parameter(Mandatory = $false)]
-        [System.Collections.Specialized.OrderedDictionary[]] $DBs = @(),
-
         # Display Name of the Azure Active Directory User or Group that will become the SQL Server Administrator
         [Parameter(Mandatory = $false)]
         [string] $AADDisplayName = ""
@@ -37,44 +33,28 @@ function Deploy-B42SQL {
     }
 
     process {
-        $accumulatedDeployments = @()
+        if (!($SQLParameters.Contains("sqlAdminPassword"))) {
+            $SQLParameters.Add("sqlAdminPassword", (New-B42Password))
+        }
+
         $templates = @("SQL")
-        $thisSQLParameters = Get-B42TemplateParameters -Templates $templates -TemplateParameters $SQLParameters
-        $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates $templates -TemplateParameters $thisSQLParameters
-        $accumulatedDeployments += $deploymentResult
-        $sqlName = $deploymentResult.Parameters.sqlName.Value
-        if ([string]::IsNullOrEmpty($sqlName)) {throw "Failed to obtain SQL name"}
+        $deployments = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates $templates -TemplateParameters $SQLParameters
+        $reportCard = Test-B42Deployment -ResourceGroupName $ResourceGroupName -Templates $templates -TemplateParameters $SQLParameters -Deployments $deployments
+        if ($reportCard.SimpleReport() -ne $true) {
+            throw "Failed to deploy the SQL Server local instance"
+        }
+        $sqlName = $reportCard.Parameters.sqlName
 
         # Add a KeyVault.
-        $currentContext = Get-AzContext
-        $TenantID = $currentContext.Tenant.Id
-        $ObjectID = (Get-AzADUser -StartsWith $currentContext.Account.Id).Id
-        $kvParams = @{
-            keyVaultName           = $sqlName
-            keyVaultTenantID       = $TenantID
-            keyVaultAccessPolicies = @((Get-B42KeyVaultAccessPolicy -ObjectID $ObjectID -TenantID $TenantID))
-        }
-        $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates @("KeyVault") -TemplateParameters $kvParams
-        $accumulatedDeployments += $deploymentResult
-        $keyVaultName = $deploymentResult.Parameters.keyVaultName.Value
+        $keyVaultReportCard = Deploy-B42KeyVault -ResourceGroupName $ResourceGroupName -Location "$Location" -IncludeCurrentUserAccess -KeyVaultParameters ([ordered]@{keyVaultName = $sqlName})
+        $null = Add-Secret -SecretName "sqlAdminUser" -SecretValue $reportCard.Parameters.sqlAdminName -KeyVaultName $sqlName
+        $null = Add-Secret -SecretName "sqlAdminPass" -SecretValue $reportCard.Parameters.sqlAdminPassword -KeyVaultName $sqlName
 
-        $null = Add-Secret -SecretName "sqlAdminUser" -SecretValue $thisSQLParameters.sqlAdminName -KeyVaultName $keyVaultName
-        $null = Add-Secret -SecretName "sqlAdminPass" -SecretValue $thisSQLParameters.sqlAdminPassword -KeyVaultName $keyVaultName
-
-        if (![string]::IsNullOrEmpty($DisplayName)) {
-            Set-AzSqlServerActiveDirectoryAdministrator -ResourceGroupName $ResourceGroupName -ServerName $sqlName -DisplayName "$AADDisplayName"
+        if (![string]::IsNullOrEmpty($AADDisplayName)) {
+            $null = Set-AzSqlServerActiveDirectoryAdministrator -ResourceGroupName $ResourceGroupName -ServerName $sqlName -DisplayName "$AADDisplayName"
         }
 
-        foreach ($db in $DBs) {
-            if (!$db.Contains("sqlName")) {
-                $db.Add("sqlName", $sqlName)
-            }
-            $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates @("DB") -TemplateParameters $db
-            $accumulatedDeployments += $deploymentResult
-        }
-
-        # TODO: Return a report card here instead.
-        $accumulatedDeployments
+        $reportCard
     }
 
     end {

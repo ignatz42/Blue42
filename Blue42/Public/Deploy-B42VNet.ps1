@@ -23,10 +23,6 @@ function Deploy-B42VNet {
         [Parameter(Mandatory = $false)]
         [System.Collections.Specialized.OrderedDictionary] $VNetParameters = [ordered]@{},
 
-        # An array of subnet parameters blocks; one per desired subnet.
-        [Parameter(Mandatory = $false)]
-        [System.Collections.Specialized.OrderedDictionary[]] $Subnets = @(),
-
         # Include a Distributed Denial of Service plan
         [Parameter(Mandatory = $false)]
         [switch] $IncludeDDos,
@@ -41,33 +37,31 @@ function Deploy-B42VNet {
     }
 
     process {
-        $accumulatedDeployments = @()
-        $templates = @("VNet")
+        $templates = @()
         if ($IncludeDDos) {
-            $templates = @("DDosPlan", "VNet")
+            $templates += "DDosPlan"
         }
-        $vmDeploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates $templates
-        $accumulatedDeployments += $vmDeploymentResult
-        $vnetName = $vmDeploymentResult.Parameters.vnetName.Value
-        if ([string]::IsNullOrEmpty($vnetName)) {throw "Failed to obtain VNet name"}
+        $templates += "VNet"
 
+        $deployments = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates $templates -TemplateParameters $VNetParameters
+        $reportCard = Test-B42Deployment -ResourceGroupName $ResourceGroupName -Templates $templates -TemplateParameters $VNetParameters -Deployments $deployments
+
+        if ($reportCard.SimpleReport() -ne $true) {
+            throw "Failed to deploy VNet"
+        }
+        $vnetName = $reportCard.Parameters.vnetName
+
+        # This must be done before any subnets are added to the vnet.
         if (![string]::IsNullOrEmpty($PrivateDNSZone)) {
             $thisVnet = Get-AzVirtualNetwork -Name $vnetName -ResourceGroupName $ResourceGroupName
             $null = New-AzDnsZone -Name $PrivateDNSZone -ResourceGroupName $ResourceGroupName -ZoneType Private -ResolutionVirtualNetworkId @($thisVnet.Id)
             $null = Set-AzDnsZone -Name $PrivateDNSZone -ResourceGroupName $ResourceGroupName -ResolutionVirtualNetworkId @($thisVnet.Id)
         }
 
-        foreach ($subnet in $Subnets) {
-            if (!$subnet.Contains("vnetName")) {
-                $subnet.Add("vnetName", $vnetName)
-            }
-            $subNetDeploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates @("Subnet") -TemplateParameters $subnet
-            $accumulatedDeployments += $subNetDeploymentResult
-        }
-
-        # TODO: Return a report card here instead.
-        #Test-B42Deployment
-        $accumulatedDeployments
+        # Take advantage of incremental ARM deployment for clarity.  Only the subnet will be added the then the report card will be returned.
+        $templates += "Subnet"
+        $deployments = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates $templates -TemplateParameters $reportCard.Parameters
+        Test-B42Deployment -ResourceGroupName $ResourceGroupName -Templates $templates -TemplateParameters $VNetParameters -Deployments $deployments
     }
 
     end {

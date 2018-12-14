@@ -37,68 +37,43 @@ function Deploy-B42VM {
     }
 
     process {
-        $accumulatedDeployments = @()
         # The parameters in VirtualNetworkParameters are required. If not provided, create some defaults.
         if (!($VMParameters.Contains("vnetResourceGroupName") -and $VMParameters.Contains("vnetName") -and $VMParameters.Contains("subnetName"))) {
-            $vnetParams = Get-B42TemplateParameters -Templates @("VNet")
-            $subnetParams = Get-B42TemplateParameters -Templates @("Subnet")
-            $accumulatedDeployments += Deploy-B42VNet -ResourceGroupName $ResourceGroupName -Location $Location -VNetParameters $vnetParams -Subnets @($subnetParams)
+            $vnetReportCard = Deploy-B42VNet -ResourceGroupName $ResourceGroupName -Location "$Location" -VNetParameters $VMParameters
             # Carry along these values to the VMDeployment.
             $VMParameters.Add("vnetResourceGroupName", $ResourceGroupName)
-            $VMParameters.Add("vnetName", $vnetParams.vnetName)
-            $VMParameters.Add("subnetName", $subnetParams.subnetName)
+            $VMParameters.Add("vnetName", $vnetReportCard.Parameters.vnetName)
+            $VMParameters.Add("subnetName", $vnetReportCard.Parameters.subnetName)
         }
 
+        # A KeyVault is required, if one wasn't supplied create it then add the admin user and password.
         if (!($VMParameters.Contains("keyVaultResourceGroupName") -and $VMParameters.Contains("keyVaultName"))) {
-            $currentContext = Get-AzContext
-            $TenantID = $currentContext.Tenant.Id
-            $ObjectID = (Get-AzADUser -StartsWith $currentContext.Account.Id).Id
-            $kvParams = @{
-                keyVaultTenantID                     = $TenantID
-                keyVaultAccessPolicies               = @((Get-B42KeyVaultAccessPolicy -ObjectID $ObjectID -TenantID $TenantID))
-                keyVaultEnabledForDeployment         = $true
-                keyVaultEnabledForTemplateDeployment = $true
-            }
-            $keyVaultResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates @("KeyVault") -TemplateParameters $kvParams
-            $accumulatedDeployments += $keyVaultResult
-            # Carry along these values to the VMDeployment.
+            $keyVaultReportCard = Deploy-B42KeyVault -ResourceGroupName $ResourceGroupName -Location "$Location" -IncludeCurrentUserAccess -KeyVaultParameters ([ordered]@{keyVaultEnabledForDeployment = $true; keyVaultEnabledForTemplateDeployment = $true})
+            # These values are required
             $VMParameters.Add("keyVaultResourceGroupName", $ResourceGroupName)
-            $VMParameters.Add("keyVaultName", $keyVaultResult.Parameters.keyVaultName.Value)
-
-            # TODO Linux.
-            $certPath = ("{0}\Blue42VM.pfx" -f (Convert-Path -Path ".\"))
-            $certForms = Get-B42CertificateForms -CertificatePath $certPath -DomainNames @("testing.local")
-            Remove-Item $certPath
-
-            $null = Add-Secret -KeyVaultName $keyVaultResult.Parameters.keyVaultName.Value -SecretName "CertPassword" -SecretValue $certForms.Password
-            $certSecret = Add-Secret -KeyVaultName $keyVaultResult.Parameters.keyVaultName.Value -SecretName "Cert" -SecretValue $certForms.JsonArray
-            $VMParameters.Add("vmCertificateSecretUrl", $certSecret.Id)
-
-            # Add the admin user and password.
-            # Should the VM just reference the password in the keyVault?
-            $aUser = "azdam"
-            $aPass = (New-B42Password)
-            $VMParameters.Add("vmAdminUsername", $aUser)
-            $VMParameters.Add("vmAdminPassword", $aPass)
-            Add-Secret -KeyVaultName $keyVaultResult.Parameters.keyVaultName.Value -SecretName "AdminUsername" -SecretValue $aUser
-            Add-Secret -KeyVaultName $keyVaultResult.Parameters.keyVaultName.Value -SecretName "AdminPassword" -SecretValue $aPass
+            $VMParameters.Add("keyVaultName", $keyVaultReportCard.Parameters.keyVaultName)
         }
-        # Create a NIC here
-        $templates = @("NetworkInterface")
-        $nicParams = Get-B42TemplateParameters -Templates $templates -TemplateParameters $VMParameters
+        # Should the VM just reference the password in the keyVault?
+        $userSecret = Add-Secret -KeyVaultName $VMParameters.keyVaultName -SecretName "AdminUsername" -SecretValue "azdam"
+        $passSecret = Add-Secret -KeyVaultName $VMParameters.keyVaultName -SecretName "AdminPassword" -SecretValue (New-B42Password)
+        $VMParameters.Add("vmAdminUsername", $userSecret.SecretValueText)
+        $VMParameters.Add("vmAdminPassword", $passSecret.SecretValueText)
+
+        # Deploy VM Specific pre-reqs.
+        $prereqTemplates = @()
         if ($IncludePublicInterface) {
-            # Ok.  This should probably be more simple. Not sure that the $pipnsgResult order is guaranteed. The alternative
-            # may be simply to Test-B42Deployment to combine the parameter sets?
-            $pipnsgParameters = Get-B42TemplateParameters -Templates @("PublicIP", "NSG") -TemplateParameters $nicParams
-            $list = Get-NSGList -IsLinux:$IsLinux
-            $pipnsgParameters.nsgSecurityRules = $list
-            $accumulatedDeployments += New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates @("PublicIP", "NSG") -TemplateParameters $pipnsgParameters
-            $nicParams.publicIPName = $pipnsgParameters.publicIPName
-            $nicParams.nsgName = $pipnsgParameters.nsgName
+            $prereqTemplates += "PublicIP"
+            $VMParameters.Add("nsgSecurityRules", (Get-NSGList -IsLinux:$IsLinux))
+            $prereqTemplates += "NSG"
         }
-        $nicDeploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates $templates -TemplateParameters $nicParams
-        $accumulatedDeployments += $nicDeploymentResult
-        $VMParameters.Add("networkInterfaceName", $nicDeploymentResult.Parameters.networkInterfaceName.Value)
+        $prereqTemplates += "NetworkInterface"
+        $prereqDeployments = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates $prereqTemplates -TemplateParameters $VMParameters
+        $prereqReportCard = Test-B42Deployment -ResourceGroupName $ResourceGroupName -Templates $prereqTemplates -TemplateParameters $VMParameters -Deployments $prereqDeployments
+
+        if ($prereqReportCard.SimpleReport() -ne $true) {
+            throw "Failed to deploy Pre-Reqs"
+        }
+        $VMParameters.Add("networkInterfaceName", $prereqReportCard.Parameters.networkInterfaceName)
 
         # TODO: More tokens for resourceid
         if ($VMParameters.Contains("imageName")) {
@@ -107,21 +82,40 @@ function Deploy-B42VM {
             $VMParameters.Add("vmImageSKU", "")
         }
 
-        $deploymentResult = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates @("WinVM") -TemplateParameters $VMParameters
-        $accumulatedDeployments += $deploymentResult
-        $vmName = $deploymentResult.Parameters.vmName.Value
-        if ([string]::IsNullOrEmpty($vmName)) {throw "Failed to obtain VM name"}
+        # Deploy the actual VM
+        $requiredTemplates = @()
+        if ($IsLinux) {
+            $requiredTemplates += "LinVM"
+            # TODO generate the SSH bits here.
+        } else {
+            $requiredTemplates += "WinVM"
 
-        if($deploymentResult.Parameters.vmIdentity.Value -eq "SystemAssigned"){
+            # Create a self-signed cert for use with WinRM over HTTPS
+            $certPath = ("{0}\Blue42VM.pfx" -f (Convert-Path -Path ".\"))
+            $certForms = Get-B42CertificateForms -CertificatePath $certPath -DomainNames @("testing.local")
+            # TODO Why is this still here?  Should the helper delete it?
+            $null = Remove-Item $certPath
+
+            $null = Add-Secret -KeyVaultName $VMParameters.keyVaultName -SecretName "CertPassword" -SecretValue $certForms.Password
+            $certSecret = Add-Secret -KeyVaultName $VMParameters.keyVaultName -SecretName "Cert" -SecretValue $certForms.JsonArray
+            $VMParameters.Add("vmCertificateSecretUrl", $certSecret.Id)
+        }
+        $requiredDeployments = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates $requiredTemplates -TemplateParameters $VMParameters
+        $requiredReportCard = Test-B42Deployment -ResourceGroupName $ResourceGroupName -Templates $requiredTemplates -TemplateParameters $VMParameters -Deployments $requiredDeployments
+
+        if ($requiredReportCard.SimpleReport() -ne $true) {
+            throw "Failed to deploy the VM"
+        }
+
+        if($requiredReportCard.Parameters.vmIdentity -eq "SystemAssigned"){
             # Find the Managed Service Identity PrincipalId and grant it permission to query the secrets.
-            $vmInfoPS = Get-AzVM -ResourceGroupName $ResourceGroupName -Name $vmName
+            $vmInfoPS = Get-AzVM -ResourceGroupName $ResourceGroupName -Name $requiredReportCard.Parameters.vmName
             if (![string]::IsNullOrEmpty($vmInfoPS.Identity.PrincipalId)) {
                 Set-AzKeyVaultAccessPolicy -VaultName $VMParameters.keyVaultName -PermissionsToSecrets get, list -ObjectId $vmInfoPS.Identity.PrincipalId
             }
         }
-
-        # TODO: Return a report card here instead.
-        $accumulatedDeployments
+        # This report card only contains the results of the VM deployment.
+        $requiredReportCard
     }
 
     end {

@@ -94,7 +94,9 @@
         'Deploy-B42VM',
         'Deploy-B42VMSS',
         'Deploy-B42VNet',
-        'Deploy-B42AppService'
+        'Deploy-B42AppService',
+        'Deploy-B42KeyVault',
+        'Deploy-B42WebApp'
     )
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
