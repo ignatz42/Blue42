@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.4
+
++ Converted from AzureRm to Az modules
++ Corrected style issues
++ Added ability to pass existing deployment set to test utility
++ Refined OneTouch deploy scripts
+
 ## 0.2.3
 
 + Added Private DNS Zone to Deploy-B42VNet
