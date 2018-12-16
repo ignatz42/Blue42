@@ -4,14 +4,14 @@
     "parameters": {
         "appInsightsName": {
             "type": "string",
-            "defaultValue": "ai[UID]",
+            "defaultValue": "ai%UID%",
             "metadata": {
                 "description": "The App Insights Name"
             }
         },
         "appInsightsLocation": {
             "type": "string",
-            "defaultValue": "azure[LOCATION]",
+            "defaultValue": "%LOCATION%",
             "metadata": {
                 "description": "App Insights Location."
             }
@@ -19,7 +19,7 @@
         "appInsightsTags": {
             "type": "object",
             "defaultValue": {
-              "Date": "[DATE]"
+              "Date": "%DATE%"
             },
             "metadata": {
                 "description": "App Insights Tags."

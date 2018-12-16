@@ -4,14 +4,14 @@
   "parameters": {
     "networkInterfaceName": {
       "type": "string",
-      "defaultValue": "nic[UID]",
+      "defaultValue": "nic%UID%",
       "metadata": {
         "description": "Network Interface Name"
       }
     },
     "networkInterfaceLocation": {
       "type": "string",
-      "defaultValue": "azure[LOCATION]",
+      "defaultValue": "%LOCATION%",
       "metadata": {
         "description": "Network Interface Location."
       }
@@ -54,7 +54,7 @@
     "networkInterfaceTags": {
         "type": "object",
         "defaultValue": {
-          "Date": "[DATE]"
+          "Date": "%DATE%"
         },
         "metadata": {
             "description": "Network Interface Tags."

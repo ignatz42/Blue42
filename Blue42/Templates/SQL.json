@@ -4,14 +4,14 @@
   "parameters": {
     "sqlName": {
       "type": "string",
-      "defaultValue": "sql[UID]",
+      "defaultValue": "sql%UID%",
       "metadata": {
         "description": "The primary name of the SQL Server."
       }
     },
     "sqlLocation": {
       "type": "string",
-      "defaultValue": "azure[LOCATION]",
+      "defaultValue": "%LOCATION%",
       "metadata": {
         "description": "SQL Location."
       }
@@ -25,7 +25,7 @@
     },
     "sqlAdminPassword": {
       "type": "securestring",
-      "defaultValue": "get[PASSWORD]",
+      "defaultValue": "%PASSWORD%",
       "metadata": {
         "description": "The SQL Server adminstrator password."
       }
@@ -33,7 +33,7 @@
     "sqlTags": {
         "type": "object",
         "defaultValue": {
-          "Date": "[DATE]"
+          "Date": "%DATE%"
         },
         "metadata": {
             "description": "SQL Server Tags."

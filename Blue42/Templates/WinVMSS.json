@@ -25,14 +25,14 @@
     },
     "vmssName": {
       "type": "string",
-      "defaultValue": "vmss[UID]",
+      "defaultValue": "vmss%UID%",
       "metadata": {
         "description": "ScaleSet name."
       }
     },
     "vmssLocation": {
       "type": "string",
-      "defaultValue": "azure[LOCATION]",
+      "defaultValue": "%LOCATION%",
       "metadata": {
         "description": "Scaleset Location."
       }
@@ -94,7 +94,7 @@
     },
     "vmssAdminPassword": {
       "type": "securestring",
-      "defaultValue": "get[PASSWORD]",
+      "defaultValue": "%PASSWORD%",
       "metadata": {
         "description": "ScaleSet Admin password."
       }
@@ -151,7 +151,7 @@
     "vmssTags": {
         "type": "object",
         "defaultValue": {
-          "Date": "[DATE]"
+          "Date": "%DATE%"
         },
         "metadata": {
             "description": "Virtual Machine Scale Set Tags."

@@ -4,14 +4,14 @@
   "parameters": {
     "certificateName": {
       "type": "string",
-      "defaultValue": "DefaultCertificateFor_ent[UID]_InternalLoadBalancingASE",
+      "defaultValue": "DefaultCertificateFor_ent%UID%_InternalLoadBalancingASE",
       "metadata": {
         "description": "The name of the Web Certificate to be used with an ASE."
       }
     },
     "certificateLocation": {
       "type": "string",
-      "defaultValue": "azure[LOCATION]",
+      "defaultValue": "%LOCATION%",
       "metadata": {
         "description": "Location of the Web Certificate"
       }
@@ -47,7 +47,7 @@
     "certificateTags": {
         "type": "object",
         "defaultValue": {
-          "Date": "[DATE]"
+          "Date": "%DATE%"
         },
         "metadata": {
             "description": "Web Certificate Tags."

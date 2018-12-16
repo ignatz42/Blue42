@@ -4,14 +4,14 @@
   "parameters": {
     "ddosPlanName": {
       "type": "string",
-      "defaultValue": "ddos[UID]",
+      "defaultValue": "ddos%UID%",
       "metadata": {
         "description": "Name of the DDoS Standard Plan."
       }
     },
     "ddosLocation": {
       "type": "string",
-      "defaultValue": "azure[LOCATION]",
+      "defaultValue": "%LOCATION%",
       "metadata": {
         "description": "DDoS Location."
       }
@@ -19,7 +19,7 @@
     "ddosTags": {
         "type": "object",
         "defaultValue": {
-          "Date": "[DATE]"
+          "Date": "%DATE%"
         },
         "metadata": {
             "description": "DDoS Tags."

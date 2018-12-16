@@ -4,14 +4,14 @@
   "parameters": {
     "publicIPName": {
       "type": "string",
-      "defaultValue": "pubip[UID]",
+      "defaultValue": "pubip%UID%",
       "metadata": {
         "description": "The name of the Public IP"
       }
     },
     "publicIPLocation": {
       "type": "string",
-      "defaultValue": "azure[LOCATION]",
+      "defaultValue": "%LOCATION%",
       "metadata": {
         "description": "Public IP Location."
       }
@@ -47,7 +47,7 @@
     },
     "publicIPDomainNameLabel": {
       "type": "string",
-      "defaultValue": "pubip[UID]",
+      "defaultValue": "pubip%UID%",
       "metadata": {
         "description": "The Public IP Domain Name label."
       }
@@ -66,7 +66,7 @@
     "publicIPTags": {
         "type": "object",
         "defaultValue": {
-          "Date": "[DATE]"
+          "Date": "%DATE%"
         },
         "metadata": {
             "description": "Public IP Tags."

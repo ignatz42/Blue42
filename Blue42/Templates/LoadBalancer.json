@@ -4,14 +4,14 @@
   "parameters": {
     "loadBalancerName": {
       "type": "string",
-      "defaultValue": "lb[UID]",
+      "defaultValue": "lb%UID%",
       "metadata": {
         "description": "The name of the Load Balancer."
       }
     },
     "loadBalancerLocation": {
       "type": "string",
-      "defaultValue": "azure[LOCATION]",
+      "defaultValue": "%LOCATION%",
       "metadata": {
         "description": "Load Balancer Location."
       }
@@ -97,7 +97,7 @@
     "loadBalancerTags": {
         "type": "object",
         "defaultValue": {
-          "Date": "[DATE]"
+          "Date": "%DATE%"
         },
         "metadata": {
             "description": "Load balancer Tags."

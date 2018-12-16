@@ -4,21 +4,21 @@
   "parameters": {
     "Blue42Password": {
       "type": "securestring",
-      "defaultValue": "get[PASSWORD]",
+      "defaultValue": "%PASSWORD%",
       "metadata": {
         "description": "Blue42 password"
       }
     },
     "Blue42Location": {
       "type": "string",
-      "defaultValue": "azure[LOCATION]",
+      "defaultValue": "%LOCATION%",
       "metadata": {
         "description": "Blue42 Default Location"
       }
     },
     "Blue42UID": {
       "type": "string",
-      "defaultValue": "root[UID]",
+      "defaultValue": "root%UID%",
       "metadata": {
         "description": "Blue42 Unique Identifer"
       }
@@ -35,7 +35,7 @@
     "SampleTags": {
       "type": "object",
       "defaultValue": {
-        "Date": "[DATE]",
+        "Date": "%DATE%",
         "Dept": "Finance",
         "Environment": "Production"
       }

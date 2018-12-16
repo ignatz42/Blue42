@@ -25,14 +25,14 @@
     },
     "storageName": {
       "type": "string",
-      "defaultValue": "sass[UID]",
+      "defaultValue": "sass%UID%",
       "metadata": {
         "description": "Storage Account Name"
       }
     },
     "storageLocation": {
       "type": "string",
-      "defaultValue": "azure[LOCATION]",
+      "defaultValue": "%LOCATION%",
       "metadata": {
         "description": "Storage Account Location."
       }
@@ -60,7 +60,7 @@
     "storageTags": {
         "type": "object",
         "defaultValue": {
-          "Date": "[DATE]"
+          "Date": "%DATE%"
         },
         "metadata": {
             "description": "Storage Account Tags."

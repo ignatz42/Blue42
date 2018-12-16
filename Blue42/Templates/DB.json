@@ -11,14 +11,14 @@
     },
     "dbName": {
       "type": "string",
-      "defaultValue": "db[UID]",
+      "defaultValue": "db%UID%",
       "metadata": {
         "description": "The DB name."
       }
     },
     "dbLocation": {
       "type": "string",
-      "defaultValue": "azure[LOCATION]",
+      "defaultValue": "%LOCATION%",
       "metadata": {
         "description": "DB Location."
       }
@@ -79,7 +79,7 @@
     "dbTags": {
         "type": "object",
         "defaultValue": {
-          "Date": "[DATE]"
+          "Date": "%DATE%"
         },
         "metadata": {
             "description": "DB Tags."

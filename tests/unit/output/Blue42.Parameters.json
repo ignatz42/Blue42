@@ -3,13 +3,13 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "Blue42Password": {
-      "value": "get[PASSWORD]"
+      "value": "%PASSWORD%"
     },
     "Blue42Location": {
-      "value": "azure[LOCATION]"
+      "value": "%LOCATION%"
     },
     "Blue42UID": {
-      "value": "root[UID]"
+      "value": "root%UID%"
     },
     "CopySource": {
       "value": [
@@ -18,7 +18,7 @@
     },
     "SampleTags": {
       "value": {
-        "Date": "[DATE]",
+        "Date": "%DATE%",
         "Dept": "Finance",
         "Environment": "Production"
       }

@@ -4,14 +4,14 @@
   "parameters": {
     "routeTableName": {
       "type": "string",
-      "defaultValue": "routeTable[UID]",
+      "defaultValue": "routeTable%UID%",
       "metadata": {
         "description": "The RouteTable name."
       }
     },
     "routeTableLocation": {
       "type": "string",
-      "defaultValue": "azure[LOCATION]",
+      "defaultValue": "%LOCATION%",
       "metadata": {
         "description": "RouteTable Location."
       }
@@ -32,7 +32,7 @@
     "routeTableTags": {
         "type": "object",
         "defaultValue": {
-          "Date": "[DATE]"
+          "Date": "%DATE%"
         },
         "metadata": {
             "description": "Route Table Tags."

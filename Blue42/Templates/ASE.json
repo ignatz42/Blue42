@@ -25,14 +25,14 @@
     },
     "aseName": {
       "type": "string",
-      "defaultValue": "ent[UID]",
+      "defaultValue": "ent%UID%",
       "metadata": {
         "description": "Name of the App Service Environment"
       }
     },
     "aseLocation": {
       "type": "string",
-      "defaultValue": "azure[LOCATION]",
+      "defaultValue": "%LOCATION%",
       "metadata": {
         "description": "Location of the App Service Environment"
       }
@@ -74,7 +74,7 @@
     "aseTags": {
         "type": "object",
         "defaultValue": {
-          "Date": "[DATE]"
+          "Date": "%DATE%"
         },
         "metadata": {
             "description": "ASE Tags."

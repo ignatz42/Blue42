@@ -46,7 +46,7 @@ Describe "Templates" {
             $testParameters.Contains($key) | Should Be ($true)
             ($testParameters[$key] -eq $customValues.$key) | Should Be ($true)
         }
-        # This tests that the [DATE] tag replacement happens as intended.
+        # This tests that the %DATE% tag replacement happens as intended.
         $expectedDate = [ordered]@{
             Date = (Get-Date -Format "g")
             Dept = "Finance"

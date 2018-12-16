@@ -4,14 +4,14 @@
   "parameters": {
     "nsgName": {
       "type": "string",
-      "defaultValue": "nsg[UID]",
+      "defaultValue": "nsg%UID%",
       "metadata": {
         "description": "The Network Security Group name."
       }
     },
     "nsgLocation": {
       "type": "string",
-      "defaultValue": "azure[LOCATION]",
+      "defaultValue": "%LOCATION%",
       "metadata": {
         "description": "Network Security Group Location."
       }
@@ -46,7 +46,7 @@
     "nsgTags": {
         "type": "object",
         "defaultValue": {
-          "Date": "[DATE]"
+          "Date": "%DATE%"
         },
         "metadata": {
             "description": "NSG Tags."

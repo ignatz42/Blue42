@@ -5,7 +5,7 @@ function Get-Template {
         .DESCRIPTION
         The Get-Template function converts the JSON ARM template into PowerShell objects.
         .NOTES
-        The tokens [PASSWORD], [LOCATION] and [UID] are replaced here.
+        ordered lists are used instead of hashtables for consistent output
     #>
     [CmdletBinding()]
     param (

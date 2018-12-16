@@ -39,9 +39,9 @@ Describe "the basic module" {
 
             It "performs a simple deployment" {
                 $mockParameters = @{
-                    Blue42Password = "get[PASSWORD]"
-                    Blue42UID      = "root[UID]"
-                    Blue42Location = "azure[LOCATION]"
+                    Blue42Password = "%PASSWORD%"
+                    Blue42UID      = "root%UID%"
+                    Blue42Location = "%LOCATION%"
                 }
 
                 $deploymentResult = New-Deployment -Location "blueMan" -ResourceGroupName "deploymenttest-rg" -TemplatePath "$PSScriptRoot\input\Blue42.Test.json" -TemplateParameters $mockParameters

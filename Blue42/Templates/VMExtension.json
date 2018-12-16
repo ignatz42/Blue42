@@ -4,14 +4,14 @@
   "parameters": {
     "vmExtensionName": {
       "type": "string",
-      "defaultValue": "mvx[UID]",
+      "defaultValue": "mvx%UID%",
       "metadata": {
         "description": "Name of the VM"
       }
     },
     "vmExtensionLocation": {
       "type": "string",
-      "defaultValue": "azure[LOCATION]",
+      "defaultValue": "%LOCATION%",
       "metadata": {
         "description": "VM Extension Location."
       }
@@ -52,7 +52,7 @@
     "vmExtensionTags": {
         "type": "object",
         "defaultValue": {
-          "Date": "[DATE]"
+          "Date": "%DATE%"
         },
         "metadata": {
             "description": "VM Extension Tags."

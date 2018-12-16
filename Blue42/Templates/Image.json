@@ -4,14 +4,14 @@
   "parameters": {
     "imageName": {
       "type": "string",
-      "defaultValue": "image[UID]",
+      "defaultValue": "image%UID%",
       "metadata": {
         "description": "The managed image name."
       }
     },
     "imageLocation": {
       "type": "string",
-      "defaultValue": "azure[LOCATION]",
+      "defaultValue": "%LOCATION%",
       "metadata": {
         "description": "Image Location."
       }
@@ -61,7 +61,7 @@
     "imageTags": {
         "type": "object",
         "defaultValue": {
-          "Date": "[DATE]"
+          "Date": "%DATE%"
         },
         "metadata": {
             "description": "Managed Image Tags."

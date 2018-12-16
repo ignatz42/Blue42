@@ -4,14 +4,14 @@
   "parameters": {
     "aspName": {
       "type": "string",
-      "defaultValue": "ASP[UID]",
+      "defaultValue": "ASP%UID%",
       "metadata": {
         "description": "The App Service Plan Name"
       }
     },
     "aspLocation": {
       "type": "string",
-      "defaultValue": "azure[LOCATION]",
+      "defaultValue": "%LOCATION%",
       "metadata": {
         "description": "App Service Plan Location."
       }
@@ -99,7 +99,7 @@
     "aspTags": {
         "type": "object",
         "defaultValue": {
-          "Date": "[DATE]"
+          "Date": "%DATE%"
         },
         "metadata": {
             "description": "App Service Plan Tags."

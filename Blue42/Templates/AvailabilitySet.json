@@ -4,14 +4,14 @@
   "parameters": {
     "asetName": {
       "type": "string",
-      "defaultValue": "aset[UID]",
+      "defaultValue": "aset%UID%",
       "metadata": {
         "description": "The name of the availability set."
       }
     },
     "asetLocation": {
       "type": "string",
-      "defaultValue": "azure[LOCATION]",
+      "defaultValue": "%LOCATION%",
       "metadata": {
         "description": "Availability Set Location."
       }
@@ -33,7 +33,7 @@
     "asetTags": {
         "type": "object",
         "defaultValue": {
-          "Date": "[DATE]"
+          "Date": "%DATE%"
         },
         "metadata": {
             "description": "Availability Set Tags."

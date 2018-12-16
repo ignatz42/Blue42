@@ -4,7 +4,7 @@
   "parameters": {
     "Blue42Password": {
       "type": "securestring",
-      "defaultValue": "get[PASSWORD]",
+      "defaultValue": "%PASSWORD%",
       "metadata": {
         "description": "Blue42 password"
       }

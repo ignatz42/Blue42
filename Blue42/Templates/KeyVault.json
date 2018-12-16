@@ -4,14 +4,14 @@
   "parameters": {
     "keyVaultName": {
       "type": "string",
-      "defaultValue": "kv[UID]",
+      "defaultValue": "kv%UID%",
       "metadata": {
         "description": "The name of the Key Vault"
       }
     },
     "keyVaultLocation": {
       "type": "string",
-      "defaultValue": "azure[LOCATION]",
+      "defaultValue": "%LOCATION%",
       "metadata": {
         "description": "Key Vault Location."
       }
@@ -77,7 +77,7 @@
     "keyVaultTags": {
         "type": "object",
         "defaultValue": {
-          "Date": "[DATE]"
+          "Date": "%DATE%"
         },
         "metadata": {
             "description": "Key Vault Tags."

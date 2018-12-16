@@ -4,14 +4,14 @@
   "parameters": {
     "vmssExtensionName": {
       "type": "string",
-      "defaultValue": "mvssx[UID]",
+      "defaultValue": "mvssx%UID%",
       "metadata": {
         "description": "Name of the VMSS Extension"
       }
     },
     "vmssExtensionLocation": {
       "type": "string",
-      "defaultValue": "azure[LOCATION]",
+      "defaultValue": "%LOCATION%",
       "metadata": {
         "description": "VMSS Extension Location."
       }
@@ -52,7 +52,7 @@
     "vmssExtensionTags": {
         "type": "object",
         "defaultValue": {
-          "Date": "[DATE]"
+          "Date": "%DATE%"
         },
         "metadata": {
             "description": "VMSS Extension Tags."

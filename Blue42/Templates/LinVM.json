@@ -4,14 +4,14 @@
   "parameters": {
     "vmName": {
       "type": "string",
-      "defaultValue": "[UID]",
+      "defaultValue": "%UID%",
       "metadata": {
         "description": "Name of the Virtual Machine"
       }
     },
     "vmLocation": {
       "type": "string",
-      "defaultValue": "azure[LOCATION]",
+      "defaultValue": "%LOCATION%",
       "metadata": {
         "description": "VM Location."
       }
@@ -89,7 +89,7 @@
     },
     "vmAdminPassword": {
       "type": "securestring",
-      "defaultValue": "get[PASSWORD]",
+      "defaultValue": "%PASSWORD%",
       "metadata": {
         "description": "VM Password"
       }
@@ -104,7 +104,7 @@
     "vmTags": {
         "type": "object",
         "defaultValue": {
-          "Date": "[DATE]"
+          "Date": "%DATE%"
         },
         "metadata": {
             "description": "VM Tags."

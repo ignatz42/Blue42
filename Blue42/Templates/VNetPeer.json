@@ -18,7 +18,7 @@
     },
     "peerLocation": {
       "type": "string",
-      "defaultValue": "azure[LOCATION]",
+      "defaultValue": "%LOCATION%",
       "metadata": {
         "description": "virtual network peer Location."
       }
@@ -62,7 +62,7 @@
     "vnetPeerTags": {
         "type": "object",
         "defaultValue": {
-          "Date": "[DATE]"
+          "Date": "%DATE%"
         },
         "metadata": {
             "description": "Virtual network peer Tags."

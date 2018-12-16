@@ -1,0 +1,52 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "sqlName": {
+      "type": "string",
+      "defaultValue": "sql%UID%",
+      "metadata": {
+        "description": "The primary name of the SQL Server."
+      }
+    },
+    "vnetName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Virtual Network Name."
+      }
+    },
+    "vnetResourceGroupName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Virtual Network Resource Group."
+      }
+    },
+    "sqlAllowedSubnets": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "A list of subnet names that will be translated into allowed access rules."
+      }
+    }
+  },
+  "variables": {
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Sql/servers/virtualNetworkRules",
+      "name": "[concat(parameters('sqlName'), '/newVnetRule', copyIndex('virtualNetworkRules'))]",
+      "apiVersion": "2015-05-01-preview",
+      "properties": {
+        "virtualNetworkSubnetId": "[concat(resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/', parameters('vnetName')), '/', 'subnets', '/', parameters('sqlAllowedSubnets')[copyIndex('virtualNetworkRules')])]",
+        "ignoreMissingVnetServiceEndpoint": true
+      },
+      "copy": {
+        "name": "virtualNetworkRules",
+        "count": "[length(parameters('sqlAllowedSubnets'))]"
+      }
+    }
+  ],
+  "outputs": {}
+}

@@ -4,14 +4,14 @@
   "parameters": {
     "webAppName": {
       "type": "string",
-      "defaultValue": "webApp[UID]",
+      "defaultValue": "webApp%UID%",
       "metadata": {
         "description": "The Web App Name"
       }
     },
     "webAppLocation": {
       "type": "string",
-      "defaultValue": "azure[LOCATION]",
+      "defaultValue": "%LOCATION%",
       "metadata": {
         "description": "Web App Location."
       }
@@ -40,7 +40,7 @@
     "webAppTags": {
         "type": "object",
         "defaultValue": {
-          "Date": "[DATE]"
+          "Date": "%DATE%"
         },
         "metadata": {
             "description": "Web App Tags."

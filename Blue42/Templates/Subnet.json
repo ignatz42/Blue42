@@ -4,21 +4,21 @@
   "parameters": {
     "vnetName": {
       "type": "string",
-      "defaultValue": "vnet[UID]",
+      "defaultValue": "vnet%UID%",
       "metadata": {
         "description": "Virtual Network Name."
       }
     },
     "subnetName": {
       "type": "string",
-      "defaultValue": "Sub[UID]",
+      "defaultValue": "Sub%UID%",
       "metadata": {
         "description": "Subnet name."
       }
     },
     "subnetLocation": {
       "type": "string",
-      "defaultValue": "azure[LOCATION]",
+      "defaultValue": "%LOCATION%",
       "metadata": {
         "description": "Subnet Location."
       }
@@ -43,7 +43,7 @@
     "subnetTags": {
         "type": "object",
         "defaultValue": {
-          "Date": "[DATE]"
+          "Date": "%DATE%"
         },
         "metadata": {
             "description": "Subnet Tags."

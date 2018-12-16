@@ -81,7 +81,7 @@ The module includes a group of templates that have the following characteristics
 + One resource per template
 + Advanced features are disabled inside the template using conditional logic
 + Indented with 2 spaces.
-+ Have default values that may take advantage of the following special values; [PASSWORD], [LOCATION], [UID]
++ Have default values that may take advantage of the following special values; %PASSWORD%, %LOCATION%, %UID%, and %DATE%
 
 The result is that these templates may be 'stacked' to create more complex templates.
 

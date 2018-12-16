@@ -4,14 +4,14 @@
   "parameters": {
     "vnetName": {
       "type": "string",
-      "defaultValue": "vnet[UID]",
+      "defaultValue": "vnet%UID%",
       "metadata": {
         "description": "Virtual Network Name."
       }
     },
     "vnetLocation": {
       "type": "string",
-      "defaultValue": "azure[LOCATION]",
+      "defaultValue": "%LOCATION%",
       "metadata": {
         "description": "Virtual Network Location."
       }
@@ -40,7 +40,7 @@
     "vnetTags": {
         "type": "object",
         "defaultValue": {
-          "Date": "[DATE]"
+          "Date": "%DATE%"
         },
         "metadata": {
             "description": "VNet Tags."
