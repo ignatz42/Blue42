@@ -118,6 +118,6 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ### System.Collections.Specialized.OrderedDictionary
 ## NOTES
-This function does a token replacement on \[PASSWORD\] and \[UID\] contained in the template's default value field.
+This function does a token replacement on %PASSWORD%, %LOCATION%, %DATE%, and %UID% contained in the template's default value field.
 
 ## RELATED LINKS

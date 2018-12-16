@@ -7,7 +7,7 @@ function Get-B42TemplateParameters {
         .EXAMPLE
         Get-B42TemplateParameters -Templates @("Vnet", "Subnet")
         .NOTES
-        This function does a token replacement on %PASSWORD% and %UID% contained in the template's default value field.
+        This function does a token replacement on %PASSWORD%, %LOCATION%, %DATE%, and %UID% contained in the template's default value field.
     #>
     [OutputType('System.Collections.Specialized.OrderedDictionary')]
     [CmdletBinding()]
