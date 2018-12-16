@@ -36,7 +36,16 @@
       "metadata": {
         "description": "Name of the DDoS Standard Plan."
       }
-    }
+    },
+    "vnetTags": {
+        "type": "object",
+        "defaultValue": {
+          "Date": "[DATE]"
+        },
+        "metadata": {
+            "description": "VNet Tags."
+        }
+      }
   },
   "variables": {
     "vnetLocation": "[if(empty(parameters('vnetLocation')), resourceGroup().location, parameters('vnetLocation'))]",
@@ -50,7 +59,7 @@
       "type": "Microsoft.Network/virtualNetworks",
       "name": "[parameters('vnetName')]",
       "location": "[variables('vnetLocation')]",
-      "tags": {},
+      "tags": "[parameters('vnetTags')]",
       "properties": {
         "addressSpace": {
           "addressPrefixes": [

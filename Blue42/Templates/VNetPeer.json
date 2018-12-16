@@ -58,7 +58,16 @@
     "peerVnetName": {
       "type": "string",
       "defaultValue": ""
-    }
+    },
+    "vnetPeerTags": {
+        "type": "object",
+        "defaultValue": {
+          "Date": "[DATE]"
+        },
+        "metadata": {
+            "description": "Virtual network peer Tags."
+        }
+      }
   },
   "variables": {
     "peerName": "[concat(parameters('vnetName'), '/', parameters('vnetPeerName'))]",
@@ -71,6 +80,7 @@
       "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
       "apiVersion": "2018-08-01",
       "location": "[variables('peerLocation')]",
+      "tags": "[parameters('vnetPeerTags')]",
       "properties": {
         "allowVirtualNetworkAccess": "[parameters('peerAllowVirtualNetworkAccess')]",
         "allowForwardedTraffic": "[parameters('peerAllowForwardedTraffic')]",

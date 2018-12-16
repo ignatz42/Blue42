@@ -42,7 +42,16 @@
       "metadata": {
         "description": "An array that will be translated into NSG security rules."
       }
-    }
+    },
+    "nsgTags": {
+        "type": "object",
+        "defaultValue": {
+          "Date": "[DATE]"
+        },
+        "metadata": {
+            "description": "NSG Tags."
+        }
+      }
   },
   "variables": {
     "nsgLocation": "[if(empty(parameters('nsgLocation')), resourceGroup().location, parameters('nsgLocation'))]",
@@ -75,6 +84,7 @@
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[parameters('nsgName')]",
       "location": "[variables('nsgLocation')]",
+      "tags": "[parameters('nsgTags')]",
       "tags": {
         "displayName": "[parameters('nsgDisplayName')]"
       },

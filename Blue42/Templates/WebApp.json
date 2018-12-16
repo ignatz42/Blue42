@@ -36,7 +36,16 @@
       "metadata": {
         "description": "Resource Group Name of the App Service Environment"
       }
-    }
+    },
+    "webAppTags": {
+        "type": "object",
+        "defaultValue": {
+          "Date": "[DATE]"
+        },
+        "metadata": {
+            "description": "Web App Tags."
+        }
+      }
   },
   "variables": {
     "aspResourceID": "[resourceId(parameters('aspResourceGroupName'), 'Microsoft.Web/serverfarms/', parameters('aspName'))]",
@@ -48,6 +57,7 @@
       "type": "Microsoft.Web/sites",
       "name": "[parameters('webAppName')]",
       "location": "[variables('webAppLocation')]",
+      "tags": "[parameters('webAppTags')]",
       "properties": {
         "name": "[parameters('webAppName')]",
         "serverFarmId": "[variables('aspResourceID')]",

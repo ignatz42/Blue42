@@ -15,7 +15,16 @@
       "metadata": {
         "description": "DDoS Location."
       }
-    }
+    },
+    "ddosTags": {
+        "type": "object",
+        "defaultValue": {
+          "Date": "[DATE]"
+        },
+        "metadata": {
+            "description": "DDoS Tags."
+        }
+      }
   },
   "variables": {
     "ddosLocation": "[if(empty(parameters('ddosLocation')), resourceGroup().location, parameters('ddosLocation'))]"
@@ -25,7 +34,8 @@
       "apiVersion": "2018-02-01",
       "type": "Microsoft.Network/ddosProtectionPlans",
       "name": "[parameters('ddosPlanName')]",
-      "location": "[variables('ddosLocation')]"
+      "location": "[variables('ddosLocation')]",
+      "tags": "[parameters('ddosTags')]"
     }
   ],
   "outputs": {}

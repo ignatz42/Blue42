@@ -10,11 +10,11 @@ function Get-Template {
     [CmdletBinding()]
     param (
         # The path to the template
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string] $TemplatePath,
 
         # Skip token replacement.
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [switch] $SkipTokenReplacement
     )
 
@@ -32,20 +32,13 @@ function Get-Template {
 
         # Replace the tokens to make sure that all parameters have working default values after the template is read.
         foreach ($parameterKey in $template.parameters.Keys) {
+            if (($template.parameters.$parameterKey.type.EndsWith("object"))) {
+                foreach ($value in $template.parameters.$parameterKey.defaultValue.Values) {
+                    $value = Edit-Tokens -DefaultValue $value -Globals $globals
+                }
+            }
             if (!($template.parameters.$parameterKey.type.EndsWith("string"))) {continue}
-            if (!($template.parameters.$parameterKey.defaultValue -match "(?<Head>.*)\[(?<Function>.+)\](?<Tail>.*)")) {continue}
-            if ('PASSWORD' -eq $Matches.Function) {
-                $template.parameters.$parameterKey.defaultValue = New-B42Password
-                Write-Verbose "B42 - Replaced [PASSWORD]. See KeyVault for value or edit this line."
-            }
-            if ('LOCATION' -eq $Matches.Function) {
-                $template.parameters.$parameterKey.defaultValue = $globals.Location
-                Write-Verbose ("B42 - Replaced [LOCATION] with {0}" -f $template.parameters.$parameterKey.defaultValue)
-            }
-            if ('UID' -eq $Matches.Function) {
-                $template.parameters.$parameterKey.defaultValue = $Matches.Head + $globals.UID + $Matches.Tail
-                Write-Verbose ("B42 - Replaced [UID] with {0}" -f $template.parameters.$parameterKey.defaultValue)
-            }
+            $template.parameters.$parameterKey.defaultValue = Edit-Tokens -DefaultValue $template.parameters.$parameterKey.defaultValue -Globals $globals
         }
         $template
     }

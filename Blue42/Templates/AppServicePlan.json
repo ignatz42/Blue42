@@ -95,7 +95,16 @@
       "metadata": {
         "description": "Name of the App Service Environment"
       }
-    }
+    },
+    "aspTags": {
+        "type": "object",
+        "defaultValue": {
+          "Date": "[DATE]"
+        },
+        "metadata": {
+            "description": "App Service Plan Tags."
+        }
+      }
   },
   "variables": {
     "aspLocation": "[if(empty(parameters('aspLocation')), resourceGroup().location, parameters('aspLocation'))]",
@@ -119,6 +128,7 @@
       },
       "kind": "[parameters('aspKind')]",
       "location": "[variables('aspLocation')]",
+      "tags": "[parameters('aspTags')]",
       "properties": "[if(empty(parameters('aseName')), json('null'), variables('aspProperties'))]"
     }
   ],

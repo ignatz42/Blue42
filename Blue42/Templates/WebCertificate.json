@@ -43,7 +43,16 @@
       "metadata": {
         "description": "A pfx file encoded as a base-64 string.  The pfx contains the SSL certificate that will be configured as the default SSL certificate for the ASE."
       }
-    }
+    },
+    "certificateTags": {
+        "type": "object",
+        "defaultValue": {
+          "Date": "[DATE]"
+        },
+        "metadata": {
+            "description": "Web Certificate Tags."
+        }
+      }
   },
   "variables": {},
   "resources": [
@@ -52,6 +61,7 @@
       "type": "Microsoft.Web/certificates",
       "name": "[parameters('certificateName')]",
       "location": "[parameters('certificateLocation')]",
+      "tags": "[parameters('certificateTags')]",
       "properties": {
         "pfxBlob": "[parameters('certificatePfxBlobString')]",
         "password": "[parameters('certificatePassword')]",

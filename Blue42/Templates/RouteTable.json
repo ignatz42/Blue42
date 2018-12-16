@@ -28,7 +28,16 @@
       "metadata": {
         "description": "An array that will be translated into routes."
       }
-    }
+    },
+    "routeTableTags": {
+        "type": "object",
+        "defaultValue": {
+          "Date": "[DATE]"
+        },
+        "metadata": {
+            "description": "Route Table Tags."
+        }
+      }
   },
   "variables": {
     "routeTableLocation": "[if(empty(parameters('routeTableLocation')), resourceGroup().location, parameters('routeTableLocation'))]",
@@ -54,6 +63,7 @@
       "type": "Microsoft.Network/routeTables",
       "name": "[parameters('routeTableName')]",
       "location": "[variables('routeTableLocation')]",
+      "tags": "[parameters('routeTableTags')]",
       "properties": "[variables('tableProperties')]"
     }
   ],

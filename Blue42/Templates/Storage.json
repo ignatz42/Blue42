@@ -56,7 +56,16 @@
       "metadata": {
         "description": "The tier of the Storage Account"
       }
-    }
+    },
+    "storageTags": {
+        "type": "object",
+        "defaultValue": {
+          "Date": "[DATE]"
+        },
+        "metadata": {
+            "description": "Storage Account Tags."
+        }
+      }
   },
   "variables": {
     "storageLocation": "[if(empty(parameters('storageLocation')), resourceGroup().location, parameters('storageLocation'))]",
@@ -88,7 +97,7 @@
       "name": "[parameters('storageName')]",
       "apiVersion": "2018-02-01",
       "location": "[variables('storageLocation')]",
-      "tags": {},
+      "tags": "[parameters('storageTags')]",
       "scale": null,
       "properties": {
         "networkAcls": "[if(greater(length(parameters('storageAllowedSubnets')), 0), variables('networkAclCollection'), json('null'))]",

@@ -57,7 +57,16 @@
       "metadata": {
         "description": "The managed image zone resiliency."
       }
-    }
+    },
+    "imageTags": {
+        "type": "object",
+        "defaultValue": {
+          "Date": "[DATE]"
+        },
+        "metadata": {
+            "description": "Managed Image Tags."
+        }
+      }
   },
   "variables": {
     "imageLocation": "[if(empty(parameters('imageLocation')), resourceGroup().location, parameters('imageLocation'))]"
@@ -68,6 +77,7 @@
       "type": "Microsoft.Compute/images",
       "name": "[parameters('imageName')]",
       "location": "[variables('imageLocation')]",
+      "tags": "[parameters('imageTags')]",
       "properties": {
         "storageProfile": {
           "zoneResilient": "[parameters('imageZoneResilient')]",

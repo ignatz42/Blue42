@@ -93,7 +93,16 @@
       "metadata": {
         "description": "An array of ports names that will be translated into NSG Allow rules."
       }
-    }
+    },
+    "loadBalancerTags": {
+        "type": "object",
+        "defaultValue": {
+          "Date": "[DATE]"
+        },
+        "metadata": {
+            "description": "Load balancer Tags."
+        }
+      }
   },
   "variables": {
     "loadBalancerLocation": "[if(empty(parameters('loadBalancerLocation')), resourceGroup().location, parameters('loadBalancerLocation'))]",
@@ -136,6 +145,7 @@
       "name": "[parameters('loadBalancerName')]",
       "type": "Microsoft.Network/loadBalancers",
       "location": "[variables('loadBalancerLocation')]",
+      "tags": "[parameters('loadBalancerTags')]",
       "sku": {
         "name": "[parameters('loadBalancerSKU')]"
       },

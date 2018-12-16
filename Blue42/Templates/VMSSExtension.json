@@ -6,21 +6,21 @@
       "type": "string",
       "defaultValue": "mvssx[UID]",
       "metadata": {
-        "description": "Name of the VM Extension"
+        "description": "Name of the VMSS Extension"
       }
     },
     "vmssExtensionLocation": {
       "type": "string",
       "defaultValue": "azure[LOCATION]",
       "metadata": {
-        "description": "VM Extension Location."
+        "description": "VMSS Extension Location."
       }
     },
     "vmssName": {
       "type": "string",
       "defaultValue": "",
       "metadata": {
-        "description": "Name of the Virtual Machine"
+        "description": "Name of the Virtual Machine Scale Set"
       }
     },
     "vmssExtensionFileUris": {
@@ -48,7 +48,16 @@
     "vmssExtensionTypeHandlerVersion": {
       "type": "string",
       "defaultValue": "2.0"
-    }
+    },
+    "vmssExtensionTags": {
+        "type": "object",
+        "defaultValue": {
+          "Date": "[DATE]"
+        },
+        "metadata": {
+            "description": "VMSS Extension Tags."
+        }
+      }
   },
   "variables": {
     "vmssExtensionLocation": "[if(empty(parameters('vmssExtensionLocation')), resourceGroup().location, parameters('vmssExtensionLocation'))]"
@@ -59,6 +68,7 @@
       "type": "Microsoft.Compute/virtualMachineScaleSets/extensions",
       "apiVersion": "2017-12-01",
       "location": "[variables('vmssExtensionLocation')]",
+      "tags": "[parameters('vmssExtensionTags')]",
       "properties": {
         "publisher": "[parameters('vmssExtensionPublisher')]",
         "type": "[parameters('vmssExtensionType')]",

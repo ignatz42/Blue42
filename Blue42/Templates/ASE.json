@@ -70,7 +70,16 @@
       "metadata": {
         "description": "The hexadecimal certificate thumbprint of the certificate contained in pfxBlobString.  All spaces need to be removed from the hex string."
       }
-    }
+    },
+    "aseTags": {
+        "type": "object",
+        "defaultValue": {
+          "Date": "[DATE]"
+        },
+        "metadata": {
+            "description": "ASE Tags."
+        }
+      }
   },
   "variables": {
     "aseLocation": "[if(empty(parameters('aseLocation')), resourceGroup().location, parameters('aseLocation'))]",
@@ -88,6 +97,7 @@
       "type": "Microsoft.Web/hostingEnvironments",
       "name": "[parameters('aseName')]",
       "location": "[variables('aseLocation')]",
+      "tags": "[parameters('aseTags')]",
       "kind": "[parameters('aseKind')]",
       "properties": {
         "name": "[parameters('aseName')]",

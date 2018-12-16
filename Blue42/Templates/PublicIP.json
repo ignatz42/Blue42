@@ -62,7 +62,16 @@
       "metadata": {
         "description": "The Public IP Address version."
       }
-    }
+    },
+    "publicIPTags": {
+        "type": "object",
+        "defaultValue": {
+          "Date": "[DATE]"
+        },
+        "metadata": {
+            "description": "Public IP Tags."
+        }
+      }
   },
   "variables": {
     "publicIPLocation": "[if(empty(parameters('publicIPLocation')), resourceGroup().location, parameters('publicIPLocation'))]"
@@ -73,6 +82,7 @@
       "name": "[parameters('publicIPName')]",
       "type": "Microsoft.Network/publicIPAddresses",
       "location": "[variables('publicIPLocation')]",
+      "tags": "[parameters('publicIPTags')]",
       "sku": {
         "name": "[parameters('publicIPSku')]"
       },

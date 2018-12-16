@@ -75,7 +75,16 @@
       "metadata": {
         "description": "The sample DB name (if none leave blank)."
       }
-    }
+    },
+    "dbTags": {
+        "type": "object",
+        "defaultValue": {
+          "Date": "[DATE]"
+        },
+        "metadata": {
+            "description": "DB Tags."
+        }
+      }
   },
   "variables": {
     "dbLocation": "[if(empty(parameters('dbLocation')), resourceGroup().location, parameters('dbLocation'))]"
@@ -87,6 +96,7 @@
       "name": "[concat(parameters('sqlName'), '/', parameters('dbName'))]",
       "tags": {},
       "location": "[variables('dbLocation')]",
+      "tags": "[parameters('dbTags')]",
       "properties": {
         "collation": "[parameters('dbCollation')]",
         "edition": "[parameters('dbEdition')]",

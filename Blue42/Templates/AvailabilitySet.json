@@ -29,7 +29,16 @@
       "metadata": {
         "description": "The number of update domains."
       }
-    }
+    },
+    "asetTags": {
+        "type": "object",
+        "defaultValue": {
+          "Date": "[DATE]"
+        },
+        "metadata": {
+            "description": "Availability Set Tags."
+        }
+      }
   },
   "variables": {
     "asetLocation": "[if(empty(parameters('asetLocation')), resourceGroup().location, parameters('asetLocation'))]"
@@ -40,6 +49,7 @@
       "type": "Microsoft.Compute/availabilitySets",
       "apiVersion": "2018-06-01",
       "location": "[variables('asetlocation')]",
+      "tags": "[parameters('asetTags')]",
       "properties": {
         "platformFaultDomainCount": "[parameters('asetFaultDomain')]",
         "platformUpdateDomainCount": "[parameters('asetUpdateDomain')]",

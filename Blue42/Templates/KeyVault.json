@@ -73,7 +73,16 @@
       "metadata": {
         "description": "True if this vault will be used to store encrypted disks."
       }
-    }
+    },
+    "keyVaultTags": {
+        "type": "object",
+        "defaultValue": {
+          "Date": "[DATE]"
+        },
+        "metadata": {
+            "description": "Key Vault Tags."
+        }
+      }
   },
   "variables": {
     "keyVaultLocation": "[if(empty(parameters('keyVaultLocation')), resourceGroup().location, parameters('keyVaultLocation'))]"
@@ -84,6 +93,7 @@
       "name": "[parameters('keyVaultName')]",
       "type": "Microsoft.KeyVault/vaults",
       "location": "[variables('keyVaultLocation')]",
+      "tags": "[parameters('keyVaultTags')]",
       "properties": {
         "enabledForDeployment": "[parameters('keyVaultEnabledForDeployment')]",
         "enabledForTemplateDeployment": "[parameters('keyVaultEnabledForTemplateDeployment')]",

@@ -25,13 +25,14 @@ Describe "Deployments" {
 
         $finalReport.SimpleReport() | Should Be ($true)
 
-        $finalReport.Parameters.Count | Should Be (5)
+        $finalReport.Parameters.Count | Should Be (6)
 
         $finalReport.Parameters.Contains("Blue42Password") | Should Be ($true)
         $finalReport.Parameters.Contains("Blue42Location") | Should Be ($true)
         $finalReport.Parameters.Contains("Blue42UID") | Should Be ($true)
         $finalReport.Parameters.Contains("CopySource") | Should Be ($true)
         $finalReport.Parameters.Contains("NewCopySource") | Should Be ($true)
+        $finalReport.Parameters.Contains("SampleTags") | Should Be ($true)
 
         ($finalReport.Parameters.Blue42Password -eq "CustomPasswordValue") | Should Be ($true)
         ($finalReport.Parameters.CopySource -eq "OnlyInTemplate1") | Should Be ($true)

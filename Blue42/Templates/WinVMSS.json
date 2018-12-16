@@ -147,7 +147,16 @@
       "metadata": {
         "description": "Certificate that will be copied to the virtual machines."
       }
-    }
+    },
+    "vmssTags": {
+        "type": "object",
+        "defaultValue": {
+          "Date": "[DATE]"
+        },
+        "metadata": {
+            "description": "Virtual Machine Scale Set Tags."
+        }
+      }
   },
   "variables": {
     "vmssLocation": "[if(empty(parameters('vmssLocation')), resourceGroup().location, parameters('vmssLocation'))]",
@@ -176,6 +185,7 @@
       "name": "[parameters('vmssName')]",
       "type": "Microsoft.Compute/virtualMachineScaleSets",
       "location": "[variables('vmssLocation')]",
+      "tags": "[parameters('vmssTags')]",
       "identity": {
         "type": "[parameters('vmssIdentity')]"
       },
@@ -184,7 +194,6 @@
         "tier": "Standard",
         "capacity": "[int(parameters('vmssInstanceCount'))]"
       },
-      "tags": {},
       "properties": {
         "singlePlacementGroup": true,
         "upgradePolicy": {

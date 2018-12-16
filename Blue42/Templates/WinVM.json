@@ -121,7 +121,16 @@
       "metadata": {
         "description": "Certificate that will be copied to the virtual machines. Leave blank for Linux."
       }
-    }
+    },
+    "vmTags": {
+        "type": "object",
+        "defaultValue": {
+          "Date": "[DATE]"
+        },
+        "metadata": {
+            "description": "Virtual Machine Tags."
+        }
+      }
   },
   "variables": {
     "vmLocation": "[if(empty(parameters('vmLocation')), resourceGroup().location, parameters('vmLocation'))]",
@@ -154,6 +163,7 @@
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[parameters('vmName')]",
       "location": "[variables('vmLocation')]",
+      "tags": "[parameters('vmTags')]",
       "identity": {
         "type": "[parameters('vmIdentity')]"
       },

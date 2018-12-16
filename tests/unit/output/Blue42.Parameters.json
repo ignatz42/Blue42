@@ -15,6 +15,13 @@
       "value": [
         "singleEntry"
       ]
+    },
+    "SampleTags": {
+      "value": {
+        "Date": "[DATE]",
+        "Dept": "Finance",
+        "Environment": "Production"
+      }
     }
   }
 }

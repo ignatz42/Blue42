@@ -32,6 +32,14 @@
         "description": "This sample tests an array with a single element"
       }
     },
+    "SampleTags": {
+      "type": "object",
+      "defaultValue": {
+        "Date": "[DATE]",
+        "Dept": "Finance",
+        "Environment": "Production"
+      }
+    },
     "NewCopySource": {
       "type": "array",
       "defaultValue": [

@@ -29,7 +29,16 @@
       "metadata": {
         "description": "The SQL Server adminstrator password."
       }
-    }
+    },
+    "sqlTags": {
+        "type": "object",
+        "defaultValue": {
+          "Date": "[DATE]"
+        },
+        "metadata": {
+            "description": "SQL Server Tags."
+        }
+      }
   },
   "variables": {
     "sqlLocation": "[if(empty(parameters('sqlLocation')), resourceGroup().location, parameters('sqlLocation'))]"
@@ -39,9 +48,9 @@
       "name": "[parameters('sqlName')]",
       "type": "Microsoft.Sql/servers",
       "location": "[variables('sqlLocation')]",
+      "tags": "[parameters('sqlTags')]",
       "apiVersion": "2015-05-01-preview",
       "kind": "v12.0",
-      "tags": {},
       "properties": {
         "administratorLogin": "[parameters('sqlAdminName')]",
         "administratorLoginPassword": "[parameters('sqlAdminPassword')]",
