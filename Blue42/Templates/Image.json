@@ -59,14 +59,14 @@
       }
     },
     "imageTags": {
-        "type": "object",
-        "defaultValue": {
-          "Date": "%DATE%"
-        },
-        "metadata": {
-            "description": "Managed Image Tags."
-        }
+      "type": "object",
+      "defaultValue": {
+        "Date": "%DATE%"
+      },
+      "metadata": {
+        "description": "Managed Image Tags."
       }
+    }
   },
   "variables": {
     "imageLocation": "[if(empty(parameters('imageLocation')), resourceGroup().location, parameters('imageLocation'))]"

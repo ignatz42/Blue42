@@ -123,14 +123,14 @@
       }
     },
     "vmTags": {
-        "type": "object",
-        "defaultValue": {
-          "Date": "%DATE%"
-        },
-        "metadata": {
-            "description": "Virtual Machine Tags."
-        }
+      "type": "object",
+      "defaultValue": {
+        "Date": "%DATE%"
+      },
+      "metadata": {
+        "description": "Virtual Machine Tags."
       }
+    }
   },
   "variables": {
     "vmLocation": "[if(empty(parameters('vmLocation')), resourceGroup().location, parameters('vmLocation'))]",

@@ -50,14 +50,14 @@
       "defaultValue": "2.0"
     },
     "vmssExtensionTags": {
-        "type": "object",
-        "defaultValue": {
-          "Date": "%DATE%"
-        },
-        "metadata": {
-            "description": "VMSS Extension Tags."
-        }
+      "type": "object",
+      "defaultValue": {
+        "Date": "%DATE%"
+      },
+      "metadata": {
+        "description": "VMSS Extension Tags."
       }
+    }
   },
   "variables": {
     "vmssExtensionLocation": "[if(empty(parameters('vmssExtensionLocation')), resourceGroup().location, parameters('vmssExtensionLocation'))]"

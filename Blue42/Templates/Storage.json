@@ -58,14 +58,14 @@
       }
     },
     "storageTags": {
-        "type": "object",
-        "defaultValue": {
-          "Date": "%DATE%"
-        },
-        "metadata": {
-            "description": "Storage Account Tags."
-        }
+      "type": "object",
+      "defaultValue": {
+        "Date": "%DATE%"
+      },
+      "metadata": {
+        "description": "Storage Account Tags."
       }
+    }
   },
   "variables": {
     "storageLocation": "[if(empty(parameters('storageLocation')), resourceGroup().location, parameters('storageLocation'))]",

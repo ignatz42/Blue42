@@ -52,14 +52,14 @@
       }
     },
     "networkInterfaceTags": {
-        "type": "object",
-        "defaultValue": {
-          "Date": "%DATE%"
-        },
-        "metadata": {
-            "description": "Network Interface Tags."
-        }
+      "type": "object",
+      "defaultValue": {
+        "Date": "%DATE%"
+      },
+      "metadata": {
+        "description": "Network Interface Tags."
       }
+    }
   },
   "variables": {
     "networkInterfaceLocation": "[if(empty(parameters('networkInterfaceLocation')), resourceGroup().location, parameters('networkInterfaceLocation'))]",

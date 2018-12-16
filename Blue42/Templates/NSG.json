@@ -44,14 +44,14 @@
       }
     },
     "nsgTags": {
-        "type": "object",
-        "defaultValue": {
-          "Date": "%DATE%"
-        },
-        "metadata": {
-            "description": "NSG Tags."
-        }
+      "type": "object",
+      "defaultValue": {
+        "Date": "%DATE%"
+      },
+      "metadata": {
+        "description": "NSG Tags."
       }
+    }
   },
   "variables": {
     "nsgLocation": "[if(empty(parameters('nsgLocation')), resourceGroup().location, parameters('nsgLocation'))]",

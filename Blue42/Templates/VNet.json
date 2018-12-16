@@ -38,14 +38,14 @@
       }
     },
     "vnetTags": {
-        "type": "object",
-        "defaultValue": {
-          "Date": "%DATE%"
-        },
-        "metadata": {
-            "description": "VNet Tags."
-        }
+      "type": "object",
+      "defaultValue": {
+        "Date": "%DATE%"
+      },
+      "metadata": {
+        "description": "VNet Tags."
       }
+    }
   },
   "variables": {
     "vnetLocation": "[if(empty(parameters('vnetLocation')), resourceGroup().location, parameters('vnetLocation'))]",

@@ -17,14 +17,14 @@
       }
     },
     "ddosTags": {
-        "type": "object",
-        "defaultValue": {
-          "Date": "%DATE%"
-        },
-        "metadata": {
-            "description": "DDoS Tags."
-        }
+      "type": "object",
+      "defaultValue": {
+        "Date": "%DATE%"
+      },
+      "metadata": {
+        "description": "DDoS Tags."
       }
+    }
   },
   "variables": {
     "ddosLocation": "[if(empty(parameters('ddosLocation')), resourceGroup().location, parameters('ddosLocation'))]"

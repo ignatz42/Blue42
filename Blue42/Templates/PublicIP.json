@@ -64,14 +64,14 @@
       }
     },
     "publicIPTags": {
-        "type": "object",
-        "defaultValue": {
-          "Date": "%DATE%"
-        },
-        "metadata": {
-            "description": "Public IP Tags."
-        }
+      "type": "object",
+      "defaultValue": {
+        "Date": "%DATE%"
+      },
+      "metadata": {
+        "description": "Public IP Tags."
       }
+    }
   },
   "variables": {
     "publicIPLocation": "[if(empty(parameters('publicIPLocation')), resourceGroup().location, parameters('publicIPLocation'))]"

@@ -60,14 +60,14 @@
       "defaultValue": ""
     },
     "vnetPeerTags": {
-        "type": "object",
-        "defaultValue": {
-          "Date": "%DATE%"
-        },
-        "metadata": {
-            "description": "Virtual network peer Tags."
-        }
+      "type": "object",
+      "defaultValue": {
+        "Date": "%DATE%"
+      },
+      "metadata": {
+        "description": "Virtual network peer Tags."
       }
+    }
   },
   "variables": {
     "peerName": "[concat(parameters('vnetName'), '/', parameters('vnetPeerName'))]",

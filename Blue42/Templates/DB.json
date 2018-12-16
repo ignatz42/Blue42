@@ -77,14 +77,14 @@
       }
     },
     "dbTags": {
-        "type": "object",
-        "defaultValue": {
-          "Date": "%DATE%"
-        },
-        "metadata": {
-            "description": "DB Tags."
-        }
+      "type": "object",
+      "defaultValue": {
+        "Date": "%DATE%"
+      },
+      "metadata": {
+        "description": "DB Tags."
       }
+    }
   },
   "variables": {
     "dbLocation": "[if(empty(parameters('dbLocation')), resourceGroup().location, parameters('dbLocation'))]"
@@ -94,7 +94,6 @@
       "apiVersion": "2017-10-01-preview",
       "type": "Microsoft.Sql/servers/databases",
       "name": "[concat(parameters('sqlName'), '/', parameters('dbName'))]",
-      "tags": {},
       "location": "[variables('dbLocation')]",
       "tags": "[parameters('dbTags')]",
       "properties": {

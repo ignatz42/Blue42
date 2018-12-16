@@ -38,14 +38,14 @@
       }
     },
     "webAppTags": {
-        "type": "object",
-        "defaultValue": {
-          "Date": "%DATE%"
-        },
-        "metadata": {
-            "description": "Web App Tags."
-        }
+      "type": "object",
+      "defaultValue": {
+        "Date": "%DATE%"
+      },
+      "metadata": {
+        "description": "Web App Tags."
       }
+    }
   },
   "variables": {
     "aspResourceID": "[resourceId(parameters('aspResourceGroupName'), 'Microsoft.Web/serverfarms/', parameters('aspName'))]",

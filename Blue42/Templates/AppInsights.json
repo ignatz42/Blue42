@@ -1,51 +1,50 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "appInsightsName": {
-            "type": "string",
-            "defaultValue": "ai%UID%",
-            "metadata": {
-                "description": "The App Insights Name"
-            }
-        },
-        "appInsightsLocation": {
-            "type": "string",
-            "defaultValue": "%LOCATION%",
-            "metadata": {
-                "description": "App Insights Location."
-            }
-        },
-        "appInsightsTags": {
-            "type": "object",
-            "defaultValue": {
-              "Date": "%DATE%"
-            },
-            "metadata": {
-                "description": "App Insights Tags."
-            }
-          }
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appInsightsName": {
+      "type": "string",
+      "defaultValue": "ai%UID%",
+      "metadata": {
+        "description": "The App Insights Name"
+      }
     },
-    "variables": {
-        "appInsightsLocation": "[if(empty(parameters('appInsightsLocation')), resourceGroup().location, parameters('appInsightsLocation'))]"
+    "appInsightsLocation": {
+      "type": "string",
+      "defaultValue": "%LOCATION%",
+      "metadata": {
+        "description": "App Insights Location."
+      }
     },
-    "resources": [
-        {
-            "apiVersion": "2014-04-01",
-            "name": "[parameters('appInsightsName')]",
-            "type": "Microsoft.Insights/components",
-            "location": "[variables('appInsightsLocation')]",
-            "tags": "[parameters('appInsightsTags')]",
-            "properties": {
-                "applicationId": "[parameters('appInsightsName')]"
-            }
-        }
-    ],
-    "outputs": {
-        "APPINSIGHTS_INSTRUMENTATIONKEY": {
-            "type": "string",
-            "value": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]"
-          }
+    "appInsightsTags": {
+      "type": "object",
+      "defaultValue": {
+        "Date": "%DATE%"
+      },
+      "metadata": {
+        "description": "App Insights Tags."
+      }
     }
+  },
+  "variables": {
+    "appInsightsLocation": "[if(empty(parameters('appInsightsLocation')), resourceGroup().location, parameters('appInsightsLocation'))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2014-04-01",
+      "name": "[parameters('appInsightsName')]",
+      "type": "Microsoft.Insights/components",
+      "location": "[variables('appInsightsLocation')]",
+      "tags": "[parameters('appInsightsTags')]",
+      "properties": {
+        "applicationId": "[parameters('appInsightsName')]"
+      }
+    }
+  ],
+  "outputs": {
+    "APPINSIGHTS_INSTRUMENTATIONKEY": {
+      "type": "string",
+      "value": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]"
+    }
+  }
 }
-

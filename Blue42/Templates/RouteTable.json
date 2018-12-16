@@ -30,14 +30,14 @@
       }
     },
     "routeTableTags": {
-        "type": "object",
-        "defaultValue": {
-          "Date": "%DATE%"
-        },
-        "metadata": {
-            "description": "Route Table Tags."
-        }
+      "type": "object",
+      "defaultValue": {
+        "Date": "%DATE%"
+      },
+      "metadata": {
+        "description": "Route Table Tags."
       }
+    }
   },
   "variables": {
     "routeTableLocation": "[if(empty(parameters('routeTableLocation')), resourceGroup().location, parameters('routeTableLocation'))]",

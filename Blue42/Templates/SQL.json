@@ -31,14 +31,14 @@
       }
     },
     "sqlTags": {
-        "type": "object",
-        "defaultValue": {
-          "Date": "%DATE%"
-        },
-        "metadata": {
-            "description": "SQL Server Tags."
-        }
+      "type": "object",
+      "defaultValue": {
+        "Date": "%DATE%"
+      },
+      "metadata": {
+        "description": "SQL Server Tags."
       }
+    }
   },
   "variables": {
     "sqlLocation": "[if(empty(parameters('sqlLocation')), resourceGroup().location, parameters('sqlLocation'))]"

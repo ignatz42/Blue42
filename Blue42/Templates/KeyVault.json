@@ -75,14 +75,14 @@
       }
     },
     "keyVaultTags": {
-        "type": "object",
-        "defaultValue": {
-          "Date": "%DATE%"
-        },
-        "metadata": {
-            "description": "Key Vault Tags."
-        }
+      "type": "object",
+      "defaultValue": {
+        "Date": "%DATE%"
+      },
+      "metadata": {
+        "description": "Key Vault Tags."
       }
+    }
   },
   "variables": {
     "keyVaultLocation": "[if(empty(parameters('keyVaultLocation')), resourceGroup().location, parameters('keyVaultLocation'))]"

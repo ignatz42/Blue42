@@ -95,14 +95,14 @@
       }
     },
     "loadBalancerTags": {
-        "type": "object",
-        "defaultValue": {
-          "Date": "%DATE%"
-        },
-        "metadata": {
-            "description": "Load balancer Tags."
-        }
+      "type": "object",
+      "defaultValue": {
+        "Date": "%DATE%"
+      },
+      "metadata": {
+        "description": "Load balancer Tags."
       }
+    }
   },
   "variables": {
     "loadBalancerLocation": "[if(empty(parameters('loadBalancerLocation')), resourceGroup().location, parameters('loadBalancerLocation'))]",

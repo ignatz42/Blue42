@@ -45,14 +45,14 @@
       }
     },
     "certificateTags": {
-        "type": "object",
-        "defaultValue": {
-          "Date": "%DATE%"
-        },
-        "metadata": {
-            "description": "Web Certificate Tags."
-        }
+      "type": "object",
+      "defaultValue": {
+        "Date": "%DATE%"
+      },
+      "metadata": {
+        "description": "Web Certificate Tags."
       }
+    }
   },
   "variables": {},
   "resources": [

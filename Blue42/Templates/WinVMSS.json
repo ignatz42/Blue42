@@ -149,14 +149,14 @@
       }
     },
     "vmssTags": {
-        "type": "object",
-        "defaultValue": {
-          "Date": "%DATE%"
-        },
-        "metadata": {
-            "description": "Virtual Machine Scale Set Tags."
-        }
+      "type": "object",
+      "defaultValue": {
+        "Date": "%DATE%"
+      },
+      "metadata": {
+        "description": "Virtual Machine Scale Set Tags."
       }
+    }
   },
   "variables": {
     "vmssLocation": "[if(empty(parameters('vmssLocation')), resourceGroup().location, parameters('vmssLocation'))]",

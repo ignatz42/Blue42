@@ -50,14 +50,14 @@
       "defaultValue": "2.0"
     },
     "vmExtensionTags": {
-        "type": "object",
-        "defaultValue": {
-          "Date": "%DATE%"
-        },
-        "metadata": {
-            "description": "VM Extension Tags."
-        }
+      "type": "object",
+      "defaultValue": {
+        "Date": "%DATE%"
+      },
+      "metadata": {
+        "description": "VM Extension Tags."
       }
+    }
   },
   "variables": {
     "vmExtensionLocation": "[if(empty(parameters('vmExtensionLocation')), resourceGroup().location, parameters('vmExtensionLocation'))]"

@@ -31,14 +31,14 @@
       }
     },
     "asetTags": {
-        "type": "object",
-        "defaultValue": {
-          "Date": "%DATE%"
-        },
-        "metadata": {
-            "description": "Availability Set Tags."
-        }
+      "type": "object",
+      "defaultValue": {
+        "Date": "%DATE%"
+      },
+      "metadata": {
+        "description": "Availability Set Tags."
       }
+    }
   },
   "variables": {
     "asetLocation": "[if(empty(parameters('asetLocation')), resourceGroup().location, parameters('asetLocation'))]"
