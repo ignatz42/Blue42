@@ -12,6 +12,7 @@ function Edit-Tokens {
     param (
         # The path to the template
         [Parameter(Mandatory = $true)]
+        [AllowEmptyString()]
         [string] $DefaultValue,
 
         # The sessions global variables.

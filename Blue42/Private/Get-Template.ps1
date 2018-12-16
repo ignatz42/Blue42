@@ -34,6 +34,7 @@ function Get-Template {
         foreach ($parameterKey in $template.parameters.Keys) {
             if (($template.parameters.$parameterKey.type.EndsWith("object"))) {
                 foreach ($value in $template.parameters.$parameterKey.defaultValue.Values) {
+                    if (!($value.GetType().Name.EndsWith("String"))) {continue}
                     $value = Edit-Tokens -DefaultValue $value -Globals $globals
                 }
             }
