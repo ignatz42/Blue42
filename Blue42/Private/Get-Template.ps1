@@ -33,10 +33,15 @@ function Get-Template {
         # Replace the tokens to make sure that all parameters have working default values after the template is read.
         foreach ($parameterKey in $template.parameters.Keys) {
             if (($template.parameters.$parameterKey.type.EndsWith("object"))) {
-                foreach ($value in $template.parameters.$parameterKey.defaultValue.Values) {
-                    if (!($value.GetType().Name.EndsWith("String"))) {continue}
-                    $value = Edit-Tokens -DefaultValue $value -Globals $globals
+                $newObject = [ordered]@{}
+                foreach ($key in $template.parameters.$parameterKey.defaultValue.Keys) {
+                    $newValue = $template.parameters.$parameterKey.defaultValue[$key]
+                    if (($newValue.GetType().Name.EndsWith("String"))) {
+                        $newValue = Edit-Tokens -DefaultValue $newValue -Globals $globals
+                    }
+                    $newObject.Add($key, $newValue)
                 }
+                $template.parameters.$parameterKey.defaultValue = $newObject
             }
             if (!($template.parameters.$parameterKey.type.EndsWith("string"))) {continue}
             $template.parameters.$parameterKey.defaultValue = Edit-Tokens -DefaultValue $template.parameters.$parameterKey.defaultValue -Globals $globals

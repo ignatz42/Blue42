@@ -27,8 +27,8 @@ function New-Deployment {
         [hashtable] $TemplateParameters,
 
         # The name of the Azure Deployment
-        [Parameter(Mandatory=$false)]
-        [string] $Name = ("B42{0}" -f (Get-DateTime15)),
+        [Parameter(Mandatory=$true)]
+        [string] $Name,
 
         # The deployment mode
         [Parameter(Mandatory=$false)]

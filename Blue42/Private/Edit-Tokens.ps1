@@ -38,7 +38,7 @@ function Edit-Tokens {
                 Write-Verbose ("B42 - Replaced %UID% with {0}" -f $editValue)
             }
             if ('DATE' -eq $Matches.Function) {
-                $editValue = Get-Date -Format "g"
+                $editValue = $Globals.Date
                 Write-Verbose ("B42 - Replaced %DATE% with {0}" -f $editValue)
             }
         }

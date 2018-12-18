@@ -62,7 +62,7 @@ function New-B42Deployment {
                 TemplateParameters      = (Get-B42TemplateParameters -Templates @($template) -TemplatePath $TemplatePath -TemplateParameters $combinedParameters)
                 Mode                    = $mode
                 DeploymentDebugLogLevel = "None"
-                Name                    = ("{0}_{1}" -f $template, (Get-DateTime15))
+                Name                    = ("{0}_{1}" -f $template, $globals.UID)
             }
             New-Deployment @deploymentParameters
         }

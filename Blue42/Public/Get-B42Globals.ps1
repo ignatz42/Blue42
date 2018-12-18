@@ -26,6 +26,7 @@ function Get-B42Globals {
             UID          = $Script:uid
             Location     = $Script:location
             TemplatePath = $Script:templatePath
+            Date         = $Script:Date
         }
     }
 

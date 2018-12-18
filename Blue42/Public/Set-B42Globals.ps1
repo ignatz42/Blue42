@@ -13,7 +13,8 @@ function Set-B42Globals {
     param (
         # The default unique identifer used in name generation
         [Parameter(Mandatory=$false)]
-        [string] $UID = (Get-DateTime15),
+        [AllowEmptyString()]
+        [string] $UID = "",
 
         # The default destination Azure region
         [Parameter(Mandatory=$false)]
@@ -21,15 +22,30 @@ function Set-B42Globals {
 
         # The default search path for templates
         [Parameter(Mandatory=$false)]
-        [string] $TemplatePath = (Resolve-Path "$PSScriptRoot\..\Templates").ToString()
+        [ValidateScript({Test-Path $_})]
+        [string] $TemplatePath = (Resolve-Path "$PSScriptRoot\..\Templates").ToString(),
+
+        # The date
+        [Parameter(Mandatory=$false)]
+        [AllowEmptyString()]
+        [string] $Date = ""
     )
 
     begin {}
 
     process {
+        $d = Get-Date
+        if ([string]::IsNullOrEmpty($UID)) {
+            $UID = $d.ToString("yyyyMMddTHHmmss").ToLower()
+        }
+        if ([string]::IsNullOrEmpty($Date)) {
+            $Date = $d.ToString("g")
+        }
+
         $Script:uid = $UID
         $Script:location = $Location
         $Script:templatePath = $TemplatePath
+        $Script:Date = $Date
     }
 
     end {}

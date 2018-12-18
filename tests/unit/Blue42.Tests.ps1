@@ -23,12 +23,6 @@ Describe "the basic module" {
         }
 
         InModuleScope $ModuleName {
-            It "generates a unique date identifier" {
-                $dateUID = Get-DateTime15
-                $dateUID.Length | Should Be (15)
-                $dateUID.GetType() | Should Be ("string")
-            }
-
             It "parses the module test template" {
                 $template = Get-Template -TemplatePath "$PSScriptRoot\input\Blue42.Test.json"
                 ($template.'$schema' -eq "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#") | Should Be ($true)
@@ -44,7 +38,7 @@ Describe "the basic module" {
                     Blue42Location = "%LOCATION%"
                 }
 
-                $deploymentResult = New-Deployment -Location "blueMan" -ResourceGroupName "deploymenttest-rg" -TemplatePath "$PSScriptRoot\input\Blue42.Test.json" -TemplateParameters $mockParameters
+                $deploymentResult = New-Deployment -Location "blueMan" -ResourceGroupName "deploymenttest-rg" -TemplatePath "$PSScriptRoot\input\Blue42.Test.json" -TemplateParameters $mockParameters -Name "B42_Deployment"
                 ($deploymentResult.Parameters.Count) | Should Be (3)
 
                 $deploymentResult.Parameters.Contains("Blue42Password") | Should Be ($true)
@@ -83,9 +77,16 @@ Describe "the basic module" {
     Context "Helper functions" {
         It "passes basic globals workflow" {
             $globals = Get-B42Globals
+            # The UID is the max length of a VM host name.
             ($globals.UID.Length) | Should Be (15)
+            # Must have a Location
             ([string]::IsNullOrEmpty($globals.Location)) | Should Be ($false)
+            # Template path should be valid.
             (Test-Path $globals.TemplatePath) | Should Be ($true)
+            # Verify the Date is parsable
+            [DateTime]$dtOutput = New-Object DateTime
+            [DateTime]::TryParseExact($globals.Date, "g", [System.Globalization.CultureInfo]::CurrentCulture, [System.Globalization.DateTimeStyles]::None, [ref]$dtOutput) | Should Be ($true)
+
             # The Sleep statement is required to make sure that that the values for UID change.
             Start-Sleep -Seconds 1
             $null = Set-B42Globals
@@ -93,6 +94,8 @@ Describe "the basic module" {
             ($globals.Location -eq $newGlobals.Location) | Should Be ($true)
             ($globals.TemplatePath -eq $newGlobals.TemplatePath) | Should Be ($true)
             ($globals.UID -eq $newGlobals.UID) | Should Be ($false)
+            # The date value has minute level granularity so it should be the same.
+            ($globals.Date -eq $newGlobals.Date) | Should Be ($true)
         }
 
         It "generates a password with the minimum security requirements." {
