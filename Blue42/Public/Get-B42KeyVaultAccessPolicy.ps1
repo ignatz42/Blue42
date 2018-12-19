@@ -10,7 +10,7 @@ function Get-B42KeyVaultAccessPolicy {
         .NOTES
         This function is mostly useful for assigning the KeyVault creator instat access.
     #>
-    [OutputType('System.Collections.Hashtable')]
+    [OutputType('System.Collections.Specialized.OrderedDictionary')]
     [CmdletBinding()]
     param (
         # The ObjectId to add to an access policy.
@@ -25,7 +25,7 @@ function Get-B42KeyVaultAccessPolicy {
     begin {}
 
     process {
-        @{
+        [ordered] @{
             objectId    = $ObjectID
             tenantId    = $TenantID
             permissions = @{

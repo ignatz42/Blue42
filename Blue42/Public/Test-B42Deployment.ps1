@@ -60,13 +60,13 @@ function Test-B42Deployment {
                 $deploymentValue = $deployment.Parameters.$parameter.Value
                 # This works around issue https://github.com/Azure/azure-powershell/issues/7410
                 if (($deployment.Parameters.$parameter.Type -eq "Array") -or ($deployment.Parameters.$parameter.Type -eq "Object")) {
-                    $deploymentValue = ($deployment.Parameters.$parameter.Value.ToString() | ConvertFrom-Json -AsHashtable)
+                    $deploymentValue = ($deployment.Parameters.$parameter.Value.ToString() | ConvertFrom-Json | ConvertFrom-B42Json)
                 }
 
                 # Count the mismatched parameters.
-                $parameterMismatch = ($null -ne (Compare-Object -ReferenceObject $deploymentValue -DifferenceObject $combinedParameters.$parameter))
-                $finalReport.MismatchedParameters += [int]$parameterMismatch
-                Write-Verbose ("Parameter {0} has value {1} mismatch? {2}" -f $parameter, $deploymentValue, $parameterMismatch.ToString())
+                $comparisionResult = Compare-Object -ReferenceObject $deploymentValue -DifferenceObject $combinedParameters.$parameter
+                $finalReport.MismatchedParameters += [int]($null -ne $comparisionResult)
+                Write-Verbose ("Parameter {0} has value {1} mismatch? {2}" -f $parameter, $deploymentValue, ($null -ne $comparisionResult).ToString())
             }
         }
         $finalReport

@@ -20,7 +20,7 @@ function Get-NSGList {
     process {
         $nsg = @()
         if ($IsLinux) {
-            $nsg += @{
+            $nsg += [ordered]@{
                 name                     = "Inbound-SSH";
                 description              = "Allow SSH";
                 protocol                 = "Tcp";
@@ -33,7 +33,7 @@ function Get-NSGList {
                 direction                = "Inbound";
             }
         } else {
-            $nsg += @{
+            $nsg += [ordered]@{
                 name                     = "Inbound-WinRM-HTTPS";
                 description              = "Allow WinRM HTTPS";
                 protocol                 = "Tcp";
