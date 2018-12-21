@@ -39,15 +39,6 @@
       "metadata": {
         "description": "An array of service names that will be translated into endpoint mappings."
       }
-    },
-    "subnetTags": {
-      "type": "object",
-      "defaultValue": {
-        "Date": "%DATE%"
-      },
-      "metadata": {
-        "description": "Subnet Tags."
-      }
     }
   },
   "variables": {
@@ -74,7 +65,6 @@
       "type": "Microsoft.Network/virtualNetworks/subnets",
       "name": "[concat(parameters('vnetName'), '/', parameters('subnetName'))]",
       "location": "[variables('subnetLocation')]",
-      "tags": "[parameters('subnetTags')]",
       "properties": "[if(greater(length(parameters('subnetServiceEndpoints')), 0), variables('subnetPropertiesEndpoints'), variables('subnetPropertiesNoEndpoints'))]"
     }
   ],

@@ -56,8 +56,9 @@ function Test-B42Deployment {
 
             foreach ($parameter in $deployment.Parameters.Keys) {
                 if (!($combinedParameters.Contains($parameter))) { continue }
-
                 $deploymentValue = $deployment.Parameters.$parameter.Value
+                if ($null -eq $deploymentValue) { continue }
+
                 # This works around issue https://github.com/Azure/azure-powershell/issues/7410
                 if (($deployment.Parameters.$parameter.Type -eq "Array") -or ($deployment.Parameters.$parameter.Type -eq "Object")) {
                     $deploymentValue = ($deployment.Parameters.$parameter.Value.ToString() | ConvertFrom-Json | ConvertFrom-B42Json)

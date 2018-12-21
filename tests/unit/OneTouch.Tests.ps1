@@ -60,7 +60,7 @@ Describe "Deployments" {
 
     Mock -ModuleName $ModuleName New-SQLCommand { return }
     It "deploys a Web App" {
-        $reportCard = Deploy-B42WebApp -ResourceGroupName "mockdeployment-rg"
+        $reportCard = Deploy-B42WebApp -ResourceGroupName "mockdeployment-rg" -SQLParameters ([ordered]@{})
         $reportCard.SimpleReport() | Should Be ($true)
         $reportCard.Parameters.Contains("webAppName") | Should Be ($true)
         Assert-MockCalled -ModuleName $ModuleName -CommandName Get-AzResourceGroup -Scope It
