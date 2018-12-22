@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.5
+
++ Added support for template tags
++ Added AppInsights template
++ Changed replacement token identifier to %TOKEN%
++ Added Usage Examples to Readme
++ Removed 5.1 limits
++ Added Output value passing
+
 ## 0.2.4
 
 + Converted from AzureRm to Az modules
