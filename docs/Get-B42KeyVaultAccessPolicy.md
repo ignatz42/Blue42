@@ -67,7 +67,7 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## OUTPUTS
 
-### System.Collections.Hashtable
+### System.Collections.Specialized.OrderedDictionary
 ## NOTES
 This function is mostly useful for assigning the KeyVault creator instat access.
 

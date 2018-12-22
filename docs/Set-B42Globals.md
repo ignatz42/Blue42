@@ -13,7 +13,8 @@ Sets the default values for Location, TemplatePath, and a Unique Identifer.
 ## SYNTAX
 
 ```
-Set-B42Globals [[-UID] <String>] [[-Location] <String>] [[-TemplatePath] <String>] [<CommonParameters>]
+Set-B42Globals [[-UID] <String>] [[-Location] <String>] [[-TemplatePath] <String>] [[-Date] <String>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -38,7 +39,7 @@ Aliases:
 
 Required: False
 Position: 1
-Default value: (Get-DateTime15)
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -69,6 +70,21 @@ Aliases:
 Required: False
 Position: 3
 Default value: (Resolve-Path "$PSScriptRoot\..\Templates").ToString()
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Date
+The date
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 4
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

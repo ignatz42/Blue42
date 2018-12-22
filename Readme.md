@@ -7,15 +7,17 @@ Blue42 is a PowerShell script module that facilitates the process of writing and
 
 ## The Module
 
+### License
+
+This project is [licensed under the MIT License](./LICENSE).
+
 ### Requirements
 
 Blue42 requires the following modules to function as intended.
 
-+ PowerShell Core 6.1
++ PowerShell
 + Az
-+ WindowsCompatibility - Required for PKI support
-
-( PowerShell Desktop 5.1/AzrueRM has limitations noted below. )
++ WindowsCompatibility - Required for PKI support with PowerShell Core
 
 ### Installation
 
@@ -59,19 +61,18 @@ The module has the following functions
 #### Deployment Tools
 
 + [New-B42Deployment](./docs/New-B42Deployment.md) - creates a new AzReourceGroup deployment with supplied parameters
-+ [Test-B42Deployment](./docs/Test-B42Deployment.md) - verifies that a resource group's AzResourceGroupDeployment variables matched expected values (Incompatible with PowerShell 5.1)
++ [Test-B42Deployment](./docs/Test-B42Deployment.md) - verifies that a resource group's AzResourceGroupDeployment variables matched expected values
 
 #### Deployment Helpers
 
-+ [Deploy-B42VNet](./docs/Deploy-B42VNetmd) - deploys a virtual network and 0 or more subnets
-+ [Deploy-B42VM](./docs/Deploy-B42VM.md) - deploys a virtual machine with 0 or more script extensions
-+ [Deploy-B42VMSS](./docs/Deploy-B42VMSS.md) - deploys a virtual machine scale set with 0 or more script extensions
-+ [Deploy-B42SQL](./docs/Deploy-B42SQL.md) - deploys a SQL server and 0 or more databases
-+ [Deploy-B42AppService](./docs/Deploy-B42AppService.md) - deploys an application service plan and 0 or more web apps
++ [Deploy-B42VNet](./docs/Deploy-B42VNetmd) - deploys a virtual network with options
++ [Deploy-B42VM](./docs/Deploy-B42VM.md) - deploys a virtual machine with
++ [Deploy-B42VMSS](./docs/Deploy-B42VMSS.md) - deploys a virtual machine scale set
++ [Deploy-B42SQL](./docs/Deploy-B42SQL.md) - deploys a SQL server
++ [Deploy-B42AppService](./docs/Deploy-B42AppService.md) - deploys an application service plan
 + [Deploy-B42ASE](./docs/Deploy-B42ASE.md) - deploys an application service environment
 + [Deploy-B42KeyVault](./docs/Deploy-B42KeyVault.md) - deploys a key vault
 + [Deploy-B42WebApp](./docs/Deploy-B42WebApp.md) - deploys a web app
-
 
 ### Templates
 
@@ -85,6 +86,81 @@ The module includes a group of templates that have the following characteristics
 
 The result is that these templates may be 'stacked' to create more complex templates.
 
-## License
+## Usage Examples
 
-This project is [licensed under the MIT License](./LICENSE).
+Blue42 may be useful when creating new stack resource manager templates and deploying related one-off test resources
+
+### Creating stacked Azure Resource Manager templates
+
+The included templates may be stacked together to make starting points for future customization. For example, the following:
+
+```powershell
+$templates = @("VNet", "Subnet")
+(Get-B42Template -Templates $template -AsJson) | Out-File "vnet_subnet.json"
+```
+
+will produce a valid arm template for deploying a vnet and a subnet later. Likewise, a parameter file for this new template can be created with:
+
+```powershell
+(Get-B42TemplateParameters -Templates @("vnet_subnet") -TemplatePath "." -AsJson) | Out-File "vnet_subnet.paramenters.json"
+```
+
+### Deploying related test resources
+
+The basic deployment stanza, with auto-generated names, might look like:
+
+```powershell
+$templates = @("VNet", "Subnet")
+$deployments = New-B42Deployment -ResourceGroupName $ResourceGroupName -Templates $templates
+$reportCard = Test-B42Deployment -ResourceGroupName $ResourceGroupName -Templates $templates -Deployments $deployments
+
+if ($reportCard.SimpleReport() -ne $true) {
+    throw "Failed to deploy VNet"
+}
+...
+```
+
+This can be further defined by passing parameters like this:
+
+```powershell
+$parameters = [ordered]@{
+  vnetName = "Blue42VNet"
+  subnetName = "ClientSubnet"
+}
+$templates = @("VNet", "Subnet")
+$deployments = New-B42Deployment -ResourceGroupName $ResourceGroupName -Templates $templates -TemplateParameters $parameters
+$reportCard = Test-B42Deployment -ResourceGroupName $ResourceGroupName -Templates $templates -TemplateParameters $parameters -Deployments $deployments
+
+if ($reportCard.SimpleReport() -ne $true) {
+    throw "Failed to deploy VNet"
+}
+...
+```
+
+### One-Touch Deployments
+
+Common deployments have been collected in the series of Deploy-* scripts which might look like this:
+
+```powershell
+$reportCard = Deploy-B42VNet -ResourceGroupName $ResourceGroupName
+
+if ($reportCard.SimpleReport() -ne $true) {
+    throw "Failed to deploy VNet"
+}
+...
+```
+
+The One-Touch Deployment script also take override parameters.
+
+```powershell
+$parameters = [ordered]@{
+  vnetName = "Blue42VNet"
+  subnetName = "ClientSubnet"
+}
+$reportCard = Deploy-B42VNet -ResourceGroupName $ResourceGroupName -VNetParameters $parameters
+
+if ($reportCard.SimpleReport() -ne $true) {
+    throw "Failed to deploy VNet"
+}
+...
+```
