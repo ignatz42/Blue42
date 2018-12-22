@@ -4,6 +4,7 @@ Mock -ModuleName $ModuleName Get-AzResourceGroup { return $null }
 Mock -ModuleName $ModuleName New-AzResourceGroup { return $null }
 
 Mock -ModuleName $ModuleName New-AzResourceGroupDeployment {
+    $mockDeploymentTemplate = Get-Template -TemplatePath $TemplateFile -SkipTokenReplacement
     $mockDeploymentParameters = @{}
     foreach ($key in $TemplateParameterObject.Keys) {
         $deploymentVariableMock = @{
@@ -24,7 +25,7 @@ Mock -ModuleName $ModuleName New-AzResourceGroupDeployment {
         Mode                    = $Mode
         TemplateLink            = ""
         Parameters              = $mockDeploymentParameters
-        Outputs                 = ""
+        Outputs                 = $mockDeploymentTemplate.outputs
         DeploymentDebugLogLevel = $DeploymentDebugLogLevel
     }
     return $mockDeploymentResult

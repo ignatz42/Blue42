@@ -17,6 +17,13 @@
       "metadata": {
         "description": "This sample tests an array with a single element"
       }
+    },
+    "testOutput": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Variable Output from first parameter in stack"
+      }
     }
   },
   "variables": {
@@ -42,7 +49,7 @@
     }
   ],
   "outputs": {
-    "Blue42Password_Value": {
+    "Blue42PasswordAltValue": {
       "type": "string",
       "value": "[parameters('Blue42Password')]"
     }

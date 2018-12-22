@@ -54,6 +54,12 @@ function Test-B42Deployment {
             $finalReport.SuccessfulDeploymentCount += [int]$deploymentResult
             Write-Verbose ("Deployment {0} was successful?  {1}" -f $deployment.DeploymentName, $deploymentResult.ToString())
 
+            # Add the outputs to combinedParameters.
+            foreach ($output in $deployment.Outputs.Keys) {
+                if (!($combinedParameters.Contains($output))) { continue }
+                $combinedParameters.$output = $deployment.Outputs.$output.Value
+            }
+
             foreach ($parameter in $deployment.Parameters.Keys) {
                 if (!($combinedParameters.Contains($parameter))) { continue }
                 $deploymentValue = $deployment.Parameters.$parameter.Value

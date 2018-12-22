@@ -13,27 +13,27 @@ function New-B42Deployment {
     [CmdletBinding()]
     param (
         # The destination Resource Group Name
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string] $ResourceGroupName,
 
         # The destination Azure region
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [string] $Location,
 
         # An array of template names that will be combined into a single template then deployed to Azure
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [array] $Templates,
 
         # This parameter overrides the default search path. See Set/Get-B42Globals for the default path
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [string] $TemplatePath,
 
         # A list of override parameters. If empty, the default parameters supplied in the template will be used insted
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [hashtable] $TemplateParameters = @{},
 
         # Perform a 'Complete' deployment instead of the default 'Incremental'
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [switch] $Complete
     )
 
@@ -64,7 +64,13 @@ function New-B42Deployment {
                 DeploymentDebugLogLevel = "None"
                 Name                    = ("{0}_{1}" -f $template, $globals.UID)
             }
-            New-Deployment @deploymentParameters
+            $deployment = New-Deployment @deploymentParameters
+            foreach ($output in $deployment.Outputs.Keys) {
+                Write-Verbose ("B42 - Found output key {0} .Type {1} .Value {2}" -f $output, $deployment.Outputs.$output.Type, $deployment.Outputs.$output.Value.ToString())
+                if (!$combinedParameters.Contains($output)) { continue }
+                $combinedParameters.$output = $deployment.Outputs.$output.Value
+            }
+            $deployment
         }
     }
 

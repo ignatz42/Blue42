@@ -25,7 +25,7 @@ Describe "Deployments" {
 
         $finalReport.SimpleReport() | Should Be ($true)
 
-        $finalReport.Parameters.Count | Should Be (6)
+        $finalReport.Parameters.Count | Should Be (7)
 
         $finalReport.Parameters.Contains("Blue42Password") | Should Be ($true)
         $finalReport.Parameters.Contains("Blue42Location") | Should Be ($true)
@@ -33,10 +33,12 @@ Describe "Deployments" {
         $finalReport.Parameters.Contains("CopySource") | Should Be ($true)
         $finalReport.Parameters.Contains("NewCopySource") | Should Be ($true)
         $finalReport.Parameters.Contains("SampleTags") | Should Be ($true)
+        $finalReport.Parameters.Contains("testOutput") | Should Be ($true)
 
         ($finalReport.Parameters.Blue42Password -eq "CustomPasswordValue") | Should Be ($true)
         ($finalReport.Parameters.CopySource -eq "OnlyInTemplate1") | Should Be ($true)
         ($finalReport.Parameters.NewCopySource -eq "OnlyInTemplate2") | Should Be ($true)
+        [string]::IsNullOrEmpty(($finalReport.Parameters.testOutput)) | Should Be ($false)
     }
 
     It "passes a deployment test" {

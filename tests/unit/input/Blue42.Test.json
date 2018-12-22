@@ -57,9 +57,9 @@
   },
   "resources": [],
   "outputs": {
-    "Blue42Password_Value": {
+    "testOutput": {
       "type": "string",
-      "value": "[parameters('Blue42Password')]",
+      "value": "[variables('variableSample')]",
       "special": null
     }
   }
