@@ -43,15 +43,20 @@ function Deploy-B42SQL {
         if ($reportCard.SimpleReport() -ne $true) {
             throw "Failed to deploy the SQL Server local instance"
         }
-        $sqlName = $reportCard.Parameters.sqlName
+        if (!($SQLParameters.Contains("sqlName"))) {
+            $SQLParameters.Add("sqlName", $reportCard.Parameters.sqlName)
+        }
+        if (!($SQLParameters.Contains("sqlAdminName"))) {
+            $SQLParameters.Add("sqlAdminName", $reportCard.Parameters.sqlAdminName)
+        }
 
         # Add a KeyVault.
-        $keyVaultReportCard = Deploy-B42KeyVault -ResourceGroupName $ResourceGroupName -Location "$Location" -IncludeCurrentUserAccess -KeyVaultParameters ([ordered]@{keyVaultName = $sqlName})
-        $null = Add-Secret -SecretName "sqlAdminUser" -SecretValue $reportCard.Parameters.sqlAdminName -KeyVaultName $sqlName
-        $null = Add-Secret -SecretName "sqlAdminPass" -SecretValue $reportCard.Parameters.sqlAdminPassword -KeyVaultName $sqlName
+        $null = Deploy-B42KeyVault -ResourceGroupName $ResourceGroupName -Location "$Location" -IncludeCurrentUserAccess -KeyVaultParameters ([ordered]@{keyVaultName = $SQLParameters.sqlName})
+        $null = Add-Secret -SecretName "sqlAdminUser" -SecretValue $SQLParameters.sqlAdminName -KeyVaultName $SQLParameters.sqlName
+        $null = Add-Secret -SecretName "sqlAdminPass" -SecretValue $SQLParameters.sqlAdminPassword -KeyVaultName $SQLParameters.sqlName
 
         if (![string]::IsNullOrEmpty($AADDisplayName)) {
-            $null = Set-AzSqlServerActiveDirectoryAdministrator -ResourceGroupName $ResourceGroupName -ServerName $sqlName -DisplayName "$AADDisplayName"
+            $null = Set-AzSqlServerActiveDirectoryAdministrator -ResourceGroupName $ResourceGroupName -ServerName $SQLParameters.sqlName -DisplayName "$AADDisplayName"
         }
 
         $reportCard

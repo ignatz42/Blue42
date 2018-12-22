@@ -40,10 +40,6 @@ function Deploy-B42VM {
         # The parameters in VirtualNetworkParameters are required. If not provided, create some defaults.
         if (!($VMParameters.Contains("vnetResourceGroupName") -and $VMParameters.Contains("vnetName") -and $VMParameters.Contains("subnetName"))) {
             $vnetReportCard = Deploy-B42VNet -ResourceGroupName $ResourceGroupName -Location "$Location" -VNetParameters $VMParameters
-            # Carry along these values to the VMDeployment.
-            $VMParameters.Add("vnetResourceGroupName", $ResourceGroupName)
-            $VMParameters.Add("vnetName", $vnetReportCard.Parameters.vnetName)
-            $VMParameters.Add("subnetName", $vnetReportCard.Parameters.subnetName)
         }
 
         # A KeyVault is required, if one wasn't supplied create it then add the admin user and password.

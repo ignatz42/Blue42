@@ -32,10 +32,6 @@ function Deploy-B42ASE {
         # The parameters in VirtualNetworkParameters are required. If not provided, create some defaults.
         if (!($AppServiceEnvironmentParameters.Contains("vnetResourceGroupName") -and $AppServiceEnvironmentParameters.Contains("vnetName") -and $AppServiceEnvironmentParameters.Contains("subnetName"))) {
             $vnetReportCard = Deploy-B42VNet -ResourceGroupName $ResourceGroupName -Location "$Location"
-            # Carry along these values to the VMDeployment.
-            $AppServiceEnvironmentParameters.Add("vnetResourceGroupName", $ResourceGroupName)
-            $AppServiceEnvironmentParameters.Add("vnetName", $vnetReportCard.Parameters.vnetName)
-            $AppServiceEnvironmentParameters.Add("subnetName", $vnetReportCard.Parameters.subnetName)
         }
 
         $templates = @("ASE")
@@ -46,7 +42,9 @@ function Deploy-B42ASE {
         if ($aseReportCard.SimpleReport() -ne $true) {
             throw "Failed to deploy the ASE phase 1"
         }
-        $AppServiceEnvironmentParameters.Add("aseName", $aseReportCard.Parameters.aseName)
+        if (!($AppServiceEnvironmentParameters.Contains("aseName"))){
+            $AppServiceEnvironmentParameters.Add("aseName", $aseReportCard.Parameters.aseName)
+        }
 
         # Publish the cert.
 

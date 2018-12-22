@@ -49,11 +49,16 @@ function Deploy-B42VNet {
         if ($reportCard.SimpleReport() -ne $true) {
             throw "Failed to deploy VNet"
         }
-        $vnetName = $reportCard.Parameters.vnetName
+        if (!($VNetParameters.Contains("vnetResourceGroupName"))) {
+            $VNetParameters.Add("vnetResourceGroupName", $ResourceGroupName)
+        }
+        if (!($VNetParameters.Contains("vnetName"))) {
+            $VNetParameters.Add("vnetName", $reportCard.Parameters.vnetName)
+        }
 
         # This must be done before any subnets are added to the vnet.
         if (![string]::IsNullOrEmpty($PrivateDNSZone)) {
-            $thisVnet = Get-AzVirtualNetwork -Name $vnetName -ResourceGroupName $ResourceGroupName
+            $thisVnet = Get-AzVirtualNetwork -Name $VNetParameters.vnetName -ResourceGroupName $ResourceGroupName
             $null = New-AzDnsZone -Name $PrivateDNSZone -ResourceGroupName $ResourceGroupName -ZoneType Private -ResolutionVirtualNetworkId @($thisVnet.Id)
             $null = Set-AzDnsZone -Name $PrivateDNSZone -ResourceGroupName $ResourceGroupName -ResolutionVirtualNetworkId @($thisVnet.Id)
         }
@@ -61,7 +66,11 @@ function Deploy-B42VNet {
         # Take advantage of incremental ARM deployment for clarity.  Only the subnet will be added the then the report card will be returned.
         $templates += "Subnet"
         $deployments = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates $templates -TemplateParameters $reportCard.Parameters
-        Test-B42Deployment -ResourceGroupName $ResourceGroupName -Templates $templates -TemplateParameters $VNetParameters -Deployments $deployments
+        $reportCard = Test-B42Deployment -ResourceGroupName $ResourceGroupName -Templates $templates -TemplateParameters $VNetParameters -Deployments $deployments
+        if (!($VNetParameters.Contains("subnetName"))) {
+            $VNetParameters.Add("subnetName", $reportCard.Parameters.subnetName)
+        }
+        $reportCard
     }
 
     end {

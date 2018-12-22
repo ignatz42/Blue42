@@ -55,7 +55,12 @@ function Deploy-B42KeyVault {
         if ($reportCard.SimpleReport() -ne $true) {
             throw "Failed to deploy the KeyVault"
         }
-
+        if (!($KeyVaultParameters.Contains("keyVaultName"))) {
+            $KeyVaultParameters.Add("keyVaultName", $reportCard.Parameters.keyVaultName)
+        }
+        if (!($KeyVaultParameters.Contains("keyVaultResourceGroupName"))) {
+            $KeyVaultParameters.Add("keyVaultResourceGroupName", $ResourceGroupName)
+        }
         $reportCard
     }
 

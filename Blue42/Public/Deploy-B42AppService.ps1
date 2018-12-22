@@ -41,6 +41,12 @@ function Deploy-B42AppService {
         if ($reportCard.SimpleReport() -ne $true) {
             throw "Failed to deploy the App Service Plan"
         }
+        if (!($AppServicePlanParameters.Contains("aspResourceGroupName"))) {
+            $AppServicePlanParameters.Add("aspResourceGroupName", $ResourceGroupName)
+        }
+        if (!($AppServicePlanParameters.Contains("aspName"))) {
+            $AppServicePlanParameters.Add("aspName", $reportCard.Parameters.aspName)
+        }
         $reportCard
     }
 
