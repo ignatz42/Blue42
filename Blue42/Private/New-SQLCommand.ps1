@@ -35,7 +35,11 @@ function New-SQLCommand {
     begin {}
 
     process {
-        $connectionString = "Server=tcp:$SqlServerName.database.windows.net,1433;Initial Catalog=$SqlDatabaseName;User ID=$SqlUserName;Password=$SqlUserPassword;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+        # Decode the password for as little time as possible.
+        $credentials = New-Object System.Net.NetworkCredential("UnusedUser", $SqlUserPassword, "UnusedDomain")
+        $clearPassword = $credentials.Password.ToString()
+
+        $connectionString = "Server=tcp:$SqlServerName.database.windows.net,1433;Initial Catalog=$SqlDatabaseName;User ID=$SqlUserName;Password=$clearPassword;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
         $connection = New-Object -TypeName System.Data.SqlClient.SqlConnection($connectionString)
         try {
             $connection.Open()

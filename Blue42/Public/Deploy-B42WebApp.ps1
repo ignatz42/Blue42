@@ -35,36 +35,44 @@ function Deploy-B42WebApp {
     }
 
     process {
-        $templates = @("WebApp")
+        # An App Service Plan is required
+        if (!($WebAppParameters.Contains("aspResourceGroupName") -and $WebAppParameters.Contains("aspName"))) {
+            $appServivePlanReportCard = Deploy-B42AppService -ResourceGroupName $ResourceGroupName -Location "$Location" -AppServicePlanParameters $WebAppParameters
+        }
+
+        $templates = @("AppInsights", "WebApp")
         $deployments = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates $templates -TemplateParameters $WebAppParameters
         $reportCard = Test-B42Deployment -ResourceGroupName $ResourceGroupName -Templates $templates -TemplateParameters $WebAppParameters -Deployments $deployments
         if ($reportCard.SimpleReport() -ne $true) {
             throw "Failed to deploy the WebApp"
         }
+        $WebAppParameters.Add("webAppName", $reportCard.Parameters.webAppName)
 
-        # A KeyVault is required.
+        # A KeyVault is required
         if (!($WebAppParameters.Contains("keyVaultResourceGroupName") -and $WebAppParameters.Contains("keyVaultName"))) {
-            $keyVaultReportCard = Deploy-B42KeyVault -ResourceGroupName $ResourceGroupName -Location "$Location" -IncludeCurrentUserAccess -KeyVaultParameters ([ordered]@{keyVaultName = $reportCard.Parameters.webAppName})
+            $keyVaultReportCard = Deploy-B42KeyVault -ResourceGroupName $ResourceGroupName -Location "$Location" -IncludeCurrentUserAccess -KeyVaultParameters ([ordered]@{keyVaultName = $WebAppParameters.webAppName})
             $WebAppParameters.Add("keyVaultResourceGroupName", $ResourceGroupName)
             $WebAppParameters.Add("keyVaultName", $keyVaultReportCard.Parameters.keyVaultName)
         }
 
         if ($null -ne $SQLParameters) {
-            $sqlReportCard = Deploy-B42SQL -ResourceGroupName $ResourceGroupName -Location "$Location" -SQLParameters $SQLParameters
-            if ($reportCard.SimpleReport() -ne $true) {
-                throw "Failed to deploy the SQL Server"
+            if (!($SQLParameters.Contains("sqlName"))) {
+                $sqlReportCard = Deploy-B42SQL -ResourceGroupName $ResourceGroupName -Location "$Location" -SQLParameters $SQLParameters
             }
+            # The SQL Server should have an accompanying KV with the same name where the admin/user pass is stored from the previous step.
+            # TODO: Fetch them.
 
-            $dbDeployments = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates @("DB") -TemplateParameters ([ordered] @{sqlName = $sqlReportCard.Parameters.sqlName})
-            $dbReportCard = Test-B42Deployment -ResourceGroupName $ResourceGroupName -Templates $templates -TemplateParameters $AppServicePlanParameters -Deployments $dbDeployments
+            $SQLParameters.Add("dbName", $WebAppParameters.webAppName)
+            $dbDeployments = New-B42Deployment -ResourceGroupName $ResourceGroupName -Location "$Location" -Templates @("DB") -TemplateParameters $SQLParameters
+            $dbReportCard = Test-B42Deployment -ResourceGroupName $ResourceGroupName -Templates $templates -TemplateParameters $SQLParameters -Deployments $dbDeployments
             if ($dbReportCard.SimpleReport() -ne $true) {
                 throw "Failed to deploy the DB"
             }
 
-            $sqlAppUser = $reportCard.Parameters.webAppName
+            $sqlAppUser = $WebAppParameters.webAppName
             $sqlAppPass = New-B42Password
             $null = Add-Secret -SecretName "sqlAppUser" -SecretValue $sqlAppUser -KeyVaultName $WebAppParameters.keyVaultName
-            $passSecret = Add-Secret -SecretName "sqlAppPass" -SecretValue $sqlAppPass -KeyVaultName $WebAppParameters.keyVaultName
+            $null = Add-Secret -SecretName "sqlAppPass" -SecretValue $sqlAppPass -KeyVaultName $WebAppParameters.keyVaultName
 
             # Create a user for the webAppName to use for connection.
             $steps = @(
@@ -73,21 +81,22 @@ function Deploy-B42WebApp {
                     sqlCommand = ("CREATE LOGIN [{0}] WITH PASSWORD = N'{1}'" -f $sqlAppUser, $sqlAppPass)
                 }, # Creating Login
                 @{
-                    database   = "$webAppName"
+                    database   = $SQLParameters.dbName
                     sqlCommand = ("CREATE USER [{0}] FOR LOGIN [{0}]" -f $sqlAppUser)
                 }, # Creating User
                 @{
-                    database   = "$webAppName"
+                    database   = $SQLParameters.dbName
                     sqlCommand = ("ALTER ROLE [db_owner] ADD MEMBER [{0}]" -f $sqlAppUser)
                 } # Making User dbo
             )
 
+            $sqlUserPassword = (ConvertTo-SecureString -AsPlainText -Force -String $SQLParameters.sqlAdminPassword)
             $ip = Get-MyIP
-            $null = New-AzSqlServerFirewallRule -FirewallRuleName "OriginalConfiguration" -StartIpAddress $ip -EndIpAddress $ip -ResourceGroupName $ResourceGroupName -ServerName $sqlReportCard.Parameters.sqlName
+            $null = New-AzSqlServerFirewallRule -FirewallRuleName "OriginalConfiguration" -StartIpAddress $ip -EndIpAddress $ip -ResourceGroupName $ResourceGroupName -ServerName $SQLParameters.sqlName
             foreach ($step in $steps) {
-                New-SQLCommand -SqlServerName $sqlReportCard.Parameters.sqlName -SqlDatabaseName $step.database -SqlUserName $sqlReportCard.Parameters.sqlAdminName -SqlUserPassword $passSecret.SecretValue -SqlCommand $step.sqlCommand
+                New-SQLCommand -SqlServerName $SQLParameters.sqlName -SqlDatabaseName $step.database -SqlUserName $SQLParameters.sqlAdminName -SqlUserPassword $sqlUserPassword -SqlCommand $step.sqlCommand
             }
-            $null = Remove-AzSqlServerFirewallRule -FirewallRuleName "OriginalConfiguration" -ResourceGroupName $ResourceGroupName -ServerName $sqlReportCard.Parameters.sqlName
+            $null = Remove-AzSqlServerFirewallRule -FirewallRuleName "OriginalConfiguration" -ResourceGroupName $ResourceGroupName -ServerName $SQLParameters.sqlName
         }
         $reportCard
     }

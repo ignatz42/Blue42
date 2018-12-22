@@ -34,7 +34,7 @@ Describe -Tag 'RequiresAzureContext' "Actual Azure tests." {
         $passed = ([string]::IsNullOrEmpty($armError.Code) -and [string]::IsNullOrEmpty($armError.Details) -and
             [string]::IsNullOrEmpty($armError.Message) -and [string]::IsNullOrEmpty($armError.Target))
 
-        It ("{0} passes the deployment test" -f $template) {
+        It ("{0} passes the validation test" -f $template) {
             ($passed) | Should Be ($true)
         }
 

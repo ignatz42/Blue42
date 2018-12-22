@@ -42,7 +42,7 @@
     }
   ],
   "outputs": {
-    "APPINSIGHTS_INSTRUMENTATIONKEY": {
+    "webAppAppInsightsInstrumentationKey": {
       "type": "string",
       "value": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]"
     }
