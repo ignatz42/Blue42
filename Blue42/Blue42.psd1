@@ -56,9 +56,9 @@
 
     # Modules that must be imported into the global environment prior to importing this module
     RequiredModules = if($PSEdition -eq 'Core') {
-        @('Az.Resources', 'Az.Profile', 'Az.Network', 'Az.Dns', 'Az.Keyvault', 'Az.Sql', 'WindowsCompatibility')
+        @('Az.Resources', 'Az.Accounts', 'Az.Network', 'Az.Dns', 'Az.Keyvault', 'Az.Sql', 'WindowsCompatibility')
     } else { # Desktop
-        @('Az.Resources', 'Az.Profile', 'Az.Network', 'Az.Dns', 'Az.Keyvault', 'Az.Sql')
+        @('Az.Resources', 'Az.Accounts', 'Az.Network', 'Az.Dns', 'Az.Keyvault', 'Az.Sql')
     }
 
     # Assemblies that must be loaded prior to importing this module
